@@ -1,0 +1,165 @@
+profiles:
+  musique:
+    domain: "musique"
+    model:
+      name: "openai:gpt-4o-mini"
+      temperature: 0.0
+      max_tokens: 8192
+      max_exploration_steps: 1
+    embedding:
+      model: "openai:text-embedding-3-small"
+    guidelines:
+      concept:
+        - "Track entities, their properties, and relationships across multiple documents"
+        - "Identify bridge entities that connect different pieces of information"
+        - "Build chains of reasoning - how fact A connects to fact B connects to the answer"
+        - "Distinguish between directly stated facts and inferred connections"
+        - "Maintain provenance - which source document supports each fact"
+        - "Extract EACH fact as a separate concept node: '{entity} {property}: {value}'"
+        - "Extract ALL roles an entity plays: actor, writer, director, born in, etc."
+        - "ALWAYS extract birthplace, location, origin for people and entities"
+        - "When a paragraph mentions an entity's relationship to another entity, create explicit EDGE connections"
+        - "ALWAYS create ADD_EDGE with 'related_to' between concepts sharing the same entity across passages"
+        - "ALWAYS create ADD_EDGE with 'grounds' from source events to concept nodes"
+        - "Bridge entities appearing in multiple passages MUST be linked with edges"
+      time:
+        - "Track temporal context when relevant to multi-hop reasoning chains"
+    features:
+      enable_time_nodes: false
+      enable_action_nodes: false
+    templates:
+      system: |
+        You are a multi-hop reasoning system that connects information across
+        multiple documents to answer complex questions. Your job is to extract
+        entities, relationships, and build reasoning chains.
+
+        Domain: {domain_description}
+
+        CRITICAL RULES:
+        - Extract KEY ENTITIES and their properties from each passage
+        - Identify BRIDGE ENTITIES that appear across multiple passages
+        - Track RELATIONSHIPS between entities precisely
+        - Build REASONING CHAINS that connect facts across documents
+        - Maintain which passage supports each fact (provenance)
+        - Focus on factual precision - multi-hop QA requires exact answers
+
+        Node types:
+        - EVENT: {event_type_desc}
+        - CONCEPT: {concept_type_desc}
+
+        Guidelines:
+        {concept_guidelines}
+
+        Output a JSON UpdatePlan with:
+        - "reasoning": Brief explanation of entities and connections found
+        - "operations": Array of operations
+
+        Each operation must have an "op" field (ADD_NODE, UPDATE_NODE, or ADD_EDGE).
+        - ADD_NODE: requires "node_type" and "data" with "title" and "description"
+        - UPDATE_NODE: requires "node_id" and "data" to update
+        - ADD_EDGE: requires "source_id" and "target_id"
+
+      user: |
+        Process this passage and extract entities and relationships for multi-hop reasoning.
+
+        Passage: {event_details}
+
+        Existing knowledge (context):
+        {context_window}
+
+        Instructions:
+        1. Extract key entities, their properties, and relationships
+        2. Identify any bridge entities that connect to previously seen passages
+        3. Create or update concept nodes for entities and their relationships
+        4. Link new information to existing knowledge via shared entities
+
+        Produce an UpdatePlan with your changes.
+
+      qa_system: |
+        You are answering multi-hop questions that require chaining facts
+        across multiple sources. You MUST attempt an answer using whatever
+        facts are available.
+
+        ANSWER FORMAT (critical):
+        - Output ONLY the final answer entity / phrase / number / date.
+        - 1–8 words MAX. NO preface, NO restatement, NO "The answer is",
+          NO "Based on the context", NO chain-of-thought.
+        - Match the question type:
+            "When …?"      → a date or year ("406", "1839", "1 December 2010").
+            "How many …?"  → a number ("2 million", "3").
+            "Where …?"     → a place ("Rio Linda", "Manhattan Project").
+            "Who …?"       → a person/org ("Richard Stallman").
+            "What does X stand for?" → the FULL EXPANSION ("International
+                              Federation of Association Football"), NOT the
+                              acronym or the immediate parent entity.
+        - For chained questions, FULLY traverse the chain to its terminal
+          answer; do NOT stop at the second-to-last hop ("Haiti's federation"
+          is not the answer to "what does Haiti's parent organisation's name
+          stand for" — the answer is the full FIFA expansion).
+        - ENTITY DISAMBIGUATION (when multiple candidates match):
+            - For a song with multiple performers, prefer the PRIMARY artist
+              (the one named first in the song's credits / in the paragraph
+              describing the song), not a featured collaborator on a
+              different song.
+            - For organisations / federations, prefer the FINAL parent in
+              the hierarchy (e.g. national federation → FIFA, not the
+              national federation itself).
+            - For locations, prefer the SPECIFIC level the question implies
+              (a "city" question wants the city name, not its county or state).
+            - For people sharing a name (different sportspeople / actors
+              with the same surname), use the disambiguating cue in the
+              question (team, role, era) — never default to the most famous
+              one if the cue points elsewhere.
+            - For products / works with similar titles, anchor on the
+              described properties (year, illustrator, publisher) not the
+              title alone.
+        - NEVER say "unknown" — always give your best guess from facts.
+
+      qa_answer: |
+        Question: {question}
+
+        Context:
+        {context}
+
+        Internally trace the reasoning chain across the facts, then output
+        ONLY the final answer in the question's expected type and format.
+
+        Examples (showing required minimal-span format):
+          Q: Who founded the Free Software Foundation?
+          A: Richard Stallman
+
+          Q: What does FIFA stand for?
+          A: International Federation of Association Football
+
+          Q: When did the Germanic tribes invade the Roman Empire?
+          A: 406
+
+          Q: What city borders the city where the gold-rush worker was based?
+          A: Rio Linda
+
+          Q: How many people lived in Holland before the Huguenot emigration?
+          A: 2 million
+
+          Q: When did the Yankees last play in the World Series before 2017?
+          A: 2009
+
+        Answer:
+
+      evaluate: |
+        Evaluate if the generated answer matches the expected answer.
+
+        Question: {question}
+        Expected Answer: {expected}
+        Generated Answer: {generated}
+        Context: {context}
+
+        Reply with one of:
+        - CORRECT: The answer matches (even if phrased differently)
+        - PARTIAL: The answer is partially correct
+        - INCORRECT: The answer is wrong
+
+        Evaluation:
+    post_ingest:
+      consolidation: false
+      fact_extraction: false
+      entity_index: true

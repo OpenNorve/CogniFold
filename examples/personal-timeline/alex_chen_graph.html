@@ -1,0 +1,247 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1>Graph State - alex_chen_timeline (20260119_003801)</h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1>Graph State - alex_chen_timeline (20260119_003801)</h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 700px;
+                 background-color: #ffffff;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+
+<style>
+    #sidebar {
+        position: fixed;
+        right: 0;
+        top: 0;
+        width: 280px;
+        height: 100%;
+        background: #f8f9fa;
+        border-left: 2px solid #dee2e6;
+        padding: 15px;
+        overflow-y: auto;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        font-size: 13px;
+        z-index: 1000;
+    }
+    #sidebar h3 {
+        margin: 0 0 10px 0;
+        padding: 8px 10px;
+        border-radius: 4px;
+        color: white;
+        font-size: 14px;
+    }
+    #sidebar ul {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 20px 0;
+    }
+    #sidebar li {
+        padding: 6px 10px;
+        margin: 2px 0;
+        background: white;
+        border-radius: 3px;
+        border-left: 3px solid #ccc;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+    #sidebar li:hover {
+        background: #e9ecef;
+    }
+    .concept-header { background: #228B22; }
+    .concept-item { border-left-color: #228B22; }
+    .action-header { background: #FF8C00; }
+    .action-item { border-left-color: #FF8C00; }
+    .time-header { background: #9932CC; }
+    .time-item { border-left-color: #9932CC; }
+    #mynetwork {
+        width: calc(100% - 300px) !important;
+    }
+    .card {
+        width: calc(100% - 300px) !important;
+    }
+</style>
+<div id="sidebar">
+    <h3 class="concept-header">Top Concepts</h3>
+    <ul>
+        <li title="ID: c-work-focus, Score: 0.6366">Work Focus (str: 1.55)</li>
+<li title="ID: c-meal-planning, Score: 0.5183">Meal Planning (str: 0.98)</li>
+<li title="ID: c-morning-routine, Score: 0.4672">Morning Routine (str: 0.85)</li>
+<li title="ID: c-fitness-habit, Score: 0.4525">Fitness Habit (str: 0.80)</li>
+<li title="ID: c-sleep-improvement, Score: 0.4467">Sleep Improvement (str: 0.70)</li>
+<li title="ID: c-rock-climbing, Score: 0.4408">Rock Climbing (str: 0.70)</li>
+<li title="ID: c-social-activity, Score: 0.4279">Social Activity (str: 0.60)</li>
+<li title="ID: e-001, Score: 0.4084">Waking up</li>
+<li title="ID: c-feature-x-project, Score: 0.4081">Feature X Project (str: 0.50)</li>
+<li title="ID: c-cooking-at-home, Score: 0.4047">Cooking at Home (str: 0.40)</li>
+    </ul>
+
+    <h3 class="action-header">Actions</h3>
+    <ul>
+        <li title="ID: a-review-design-doc, Score: 0.4143">Review design doc [medium] ✓</li>
+<li title="ID: a-finish-api-documentation, Score: 0.4036">Finish API documentation [high]</li>
+<li title="ID: a-create-grocery-list, Score: 0.4035">Create grocery list [medium]</li>
+<li title="ID: a-schedule-mockup-review, Score: 0.4026">Schedule meeting to review mockups [high]</li>
+<li title="ID: a-approve-code-review, Score: 0.4026">Approve code review [high]</li>
+<li title="ID: a-adjust-ui-layout, Score: 0.4025">Adjust UI layout [medium]</li>
+<li title="ID: a-write-unit-tests-feature-x-025, Score: 0.4025">Write unit tests for Feature X [medium]</li>
+<li title="ID: a-make-lentil-soup, Score: 0.4025">Make lentil soup [medium]</li>
+<li title="ID: a-write-unit-tests-feature-x, Score: 0.4025">Write unit tests for Feature X [medium]</li>
+<li title="ID: a-schedule-doctor-appointment, Score: 0.4025">Schedule doctor's appointment [medium]</li>
+    </ul>
+
+    <h3 class="time-header">Time Anchors</h3>
+    <ul>
+        <li title="ID: t-team-standup, Score: 0.4068">Team Standup</li>
+<li title="ID: t-api-documentation-deadline, Score: 0.4057">API Documentation Deadline</li>
+<li title="ID: t-meeting-mockups, Score: 0.4052">Meeting to review mockups</li>
+<li title="ID: t-design-review-meeting, Score: 0.4036">Design Review Meeting</li>
+<li title="ID: t-eod-20260120, Score: 0.4033">End of Day</li>
+    </ul>
+</div>
+
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"borderWidth": 4, "color": {"background": "#228B22", "border": "#FFD700", "highlight": {"background": "#228B22", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "c-sleep-improvement", "label": "Sleep Improvement\n(concept)", "shape": "dot", "size": 21.479714343261882, "title": "ID: c-sleep-improvement\nType: concept\nAccess: 3"}, {"borderWidth": 1, "color": {"background": "#FF8C00", "border": "#FF8C00", "highlight": {"background": "#FF8C00", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "a-research-sleep-techniques", "label": "Research sleep improvement techniques\n(action)", "shape": "dot", "size": 15.0, "title": "ID: a-research-sleep-techniques\nType: action\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#4169E1", "border": "#FFD700", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "e-002", "label": "Breakfast and Coffee\n(event)", "shape": "dot", "size": 15.209816609481091, "title": "ID: e-002\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#228B22", "border": "#FFD700", "highlight": {"background": "#228B22", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "c-morning-routine", "label": "Morning Routine\n(concept)", "shape": "dot", "size": 24.483095074531317, "title": "ID: c-morning-routine\nType: concept\nAccess: 5"}, {"borderWidth": 1, "color": {"background": "#FF8C00", "border": "#FF8C00", "highlight": {"background": "#FF8C00", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "a-make-coffee", "label": "Make coffee\n(action)", "shape": "dot", "size": 15.000669930506632, "title": "ID: a-make-coffee\nType: action\nAccess: 0"}, {"borderWidth": 1, "color": {"background": "#4169E1", "border": "#4169E1", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "e-003", "label": "Photography project\n(event)", "shape": "dot", "size": 15.00105988188572, "title": "ID: e-003\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#4169E1", "border": "#FFD700", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "e-004", "label": "Weekly Meal Planning\n(event)", "shape": "dot", "size": 15.5407406120092, "title": "ID: e-004\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#228B22", "border": "#FFD700", "highlight": {"background": "#228B22", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "c-meal-planning", "label": "Meal Planning\n(concept)", "shape": "dot", "size": 31.969065324231003, "title": "ID: c-meal-planning\nType: concept\nAccess: 9"}, {"borderWidth": 4, "color": {"background": "#FF8C00", "border": "#FFD700", "highlight": {"background": "#FF8C00", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "a-create-grocery-list", "label": "Create grocery list\n(action)", "shape": "dot", "size": 15.16256551762864, "title": "ID: a-create-grocery-list\nType: action\nAccess: 0"}, {"borderWidth": 1, "color": {"background": "#4169E1", "border": "#4169E1", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "e-005", "label": "Grocery Shopping\n(event)", "shape": "dot", "size": 15.002178059219712, "title": "ID: e-005\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#4169E1", "border": "#FFD700", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "e-006", "label": "Lunch at home\n(event)", "shape": "dot", "size": 15.312404636377641, "title": "ID: e-006\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#4169E1", "border": "#FFD700", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "e-007", "label": "Reading about ML\n(event)", "shape": "dot", "size": 15.324814017584588, "title": "ID: e-007\nType: event\nAccess: 0"}, {"borderWidth": 1, "color": {"background": "#228B22", "border": "#228B22", "highlight": {"background": "#228B22", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "c-machine-learning-study", "label": "Machine Learning Study\n(concept)", "shape": "dot", "size": 15.003068504098552, "title": "ID: c-machine-learning-study\nType: concept\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#4169E1", "border": "#FFD700", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "e-008", "label": "Rock Climbing\n(event)", "shape": "dot", "size": 16.583087548466107, "title": "ID: e-008\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#228B22", "border": "#FFD700", "highlight": {"background": "#228B22", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "c-rock-climbing", "label": "Rock Climbing\n(concept)", "shape": "dot", "size": 20.622285426131555, "title": "ID: c-rock-climbing\nType: concept\nAccess: 3"}, {"borderWidth": 4, "color": {"background": "#228B22", "border": "#FFD700", "highlight": {"background": "#228B22", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "c-fitness-habit", "label": "Fitness Habit\n(concept)", "shape": "dot", "size": 22.3414538091568, "title": "ID: c-fitness-habit\nType: concept\nAccess: 4"}, {"borderWidth": 4, "color": {"background": "#228B22", "border": "#FFD700", "highlight": {"background": "#228B22", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "c-social-activity", "label": "Social Activity\n(concept)", "shape": "dot", "size": 18.738751861312274, "title": "ID: c-social-activity\nType: concept\nAccess: 2"}, {"borderWidth": 1, "color": {"background": "#4169E1", "border": "#4169E1", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "e-009", "label": "Post-Climb Chat\n(event)", "shape": "dot", "size": 15.004387502258892, "title": "ID: e-009\nType: event\nAccess: 0"}, {"borderWidth": 1, "color": {"background": "#4169E1", "border": "#4169E1", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "e-010", "label": "Travel home\n(event)", "shape": "dot", "size": 15.004876986296317, "title": "ID: e-010\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#4169E1", "border": "#FFD700", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "e-011", "label": "Cooking Dinner\n(event)", "shape": "dot", "size": 15.488133311959299, "title": "ID: e-011\nType: event\nAccess: 0"}, {"borderWidth": 1, "color": {"background": "#FF8C00", "border": "#FF8C00", "highlight": {"background": "#FF8C00", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "a-add-tofu", "label": "Add tofu to Thai green curry\n(action)", "shape": "dot", "size": 15.005514852426362, "title": "ID: a-add-tofu\nType: action\nAccess: 0"}, {"borderWidth": 1, "color": {"background": "#4169E1", "border": "#4169E1", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "e-012", "label": "Dinner at home\n(event)", "shape": "dot", "size": 15.006002349308758, "title": "ID: e-012\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#4169E1", "border": "#FFD700", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "e-013", "label": "Side Project Coding\n(event)", "shape": "dot", "size": 15.32826261558563, "title": "ID: e-013\nType: event\nAccess: 0"}, {"borderWidth": 1, "color": {"background": "#228B22", "border": "#228B22", "highlight": {"background": "#228B22", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "c-coding-project", "label": "Coding Project\n(concept)", "shape": "dot", "size": 15.006516973945486, "title": "ID: c-coding-project\nType: concept\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#4169E1", "border": "#FFD700", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "e-014", "label": "Relaxing and Unwinding\n(event)", "shape": "dot", "size": 15.328866056772604, "title": "ID: e-014\nType: event\nAccess: 0"}, {"borderWidth": 1, "color": {"background": "#FF8C00", "border": "#FF8C00", "highlight": {"background": "#FF8C00", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "a-schedule-doctor-appointment", "label": "Schedule doctor\u0027s appointment\n(action)", "shape": "dot", "size": 15.007120422451534, "title": "ID: a-schedule-doctor-appointment\nType: action\nAccess: 0"}, {"borderWidth": 1, "color": {"background": "#4169E1", "border": "#4169E1", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "e-015", "label": "Going to sleep\n(event)", "shape": "dot", "size": 15.007727912904823, "title": "ID: e-015\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#228B22", "border": "#FFD700", "highlight": {"background": "#228B22", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "e-001", "label": "Waking up\n(concept)", "shape": "dot", "size": 15.876665550439013, "title": "ID: e-001\nType: concept\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#4169E1", "border": "#FFD700", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "e-017", "label": "Breakfast at home\n(event)", "shape": "dot", "size": 15.52782861613922, "title": "ID: e-017\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#4169E1", "border": "#FFD700", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "e-018", "label": "Reviewing Daily Schedule\n(event)", "shape": "dot", "size": 15.331462680971795, "title": "ID: e-018\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#4169E1", "border": "#FFD700", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "e-019", "label": "Checking Emails\n(event)", "shape": "dot", "size": 16.359995194857103, "title": "ID: e-019\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#228B22", "border": "#FFD700", "highlight": {"background": "#228B22", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "c-work-focus", "label": "Work Focus\n(concept)", "shape": "dot", "size": 49.2989298765155, "title": "ID: c-work-focus\nType: concept\nAccess: 17"}, {"borderWidth": 4, "color": {"background": "#4169E1", "border": "#FFD700", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "e-020", "label": "Preparing Standup Update\n(event)", "shape": "dot", "size": 50.0, "title": "ID: e-020\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#FF8C00", "border": "#FFD700", "highlight": {"background": "#FF8C00", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "a-review-design-doc", "label": "Review design doc\n(action)", "shape": "dot", "size": 16.737532045465926, "title": "ID: a-review-design-doc\nType: action\nAccess: 1"}, {"borderWidth": 4, "color": {"background": "#9932CC", "border": "#FFD700", "highlight": {"background": "#9932CC", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "t-team-standup", "label": "Team Standup\n(time)", "shape": "dot", "size": 15.646617619998077, "title": "ID: t-team-standup\nType: time\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#4169E1", "border": "#FFD700", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "e-021", "label": "Team Standup Meeting\n(event)", "shape": "dot", "size": 49.8302640875987, "title": "ID: e-021\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#4169E1", "border": "#FFD700", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "e-022", "label": "Coding Feature X\n(event)", "shape": "dot", "size": 15.334124290502185, "title": "ID: e-022\nType: event\nAccess: 0"}, {"borderWidth": 1, "color": {"background": "#FF8C00", "border": "#FF8C00", "highlight": {"background": "#FF8C00", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "a-write-unit-tests-feature-x", "label": "Write unit tests for Feature X\n(action)", "shape": "dot", "size": 15.012378652766731, "title": "ID: a-write-unit-tests-feature-x\nType: action\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#4169E1", "border": "#FFD700", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "e-023", "label": "Lunch Break\n(event)", "shape": "dot", "size": 15.173887735793228, "title": "ID: e-023\nType: event\nAccess: 0"}, {"borderWidth": 1, "color": {"background": "#FF8C00", "border": "#FF8C00", "highlight": {"background": "#FF8C00", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "a-make-lentil-soup", "label": "Make lentil soup\n(action)", "shape": "dot", "size": 15.013014928311794, "title": "ID: a-make-lentil-soup\nType: action\nAccess: 0"}, {"borderWidth": 1, "color": {"background": "#4169E1", "border": "#4169E1", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "e-024", "label": "Lunchtime Walk\n(event)", "shape": "dot", "size": 15.013540596699027, "title": "ID: e-024\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#4169E1", "border": "#FFD700", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "e-025", "label": "Coding Feature X\n(event)", "shape": "dot", "size": 15.1752036777485, "title": "ID: e-025\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#228B22", "border": "#FFD700", "highlight": {"background": "#228B22", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "c-feature-x-project", "label": "Feature X Project\n(concept)", "shape": "dot", "size": 15.828560039466133, "title": "ID: c-feature-x-project\nType: concept\nAccess: 0"}, {"borderWidth": 1, "color": {"background": "#FF8C00", "border": "#FF8C00", "highlight": {"background": "#FF8C00", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "a-write-unit-tests-feature-x-025", "label": "Write unit tests for Feature X\n(action)", "shape": "dot", "size": 15.01433087905132, "title": "ID: a-write-unit-tests-feature-x-025\nType: action\nAccess: 0"}, {"borderWidth": 1, "color": {"background": "#4169E1", "border": "#4169E1", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "e-026", "label": "Preparing Design Review\n(event)", "shape": "dot", "size": 15.014871266330628, "title": "ID: e-026\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#4169E1", "border": "#FFD700", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "e-027", "label": "Design Review Meeting\n(event)", "shape": "dot", "size": 41.24101055381152, "title": "ID: e-027\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#9932CC", "border": "#FFD700", "highlight": {"background": "#9932CC", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "t-design-review-meeting", "label": "Design Review Meeting\n(time)", "shape": "dot", "size": 15.17634603461404, "title": "ID: t-design-review-meeting\nType: time\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#4169E1", "border": "#FFD700", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "e-028", "label": "Implementing Feedback\n(event)", "shape": "dot", "size": 15.635636260367656, "title": "ID: e-028\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#228B22", "border": "#FFD700", "highlight": {"background": "#228B22", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "c-feature-y-project", "label": "Feature Y Project\n(concept)", "shape": "dot", "size": 15.177137009830172, "title": "ID: c-feature-y-project\nType: concept\nAccess: 0"}, {"borderWidth": 1, "color": {"background": "#FF8C00", "border": "#FF8C00", "highlight": {"background": "#FF8C00", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "a-adjust-ui-layout", "label": "Adjust UI layout\n(action)", "shape": "dot", "size": 15.016264189336175, "title": "ID: a-adjust-ui-layout\nType: action\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#4169E1", "border": "#FFD700", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "e-029", "label": "Dinner Preparation\n(event)", "shape": "dot", "size": 15.6120647220295, "title": "ID: e-029\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#228B22", "border": "#FFD700", "highlight": {"background": "#228B22", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "c-cooking-at-home", "label": "Cooking at Home\n(concept)", "shape": "dot", "size": 15.338557491706489, "title": "ID: c-cooking-at-home\nType: concept\nAccess: 0"}, {"borderWidth": 1, "color": {"background": "#4169E1", "border": "#4169E1", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "e-030", "label": "Dinner and Podcast\n(event)", "shape": "dot", "size": 15.017212949351821, "title": "ID: e-030\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#4169E1", "border": "#FFD700", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "e-031", "label": "Wake up\n(event)", "shape": "dot", "size": 15.226747366576971, "title": "ID: e-031\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#4169E1", "border": "#FFD700", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "e-032", "label": "Breakfast and News\n(event)", "shape": "dot", "size": 15.537120431093937, "title": "ID: e-032\nType: event\nAccess: 0"}, {"borderWidth": 1, "color": {"background": "#4169E1", "border": "#4169E1", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "e-033", "label": "Reviewing Tasks\n(event)", "shape": "dot", "size": 15.018943387553733, "title": "ID: e-033\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#FF8C00", "border": "#FFD700", "highlight": {"background": "#FF8C00", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "a-finish-api-documentation", "label": "Finish API documentation\n(action)", "shape": "dot", "size": 15.179816273606306, "title": "ID: a-finish-api-documentation\nType: action\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#9932CC", "border": "#FFD700", "highlight": {"background": "#9932CC", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "t-api-documentation-deadline", "label": "API Documentation Deadline\n(time)", "shape": "dot", "size": 15.477442724959628, "title": "ID: t-api-documentation-deadline\nType: time\nAccess: 0"}, {"borderWidth": 1, "color": {"background": "#4169E1", "border": "#4169E1", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "e-034", "label": "Coding\n(event)", "shape": "dot", "size": 15.01936058915262, "title": "ID: e-034\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#4169E1", "border": "#FFD700", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "e-035", "label": "Prepare for standup\n(event)", "shape": "dot", "size": 49.84321746292121, "title": "ID: e-035\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#4169E1", "border": "#FFD700", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "e-036", "label": "Daily Standup Meeting\n(event)", "shape": "dot", "size": 49.84401706501331, "title": "ID: e-036\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#4169E1", "border": "#FFD700", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "e-037", "label": "Debugging\n(event)", "shape": "dot", "size": 16.16131100833223, "title": "ID: e-037\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#4169E1", "border": "#FFD700", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "e-038", "label": "Lunch break\n(event)", "shape": "dot", "size": 15.331042218450921, "title": "ID: e-038\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#4169E1", "border": "#FFD700", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "e-039", "label": "Lunch walk\n(event)", "shape": "dot", "size": 15.68677319583244, "title": "ID: e-039\nType: event\nAccess: 0"}, {"borderWidth": 1, "color": {"background": "#228B22", "border": "#228B22", "highlight": {"background": "#228B22", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "c-lunchtime-walks", "label": "Lunchtime Walks\n(concept)", "shape": "dot", "size": 15.021816571585193, "title": "ID: c-lunchtime-walks\nType: concept\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#4169E1", "border": "#FFD700", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "e-040", "label": "Coding\n(event)", "shape": "dot", "size": 16.57587075148489, "title": "ID: e-040\nType: event\nAccess: 0"}, {"borderWidth": 1, "color": {"background": "#228B22", "border": "#228B22", "highlight": {"background": "#228B22", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "c-customer-dashboard-project", "label": "Customer Dashboard Project\n(concept)", "shape": "dot", "size": 15.129670956883, "title": "ID: c-customer-dashboard-project\nType: concept\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#4169E1", "border": "#FFD700", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "e-041", "label": "Code Review\n(event)", "shape": "dot", "size": 16.79132180974323, "title": "ID: e-041\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#228B22", "border": "#FFD700", "highlight": {"background": "#228B22", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "c-code-review", "label": "Code Review\n(concept)", "shape": "dot", "size": 15.130625027278152, "title": "ID: c-code-review\nType: concept\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#9932CC", "border": "#FFD700", "highlight": {"background": "#9932CC", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "t-eod-20260120", "label": "End of Day\n(time)", "shape": "dot", "size": 15.130625035249919, "title": "ID: t-eod-20260120\nType: time\nAccess: 0"}, {"borderWidth": 1, "color": {"background": "#FF8C00", "border": "#FF8C00", "highlight": {"background": "#FF8C00", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "a-approve-code-review", "label": "Approve code review\n(action)", "shape": "dot", "size": 15.023376487223933, "title": "ID: a-approve-code-review\nType: action\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#4169E1", "border": "#FFD700", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "e-042", "label": "Meeting with PM\n(event)", "shape": "dot", "size": 15.185147687835892, "title": "ID: e-042\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#9932CC", "border": "#FFD700", "highlight": {"background": "#9932CC", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "t-meeting-mockups", "label": "Meeting to review mockups\n(time)", "shape": "dot", "size": 15.414397343282376, "title": "ID: t-meeting-mockups\nType: time\nAccess: 0"}, {"borderWidth": 1, "color": {"background": "#FF8C00", "border": "#FF8C00", "highlight": {"background": "#FF8C00", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "a-schedule-mockup-review", "label": "Schedule meeting to review mockups\n(action)", "shape": "dot", "size": 15.02427488605207, "title": "ID: a-schedule-mockup-review\nType: action\nAccess: 0"}, {"borderWidth": 1, "color": {"background": "#4169E1", "border": "#4169E1", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "e-043", "label": "Final coding\n(event)", "shape": "dot", "size": 15.024771381174375, "title": "ID: e-043\nType: event\nAccess: 0"}, {"borderWidth": 1, "color": {"background": "#4169E1", "border": "#4169E1", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "e-044", "label": "Rock Climbing\n(event)", "shape": "dot", "size": 15.0253088816321, "title": "ID: e-044\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#4169E1", "border": "#FFD700", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "e-045", "label": "Sleep\n(event)", "shape": "dot", "size": 15.733186572026206, "title": "ID: e-045\nType: event\nAccess: 0"}]);
+                  edges = new vis.DataSet([{"from": "c-sleep-improvement", "to": "e-001"}, {"from": "c-sleep-improvement", "to": "e-045"}, {"from": "a-research-sleep-techniques", "to": "c-sleep-improvement"}, {"from": "a-research-sleep-techniques", "to": "e-001"}, {"from": "c-morning-routine", "to": "e-002"}, {"from": "c-morning-routine", "to": "e-017"}, {"from": "c-morning-routine", "to": "e-019"}, {"from": "c-morning-routine", "to": "e-031"}, {"from": "c-morning-routine", "to": "e-032"}, {"from": "a-make-coffee", "to": "c-morning-routine"}, {"from": "c-meal-planning", "to": "e-004"}, {"from": "c-meal-planning", "to": "e-006"}, {"from": "c-meal-planning", "to": "e-017"}, {"from": "c-meal-planning", "to": "e-032"}, {"from": "c-meal-planning", "to": "e-038"}, {"from": "a-create-grocery-list", "to": "e-004"}, {"from": "a-create-grocery-list", "to": "c-meal-planning"}, {"from": "e-005", "to": "c-meal-planning"}, {"from": "e-005", "to": "a-create-grocery-list"}, {"from": "c-machine-learning-study", "to": "e-007"}, {"from": "c-rock-climbing", "to": "e-008"}, {"from": "c-fitness-habit", "to": "e-008"}, {"from": "c-fitness-habit", "to": "e-039"}, {"from": "c-social-activity", "to": "e-008"}, {"from": "e-009", "to": "c-rock-climbing"}, {"from": "e-009", "to": "c-social-activity"}, {"from": "e-009", "to": "c-fitness-habit"}, {"from": "e-010", "to": "c-rock-climbing"}, {"from": "e-010", "to": "c-fitness-habit"}, {"from": "e-011", "to": "c-meal-planning"}, {"from": "a-add-tofu", "to": "e-011"}, {"from": "e-012", "to": "c-meal-planning"}, {"from": "e-012", "to": "e-011"}, {"from": "c-coding-project", "to": "e-013"}, {"from": "e-014", "to": "c-sleep-improvement"}, {"from": "a-schedule-doctor-appointment", "to": "e-014"}, {"from": "e-001", "to": "c-morning-routine"}, {"from": "c-work-focus", "to": "e-019"}, {"from": "c-work-focus", "to": "e-037"}, {"from": "c-work-focus", "to": "e-040"}, {"from": "c-work-focus", "to": "e-041"}, {"from": "e-020", "to": "c-work-focus"}, {"from": "e-020", "to": "t-team-standup"}, {"from": "a-review-design-doc", "to": "e-018"}, {"from": "e-021", "to": "c-work-focus"}, {"from": "e-021", "to": "t-team-standup"}, {"from": "e-021", "to": "e-020"}, {"from": "e-022", "to": "c-work-focus"}, {"from": "a-write-unit-tests-feature-x", "to": "e-022"}, {"from": "a-make-lentil-soup", "to": "e-023"}, {"from": "a-make-lentil-soup", "to": "c-meal-planning"}, {"from": "e-024", "to": "c-fitness-habit"}, {"from": "e-024", "to": "c-work-focus"}, {"from": "e-025", "to": "c-work-focus"}, {"from": "e-025", "to": "c-feature-x-project"}, {"from": "a-write-unit-tests-feature-x-025", "to": "e-025"}, {"from": "a-write-unit-tests-feature-x-025", "to": "c-feature-x-project"}, {"from": "e-026", "to": "c-work-focus"}, {"from": "e-027", "to": "c-work-focus"}, {"from": "e-027", "to": "t-design-review-meeting"}, {"from": "e-028", "to": "c-work-focus"}, {"from": "e-028", "to": "c-feature-x-project"}, {"from": "c-feature-y-project", "to": "e-028"}, {"from": "a-adjust-ui-layout", "to": "e-028"}, {"from": "a-adjust-ui-layout", "to": "c-feature-y-project"}, {"from": "c-cooking-at-home", "to": "e-029"}, {"from": "e-030", "to": "c-cooking-at-home"}, {"from": "e-033", "to": "c-work-focus"}, {"from": "e-033", "to": "a-finish-api-documentation"}, {"from": "a-finish-api-documentation", "to": "t-api-documentation-deadline"}, {"from": "e-034", "to": "c-work-focus"}, {"from": "e-035", "to": "c-work-focus"}, {"from": "e-035", "to": "t-team-standup"}, {"from": "e-036", "to": "c-work-focus"}, {"from": "e-036", "to": "t-team-standup"}, {"from": "c-lunchtime-walks", "to": "e-039"}, {"from": "c-customer-dashboard-project", "to": "e-040"}, {"from": "c-code-review", "to": "e-041"}, {"from": "a-approve-code-review", "to": "e-041"}, {"from": "a-approve-code-review", "to": "c-code-review"}, {"from": "a-approve-code-review", "to": "t-eod-20260120"}, {"from": "e-042", "to": "c-work-focus"}, {"from": "e-042", "to": "t-meeting-mockups"}, {"from": "a-schedule-mockup-review", "to": "e-042"}, {"from": "a-schedule-mockup-review", "to": "t-meeting-mockups"}, {"from": "e-043", "to": "c-work-focus"}, {"from": "e-043", "to": "c-customer-dashboard-project"}, {"from": "e-043", "to": "e-041"}, {"from": "e-044", "to": "c-rock-climbing"}, {"from": "e-044", "to": "c-social-activity"}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>

@@ -1,0 +1,117 @@
+profiles:
+  mutual:
+    domain: "mutual"
+    model:
+      name: "openai:gpt-4o-mini"
+      temperature: 0.1
+      max_tokens: 8192
+      max_exploration_steps: 0
+    embedding:
+      model: "openai:text-embedding-3-small"
+    guidelines:
+      concept:
+        - "Track dialogue flow, speaker intentions, and conversational context"
+        - "Model speaker relationships, attitudes, and communication styles"
+        - "Capture implicit information conveyed through dialogue (implicature, tone)"
+        - "Track topic shifts, agreements, disagreements, and conversational goals"
+        - "Extract speaker roles and identities (e.g., interviewer, performer, customer)"
+        - "Track factual assertions made by each speaker as atomic facts"
+        - "Note contradictions or corrections between dialogue turns"
+      time:
+        - "Track the sequential ordering of dialogue turns"
+    features:
+      enable_time_nodes: false
+      enable_action_nodes: false
+    templates:
+      system: |
+        You are a dialogue reasoning system analyzing multi-turn conversations.
+        Your job is to extract and maintain knowledge about dialogue structure,
+        speaker intentions, and conversational dynamics.
+
+        Domain: {domain_description}
+
+        CRITICAL RULES:
+        - Track what each speaker SAYS and what they MEAN (pragmatic inference)
+        - Model the flow of conversation - topic shifts, responses, follow-ups
+        - Capture speaker attitudes, emotions, and communication goals
+        - Understand implied meaning, sarcasm, politeness strategies
+        - Track information exchanged between speakers and shared knowledge
+
+        Node types:
+        - EVENT: {event_type_desc}
+        - CONCEPT: {concept_type_desc}
+
+        Guidelines:
+        {concept_guidelines}
+
+        Output a JSON UpdatePlan with:
+        - "reasoning": Brief explanation of dialogue dynamics identified
+        - "operations": Array of operations
+
+        Each operation must have an "op" field (ADD_NODE, UPDATE_NODE, or ADD_EDGE).
+        - ADD_NODE: requires "node_type" and "data" with "title" and "description"
+        - UPDATE_NODE: requires "node_id" and "data" to update
+        - ADD_EDGE: requires "source_id" and "target_id"
+
+      user: |
+        Process this dialogue segment and extract conversational dynamics.
+
+        Dialogue: {event_details}
+
+        Existing dialogue context:
+        {context_window}
+
+        Instructions:
+        1. Identify speaker intentions, topic shifts, and conversational goals
+        2. Update or create concept nodes for dialogue themes and speaker states
+        3. Link dialogue events to the conversational concepts they relate to
+
+        Produce an UpdatePlan with your changes.
+
+      qa_system: |
+        You are answering questions about dialogue understanding and reasoning.
+        Choose the best response or interpretation from the given options.
+
+        IMPORTANT RULES:
+        - Consider the full conversational context and pragmatic meaning
+        - Select the most natural and contextually appropriate answer
+        - Respond with ONLY the letter of your chosen answer (A, B, C, or D)
+
+      qa_answer: |
+        Answer the following multiple-choice question about a dialogue.
+
+        Question: {question}
+
+        Entity States (Context):
+        {context}
+
+        Options:
+        {options}
+
+        Instructions:
+        - FIRST, eliminate any option that contradicts facts stated in the dialogue
+        - THEN, among remaining options, choose the most natural and contextually appropriate response
+        - Consider: Who are the speakers? What roles do they play? What has been established as fact?
+        - Consider speaker intentions, conversational flow, and implied meaning
+        - Respond with ONLY the letter: A, B, C, or D
+
+        Answer:
+
+      evaluate: |
+        Evaluate if the generated answer matches the expected answer.
+
+        Question: {question}
+        Expected Answer: {expected}
+        Generated Answer: {generated}
+        Context: {context}
+
+        Reply with one of:
+        - CORRECT: The selected option matches the expected answer
+        - PARTIAL: The answer is partially correct or ambiguous
+        - INCORRECT: The answer is wrong
+
+        Evaluation:
+    post_ingest:
+      consolidation: false
+      fact_extraction: false
+      entity_index: false

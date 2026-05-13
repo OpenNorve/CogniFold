@@ -1,0 +1,4 @@
+#!/bin/bash
+# Cognifold CLI wrapper
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+PYTHONPATH="$SCRIPT_DIR/src" python3 -c "from cognifold.cli import main; main()" "$@"

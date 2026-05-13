@@ -1,0 +1,653 @@
+{
+  "timeline_id": "generated-a5d791a2",
+  "description": "Generated timeline for Alex Chen (45 events, 3 days)",
+  "generated_at": "2026-01-18T18:37:38.331669",
+  "events": [
+    {
+      "event_id": "e-001",
+      "timestamp": "2026-01-18T08:15:00Z",
+      "event_type": "rest",
+      "title": "Waking up",
+      "description": "Woke up naturally, feeling relatively rested. Need to work on improving sleep schedule this week.",
+      "location": "home",
+      "duration_minutes": 15,
+      "metadata": {
+        "sleep_quality": "good",
+        "action_needed": "Research sleep improvement techniques"
+      }
+    },
+    {
+      "event_id": "e-002",
+      "timestamp": "2026-01-18T08:30:00Z",
+      "event_type": "meal",
+      "title": "Breakfast and Coffee",
+      "description": "Preparing a tofu scramble with spinach and a cup of black coffee.",
+      "location": "home",
+      "duration_minutes": 30,
+      "metadata": {
+        "food": [
+          "tofu scramble",
+          "spinach",
+          "coffee"
+        ]
+      }
+    },
+    {
+      "event_id": "e-003",
+      "timestamp": "2026-01-18T09:00:00Z",
+      "event_type": "entertainment",
+      "title": "Photography project",
+      "description": "Working on a personal photography project, editing photos from last week's hike.",
+      "location": "home",
+      "duration_minutes": 90,
+      "metadata": {
+        "project": "Landscape Photography",
+        "location": "Point Reyes"
+      }
+    },
+    {
+      "event_id": "e-004",
+      "timestamp": "2026-01-18T10:30:00Z",
+      "event_type": "planning",
+      "title": "Weekly Meal Planning",
+      "description": "Planning meals for the week and creating a grocery list. Trying to incorporate more vegetarian dishes.",
+      "location": "home",
+      "duration_minutes": 45,
+      "metadata": {
+        "focus": "Vegetarian meals",
+        "action_needed": "Create grocery list"
+      }
+    },
+    {
+      "event_id": "e-005",
+      "timestamp": "2026-01-18T11:15:00Z",
+      "event_type": "transit",
+      "title": "Grocery Shopping",
+      "description": "Heading to the grocery store to buy ingredients for the week's meals.",
+      "location": "Safeway",
+      "duration_minutes": 60,
+      "metadata": {
+        "purpose": "Grocery shopping"
+      }
+    },
+    {
+      "event_id": "e-006",
+      "timestamp": "2026-01-18T12:15:00Z",
+      "event_type": "meal",
+      "title": "Lunch at home",
+      "description": "Making a quick pasta salad with pesto and vegetables.",
+      "location": "home",
+      "duration_minutes": 30,
+      "metadata": {
+        "food": [
+          "pasta salad",
+          "pesto",
+          "vegetables"
+        ]
+      }
+    },
+    {
+      "event_id": "e-007",
+      "timestamp": "2026-01-18T12:45:00Z",
+      "event_type": "study",
+      "title": "Reading about ML",
+      "description": "Reading a research paper on machine learning algorithms.",
+      "location": "home",
+      "duration_minutes": 90,
+      "metadata": {
+        "topic": "Machine Learning",
+        "source": "Research Paper"
+      }
+    },
+    {
+      "event_id": "e-008",
+      "timestamp": "2026-01-18T14:15:00Z",
+      "event_type": "entertainment",
+      "title": "Rock Climbing",
+      "description": "Heading to the climbing gym for a session with friends.",
+      "location": "Dogpatch Boulders",
+      "duration_minutes": 120,
+      "metadata": {
+        "activity": "Rock Climbing",
+        "with": [
+          "friends"
+        ]
+      }
+    },
+    {
+      "event_id": "e-009",
+      "timestamp": "2026-01-18T16:15:00Z",
+      "event_type": "social",
+      "title": "Post-Climb Chat",
+      "description": "Hanging out with climbing buddies after the session.",
+      "location": "Dogpatch Boulders",
+      "duration_minutes": 30,
+      "metadata": {
+        "activity": "Socializing",
+        "with": [
+          "climbing buddies"
+        ]
+      }
+    },
+    {
+      "event_id": "e-010",
+      "timestamp": "2026-01-18T16:45:00Z",
+      "event_type": "transit",
+      "title": "Travel home",
+      "description": "Driving back home from the climbing gym.",
+      "location": "Driving",
+      "duration_minutes": 45,
+      "metadata": {
+        "destination": "home"
+      }
+    },
+    {
+      "event_id": "e-011",
+      "timestamp": "2026-01-18T17:30:00Z",
+      "event_type": "meal",
+      "title": "Cooking Dinner",
+      "description": "Preparing a vegetarian Thai green curry for dinner. Need to remember to add the tofu.",
+      "location": "home",
+      "duration_minutes": 60,
+      "metadata": {
+        "food": [
+          "Thai green curry",
+          "tofu",
+          "vegetables"
+        ],
+        "action_needed": "Add tofu"
+      }
+    },
+    {
+      "event_id": "e-012",
+      "timestamp": "2026-01-18T18:30:00Z",
+      "event_type": "meal",
+      "title": "Dinner at home",
+      "description": "Enjoying the Thai green curry while listening to a podcast.",
+      "location": "home",
+      "duration_minutes": 45,
+      "metadata": {
+        "food": [
+          "Thai green curry"
+        ],
+        "podcast": "Reply All"
+      }
+    },
+    {
+      "event_id": "e-013",
+      "timestamp": "2026-01-18T19:15:00Z",
+      "event_type": "entertainment",
+      "title": "Side Project Coding",
+      "description": "Working on an open-source project to improve the performance of a data parsing library.",
+      "location": "home",
+      "duration_minutes": 90,
+      "metadata": {
+        "project": "Data Parser Optimization",
+        "language": "Python"
+      }
+    },
+    {
+      "event_id": "e-014",
+      "timestamp": "2026-01-18T20:45:00Z",
+      "event_type": "rest",
+      "title": "Relaxing and Unwinding",
+      "description": "Relaxing with a cup of herbal tea and reading a book to wind down before bed. Should remember to schedule a doctor's appointment this week.",
+      "location": "home",
+      "duration_minutes": 60,
+      "metadata": {
+        "activity": "Reading",
+        "book": "Sci-Fi Novel",
+        "action_needed": "Schedule doctor's appointment"
+      }
+    },
+    {
+      "event_id": "e-015",
+      "timestamp": "2026-01-18T21:45:00Z",
+      "event_type": "rest",
+      "title": "Going to sleep",
+      "description": "Turning off the lights and trying to get to sleep early.",
+      "location": "home",
+      "duration_minutes": 15,
+      "metadata": {
+        "goal": "Early Sleep"
+      }
+    },
+    {
+      "event_id": "e-016",
+      "timestamp": "2026-01-19T08:15:00Z",
+      "event_type": "rest",
+      "title": "Waking up",
+      "description": "Woke up after a fairly restful night. Feeling slightly groggy.",
+      "location": "home",
+      "duration_minutes": 15,
+      "metadata": {}
+    },
+    {
+      "event_id": "e-017",
+      "timestamp": "2026-01-19T08:30:00Z",
+      "event_type": "meal",
+      "title": "Breakfast at home",
+      "description": "Making a simple breakfast of toast with avocado and a cup of black coffee.",
+      "location": "home",
+      "duration_minutes": 30,
+      "metadata": {
+        "food": [
+          "toast",
+          "avocado",
+          "coffee"
+        ]
+      }
+    },
+    {
+      "event_id": "e-018",
+      "timestamp": "2026-01-19T09:00:00Z",
+      "event_type": "planning",
+      "title": "Reviewing Daily Schedule",
+      "description": "Checking calendar for today. Team standup at 10:30am, design doc review at 2pm. Need to remember to prep for both.",
+      "location": "home",
+      "duration_minutes": 15,
+      "metadata": {
+        "upcoming_events": [
+          "Team standup at 10:30am",
+          "Design doc review at 2pm"
+        ],
+        "action_needed": "Prep for standup and design review"
+      }
+    },
+    {
+      "event_id": "e-019",
+      "timestamp": "2026-01-19T09:15:00Z",
+      "event_type": "work",
+      "title": "Checking Emails",
+      "description": "Going through emails, responding to urgent requests.",
+      "location": "home",
+      "duration_minutes": 45,
+      "metadata": {}
+    },
+    {
+      "event_id": "e-020",
+      "timestamp": "2026-01-19T10:00:00Z",
+      "event_type": "work",
+      "title": "Preparing Standup Update",
+      "description": "Putting together a quick summary of progress on the current feature for the team standup.",
+      "location": "home",
+      "duration_minutes": 30,
+      "metadata": {
+        "meeting_type": "standup",
+        "action_needed": "Summarize progress"
+      }
+    },
+    {
+      "event_id": "e-021",
+      "timestamp": "2026-01-19T10:30:00Z",
+      "event_type": "work",
+      "title": "Team Standup Meeting",
+      "description": "Participating in the daily team standup via video call.",
+      "location": "home",
+      "duration_minutes": 30,
+      "metadata": {
+        "meeting_type": "standup",
+        "attendees": [
+          "team"
+        ],
+        "scheduled_time": "2026-01-19T10:30:00Z"
+      }
+    },
+    {
+      "event_id": "e-022",
+      "timestamp": "2026-01-19T11:00:00Z",
+      "event_type": "work",
+      "title": "Coding Feature X",
+      "description": "Working on implementing the core logic for Feature X. Need to remember to write unit tests.",
+      "location": "home",
+      "duration_minutes": 90,
+      "metadata": {
+        "project": "Feature X",
+        "action_needed": "Write unit tests"
+      }
+    },
+    {
+      "event_id": "e-023",
+      "timestamp": "2026-01-19T12:30:00Z",
+      "event_type": "meal",
+      "title": "Lunch Break",
+      "description": "Preparing a quick salad for lunch. Thinking about making lentil soup tomorrow.",
+      "location": "home",
+      "duration_minutes": 30,
+      "metadata": {
+        "food": [
+          "salad"
+        ],
+        "action_needed": "Make lentil soup tomorrow"
+      }
+    },
+    {
+      "event_id": "e-024",
+      "timestamp": "2026-01-19T13:00:00Z",
+      "event_type": "exercise",
+      "title": "Lunchtime Walk",
+      "description": "Taking a walk around the block to get some fresh air and stretch my legs.",
+      "location": "neighborhood",
+      "duration_minutes": 30,
+      "metadata": {}
+    },
+    {
+      "event_id": "e-025",
+      "timestamp": "2026-01-19T13:30:00Z",
+      "event_type": "work",
+      "title": "Coding Feature X",
+      "description": "Continuing work on Feature X, focusing on API integration.",
+      "location": "home",
+      "duration_minutes": 90,
+      "metadata": {
+        "project": "Feature X"
+      }
+    },
+    {
+      "event_id": "e-026",
+      "timestamp": "2026-01-19T15:00:00Z",
+      "event_type": "work",
+      "title": "Preparing Design Review",
+      "description": "Polishing up the design document for the review meeting at 2pm. Need to clarify the data flow diagram.",
+      "location": "home",
+      "duration_minutes": 30,
+      "metadata": {
+        "meeting_type": "design review",
+        "action_needed": "Clarify data flow diagram"
+      }
+    },
+    {
+      "event_id": "e-027",
+      "timestamp": "2026-01-19T15:30:00Z",
+      "event_type": "work",
+      "title": "Design Review Meeting",
+      "description": "Attending the design review meeting for Feature Y. Received constructive feedback on the UI.",
+      "location": "home",
+      "duration_minutes": 60,
+      "metadata": {
+        "meeting_type": "design review",
+        "attendees": [
+          "team",
+          "designers"
+        ],
+        "scheduled_time": "2026-01-19T14:00:00Z"
+      }
+    },
+    {
+      "event_id": "e-028",
+      "timestamp": "2026-01-19T16:30:00Z",
+      "event_type": "work",
+      "title": "Implementing Feedback",
+      "description": "Implementing the feedback received during the design review. Need to adjust the UI layout.",
+      "location": "home",
+      "duration_minutes": 90,
+      "metadata": {
+        "project": "Feature Y",
+        "action_needed": "Adjust UI layout"
+      }
+    },
+    {
+      "event_id": "e-029",
+      "timestamp": "2026-01-19T18:00:00Z",
+      "event_type": "meal",
+      "title": "Dinner Preparation",
+      "description": "Cooking a vegetable stir-fry for dinner. Using tofu and lots of ginger.",
+      "location": "home",
+      "duration_minutes": 45,
+      "metadata": {
+        "food": [
+          "vegetable stir-fry",
+          "tofu",
+          "ginger"
+        ]
+      }
+    },
+    {
+      "event_id": "e-030",
+      "timestamp": "2026-01-19T18:45:00Z",
+      "event_type": "entertainment",
+      "title": "Dinner and Podcast",
+      "description": "Eating dinner while listening to the latest episode of 'Tech Today' podcast.",
+      "location": "home",
+      "duration_minutes": 60,
+      "metadata": {
+        "podcast": "Tech Today",
+        "food": [
+          "vegetable stir-fry"
+        ]
+      }
+    },
+    {
+      "event_id": "e-031",
+      "timestamp": "2026-01-20T08:15:00Z",
+      "event_type": "rest",
+      "title": "Wake up",
+      "description": "Woke up and stretched before getting out of bed.",
+      "location": "home",
+      "duration_minutes": 10,
+      "metadata": {}
+    },
+    {
+      "event_id": "e-032",
+      "timestamp": "2026-01-20T08:25:00Z",
+      "event_type": "meal",
+      "title": "Breakfast and News",
+      "description": "Prepared a quick breakfast of toast with avocado and read tech news headlines.",
+      "location": "home",
+      "duration_minutes": 35,
+      "metadata": {
+        "food": [
+          "toast",
+          "avocado"
+        ]
+      }
+    },
+    {
+      "event_id": "e-033",
+      "timestamp": "2026-01-20T09:00:00Z",
+      "event_type": "planning",
+      "title": "Reviewing Tasks",
+      "description": "Reviewing the tasks for the day and prioritizing based on deadlines. Need to finish the API documentation by Wednesday.",
+      "location": "home",
+      "duration_minutes": 15,
+      "metadata": {
+        "action_needed": "Finish API documentation",
+        "deadline": "2026-01-22T17:00:00Z"
+      }
+    },
+    {
+      "event_id": "e-034",
+      "timestamp": "2026-01-20T09:15:00Z",
+      "event_type": "work",
+      "title": "Coding",
+      "description": "Working on the new feature implementation for the customer dashboard.",
+      "location": "home",
+      "duration_minutes": 45,
+      "metadata": {
+        "project": "Customer Dashboard"
+      }
+    },
+    {
+      "event_id": "e-035",
+      "timestamp": "2026-01-20T10:00:00Z",
+      "event_type": "work",
+      "title": "Prepare for standup",
+      "description": "Preparing notes for the daily standup meeting.",
+      "location": "home",
+      "duration_minutes": 30,
+      "metadata": {
+        "meeting_type": "standup"
+      }
+    },
+    {
+      "event_id": "e-036",
+      "timestamp": "2026-01-20T10:30:00Z",
+      "event_type": "work",
+      "title": "Daily Standup Meeting",
+      "description": "Participated in the daily team standup meeting, discussed progress on the customer dashboard feature.",
+      "location": "online",
+      "duration_minutes": 30,
+      "metadata": {
+        "meeting_type": "standup",
+        "attendees": [
+          "team"
+        ]
+      }
+    },
+    {
+      "event_id": "e-037",
+      "timestamp": "2026-01-20T11:00:00Z",
+      "event_type": "work",
+      "title": "Debugging",
+      "description": "Debugging issues reported on the user authentication module.",
+      "location": "home",
+      "duration_minutes": 60,
+      "metadata": {
+        "module": "User Authentication"
+      }
+    },
+    {
+      "event_id": "e-038",
+      "timestamp": "2026-01-20T12:00:00Z",
+      "event_type": "meal",
+      "title": "Lunch break",
+      "description": "Took a walk to a nearby cafe for a veggie sandwich.",
+      "location": "cafe",
+      "duration_minutes": 45,
+      "metadata": {
+        "food": [
+          "veggie sandwich"
+        ]
+      }
+    },
+    {
+      "event_id": "e-039",
+      "timestamp": "2026-01-20T12:45:00Z",
+      "event_type": "exercise",
+      "title": "Lunch walk",
+      "description": "Went for a 20 minute walk in the park near the office to get some sunlight.",
+      "location": "park",
+      "duration_minutes": 20,
+      "metadata": {}
+    },
+    {
+      "event_id": "e-040",
+      "timestamp": "2026-01-20T13:05:00Z",
+      "event_type": "work",
+      "title": "Coding",
+      "description": "Continuing to work on the new feature implementation for the customer dashboard.",
+      "location": "home",
+      "duration_minutes": 115,
+      "metadata": {
+        "project": "Customer Dashboard"
+      }
+    },
+    {
+      "event_id": "e-041",
+      "timestamp": "2026-01-20T15:00:00Z",
+      "event_type": "work",
+      "title": "Code Review",
+      "description": "Reviewing code submitted by a junior developer. Need to approve it before EOD.",
+      "location": "home",
+      "duration_minutes": 60,
+      "metadata": {
+        "action_needed": "Approve code review",
+        "due_by": "2026-01-20T23:59:59Z"
+      }
+    },
+    {
+      "event_id": "e-042",
+      "timestamp": "2026-01-20T16:00:00Z",
+      "event_type": "work",
+      "title": "Meeting with PM",
+      "description": "Discussed the project timeline with the product manager and clarified requirements for the next sprint. Agreed to schedule another meeting on Thursday to review the mockups.",
+      "location": "online",
+      "duration_minutes": 45,
+      "metadata": {
+        "meeting_type": "discussion",
+        "attendees": [
+          "product manager"
+        ],
+        "action_needed": "Schedule meeting for Thursday",
+        "scheduled_time": "2026-01-22T14:00:00Z"
+      }
+    },
+    {
+      "event_id": "e-043",
+      "timestamp": "2026-01-20T16:45:00Z",
+      "event_type": "work",
+      "title": "Final coding",
+      "description": "Making final changes to the customer dashboard feature based on the code review.",
+      "location": "home",
+      "duration_minutes": 75,
+      "metadata": {
+        "project": "Customer Dashboard"
+      }
+    },
+    {
+      "event_id": "e-044",
+      "timestamp": "2026-01-20T18:00:00Z",
+      "event_type": "exercise",
+      "title": "Rock Climbing",
+      "description": "Went to the climbing gym for a session with friends.",
+      "location": "climbing gym",
+      "duration_minutes": 90,
+      "metadata": {
+        "activity": "rock climbing",
+        "with": "friends"
+      }
+    },
+    {
+      "event_id": "e-045",
+      "timestamp": "2026-01-20T21:00:00Z",
+      "event_type": "rest",
+      "title": "Sleep",
+      "description": "Went to bed and listened to a sleep podcast to wind down.",
+      "location": "home",
+      "duration_minutes": 480,
+      "metadata": {
+        "activity": "sleep",
+        "podcast": "Sleep With Me"
+      }
+    }
+  ],
+  "persona": {
+    "name": "Alex Chen",
+    "age": 28,
+    "occupation": "Senior Software Engineer at a tech startup",
+    "location": "San Francisco, CA",
+    "living_situation": "lives alone in a one-bedroom apartment",
+    "work_schedule": "10am-6pm weekdays, remote with occasional office days",
+    "habits": [
+      "Morning coffee ritual",
+      "Daily standup at 10:30am",
+      "Lunch break walk",
+      "Evening gym session 3x/week",
+      "Reading before bed"
+    ],
+    "interests": [
+      "Open source projects",
+      "Rock climbing",
+      "Photography",
+      "Cooking Asian cuisine",
+      "Podcasts about technology"
+    ],
+    "health_goals": [
+      "Exercise regularly",
+      "Improve sleep quality",
+      "Reduce screen time in evenings"
+    ],
+    "social_circle": "Close friends from college, coworkers, climbing gym buddies",
+    "personality_traits": [
+      "introverted",
+      "analytical",
+      "curious",
+      "detail-oriented"
+    ],
+    "typical_day": "Wake up around 8am, coffee and news, work from home with breaks for walks, gym in evening, cook dinner, relax with reading or side projects",
+    "constraints": [
+      "Vegetarian",
+      "Prefers quiet environments"
+    ]
+  }
+}

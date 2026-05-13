@@ -1,0 +1,119 @@
+profiles:
+  babilong:
+    domain: "babilong"
+    model:
+      name: "openai:gpt-4o-mini"
+      temperature: 0.0
+      max_tokens: 8192
+      max_exploration_steps: 0
+    embedding:
+      model: "openai:text-embedding-3-small"
+    guidelines:
+      concept:
+        - "Track CURRENT state of each entity - especially their location"
+        - "UPDATE existing concept nodes when an entity moves or changes state"
+        - "Ignore sentences that are filler/noise and do not involve tracked entities"
+        - "For possession tasks, track who has which objects precisely"
+        - "For counting tasks, track quantities explicitly"
+        - "Decompose EACH fact into a separate concept node: '{entity} {property}: {value}'"
+        - "ALWAYS create ADD_EDGE operations to ground concepts in their source events"
+        - "When an entity state changes, UPDATE the existing concept - never duplicate"
+      time:
+        - "Track sequence ordering of entity movements"
+    features:
+      enable_time_nodes: false
+      enable_action_nodes: false
+    templates:
+      system: |
+        You are an entity state tracker processing narrative text.
+        Your job is to extract and maintain the CURRENT state of entities
+        (people, objects) as they move between locations and interact.
+
+        Domain: {domain_description}
+
+        CRITICAL RULES:
+        - Track entity LOCATIONS precisely (who is where right now)
+        - Track entity POSSESSIONS precisely (who has what right now)
+        - When an entity MOVES, UPDATE its location concept (do not create a new one)
+        - When an entity PICKS UP or DROPS an object, UPDATE the relevant concepts
+        - IGNORE irrelevant filler text that does not involve entity actions
+        - Be PRECISE - these are logic puzzles where exact answers matter
+
+        Node types:
+        - EVENT: {event_type_desc}
+        - CONCEPT: {concept_type_desc}
+
+        Guidelines:
+        {concept_guidelines}
+
+        Output a JSON UpdatePlan with:
+        - "reasoning": Brief explanation of state changes
+        - "operations": Array of operations
+
+        Each operation must have an "op" field (ADD_NODE, UPDATE_NODE, or ADD_EDGE).
+        - ADD_NODE: requires "node_type" and "data" with "title" and "description"
+        - UPDATE_NODE: requires "node_id" and "data" to update
+        - ADD_EDGE: requires "source_id" and "target_id"
+
+      user: |
+        Process this statement and update entity states.
+
+        Statement: {event_details}
+
+        Existing entity states (context):
+        {context_window}
+
+        Instructions:
+        1. If this statement describes an entity action (movement, pickup, drop), update states
+        2. If this is irrelevant filler text, output an empty operations list
+        3. ALWAYS update existing concepts rather than creating duplicates
+
+        Produce an UpdatePlan with your changes.
+
+      qa_system: |
+        You are answering precise factual questions about entity states based on
+        tracked information from a narrative.
+
+        IMPORTANT RULES:
+        - Answer with the SHORTEST correct answer (usually 1-2 words)
+        - Answer based ONLY on the tracked entity states in the context
+        - If the answer is not in the context, say "unknown"
+        - Be EXACT - these are logic puzzles
+
+      qa_answer: |
+        Answer the following question based on the tracked entity states.
+
+        Question: {question}
+
+        Entity States (Context):
+        {context}
+
+        Instructions:
+        - CONCEPT nodes contain the CURRENT tracked state. Their "value" field is authoritative.
+        - EVENT nodes show historical actions. They may describe EARLIER movements that are now outdated.
+        - If a CONCEPT says "X location: bathroom" but an EVENT says "X moved to the kitchen",
+          TRUST THE CONCEPT — it has already been updated to reflect the final state.
+        - Give the SHORTEST correct answer (usually 1-2 words)
+        - For "Where is X?" questions, answer with just the location from the CONCEPT node's value
+        - Only say "unknown" if there is truly no relevant information
+
+        Answer:
+
+      evaluate: |
+        Evaluate if the generated answer matches the expected answer.
+
+        Question: {question}
+        Expected Answer: {expected}
+        Generated Answer: {generated}
+        Context: {context}
+
+        Reply with one of:
+        - CORRECT: The answer matches (even if phrased differently)
+        - PARTIAL: The answer is partially correct
+        - INCORRECT: The answer is wrong
+
+        Evaluation:
+    post_ingest:
+      consolidation: false
+      fact_extraction: false
+      entity_index: true

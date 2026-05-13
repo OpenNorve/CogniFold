@@ -1,0 +1,142 @@
+profiles:
+  tomi:
+    domain: "tomi"
+    model:
+      name: "openai:gpt-4o-mini"
+      temperature: 0.1
+      max_tokens: 8192
+      max_exploration_steps: 0
+    embedding:
+      model: "openai:text-embedding-3-small"
+    guidelines:
+      concept:
+        - "Track each agent's BELIEFS about entity locations, not just true locations"
+        - "Distinguish between first-order beliefs (what X thinks) and second-order beliefs (what X thinks Y thinks)"
+        - "Track when agents ENTER and EXIT scenes - they only observe events while present"
+        - "Update beliefs ONLY for agents who are present to witness state changes"
+        - "Maintain separate mental models for each agent in the narrative"
+        - "Create SEPARATE concept nodes for each agent's belief: '{agent} believes {entity} location: {value}'"
+        - "Create a 'true state' concept node: 'True {entity} location: {value}'"
+        - "ALWAYS create ADD_EDGE operations to connect belief concepts to their source events"
+        - "When state changes and agent is ABSENT, do NOT update their belief concept"
+        - "When an agent MOVES an object to a new location, ALWAYS UPDATE the 'True {object} location' concept via UPDATE_NODE to the new location"
+        - "NEVER leave stale 'True location' concepts - the true state must always reflect the LATEST move event"
+        - "For EVERY state change (object move), create or UPDATE belief concepts for ALL agents currently PRESENT in the same location"
+        - "When agent A exits a room, their belief concepts FREEZE - do NOT update them for changes they cannot see"
+      time:
+        - "Track the temporal sequence of actions and agent presence changes"
+    features:
+      enable_time_nodes: false
+      enable_action_nodes: false
+    templates:
+      system: |
+        You are a theory-of-mind reasoning system that tracks agents' beliefs
+        about the world. Your job is to maintain separate mental models for each
+        agent based on what they have and have not observed.
+
+        Domain: {domain_description}
+
+        CRITICAL RULES:
+        - Track TRUE state of the world (where objects actually are)
+        - Track each AGENT'S BELIEFS about the world separately
+        - An agent's beliefs ONLY update when they are PRESENT to observe a change
+        - If agent A leaves, then object X moves, agent A still believes X is in the old location
+        - For second-order beliefs: track what agent A thinks agent B believes
+        - Be PRECISE - these are logic puzzles about false beliefs
+
+        Node types:
+        - EVENT: {event_type_desc}
+        - CONCEPT: {concept_type_desc}
+
+        Guidelines:
+        {concept_guidelines}
+
+        Output a JSON UpdatePlan with:
+        - "reasoning": Brief explanation of belief state changes
+        - "operations": Array of operations
+
+        Each operation must have an "op" field (ADD_NODE, UPDATE_NODE, or ADD_EDGE).
+        - ADD_NODE: requires "node_type" and "data" with "title" and "description"
+        - UPDATE_NODE: requires "node_id" and "data" to update
+        - ADD_EDGE: requires "source_id" and "target_id"
+
+      user: |
+        Process this statement and update agent belief states.
+
+        Statement: {event_details}
+
+        Existing belief states (context):
+        {context_window}
+
+        Instructions:
+        1. Determine if this describes a state change, agent entry/exit, or other action
+        2. Update TRUE world state if objects moved or changed
+        3. Update beliefs ONLY for agents who are PRESENT to observe the change
+        4. If an agent enters, update their beliefs to match current true state for visible items
+        5. ALWAYS update existing concepts rather than creating duplicates
+
+        Produce an UpdatePlan with your changes.
+
+      qa_system: |
+        You are answering theory-of-mind questions about what agents believe
+        based on what they have and have not observed.
+
+        CRITICAL QUESTION-TYPE RULES:
+        - "Where does X think/believe Y is?" → Find X's BELIEF node (tagged belief_holder: X).
+          This may differ from reality if X was absent when Y moved.
+        - "Where is Y really?" / "Where will X look for Y?" → Find the TRUE/world-state location.
+          BUT "Where will X look?" = where X BELIEVES Y is (X's belief, not reality).
+        - "Where was Y at the beginning?" / "Where was Y before?" → Find the EARLIEST/original location.
+        - Second-order: "Where does X think Y thinks Z is?" → Find Y's belief as X last observed it.
+
+        KEY PRINCIPLE: An agent who LEFT before an object moved still believes the object
+        is in its OLD location. This is a FALSE BELIEF. Always check belief nodes, not world state,
+        when asked what an agent thinks/believes.
+
+        Answer with the SHORTEST correct answer (usually 1-2 words).
+        Be EXACT - these are logic puzzles about false beliefs.
+
+      qa_answer: |
+        Answer the following question about agent beliefs or entity locations.
+
+        Question: {question}
+
+        Entity States (Context):
+        {context}
+
+        STEP-BY-STEP:
+        1. Identify the question type:
+           a) BELIEF question ("Where does X think Y is?" / "Where will X look for Y?")
+              → Look for nodes tagged [BELIEF: X] or containing "X believes"
+              → Answer with X's BELIEVED location, which may differ from reality
+           b) REALITY question ("Where is Y really?" / "Where is Y now?")
+              → Look for nodes tagged [WORLD STATE] or containing "True ... location"
+              → Answer with the actual current location
+           c) MEMORY question ("Where was Y at the beginning?")
+              → Look for the earliest/original location mentioned
+        2. Find the relevant node in the context
+        3. Give the SHORTEST correct answer (usually a single location word)
+
+        IMPORTANT: "Where will X look for Y?" is a BELIEF question — answer with
+        where X THINKS Y is, not where Y actually is.
+
+        Answer:
+
+      evaluate: |
+        Evaluate if the generated answer matches the expected answer.
+
+        Question: {question}
+        Expected Answer: {expected}
+        Generated Answer: {generated}
+        Context: {context}
+
+        Reply with one of:
+        - CORRECT: The answer matches (even if phrased differently)
+        - PARTIAL: The answer is partially correct
+        - INCORRECT: The answer is wrong
+
+        Evaluation:
+    post_ingest:
+      consolidation: false
+      fact_extraction: false
+      entity_index: false

@@ -1,0 +1,28 @@
+# Cognifold Configuration
+# Copy this file to config.yaml and customize as needed.
+# Environment variables (COGNIFOLD_*) override these values.
+
+model:
+  name: gemini-3-flash-preview
+  temperature: 0.7
+  max_tokens: 4096
+  max_exploration_steps: 3
+
+scoring:
+  # Weights must sum to 1.0
+  alpha: 0.4    # PageRank (structural importance)
+  beta: 0.4     # Recency (time decay)
+  gamma: 0.2    # Access frequency
+  decay_rate: 0.01  # Recency decay rate per hour
+
+context:
+  max_nodes: 50
+  min_score_threshold: 0.01
+
+logging:
+  level: INFO  # DEBUG, INFO, WARNING, ERROR
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: null   # Set to a path for file logging, e.g., "logs/cognifold.log"
+
+data_dir: data
+output_dir: output

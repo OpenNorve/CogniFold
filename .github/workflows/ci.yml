@@ -1,0 +1,79 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main, cognifold-dev]
+  push:
+    branches: [main, cognifold-dev]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Lint, Type Check, Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          uv pip install --system ".[dev,service,agent,search]"
+
+      - name: Lint (ruff check)
+        run: ruff check src/ tests/
+
+      - name: Format check (ruff format)
+        run: ruff format --check src/ tests/
+
+      - name: Type check (pyright)
+        run: pyright src/
+
+      - name: Test (pytest)
+        run: pytest tests/ -v --tb=short
+
+  docker-build:
+    name: Docker Build Smoke Test
+    runs-on: ubuntu-latest
+    needs: quality
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t cognifold:ci-test .
+
+      - name: Start container
+        run: |
+          docker run -d --name cognifold-test \
+            -p 8000:8000 \
+            -e COGNIFOLD_API_KEY="" \
+            cognifold:ci-test
+
+      - name: Wait for health
+        run: |
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:8000/health; then
+              echo "Health check passed"
+              exit 0
+            fi
+            echo "Waiting... ($i/30)"
+            sleep 2
+          done
+          echo "Health check failed"
+          docker logs cognifold-test
+          exit 1
+
+      - name: Cleanup
+        if: always()
+        run: docker rm -f cognifold-test || true

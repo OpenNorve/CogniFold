@@ -1,0 +1,701 @@
+{
+  "timeline_id": "generated-d66708b5",
+  "source": "service-logs",
+  "description": "Generated service logs for ecommerce (50 events, 2 days)",
+  "generated_at": "2026-01-19T00:30:33.870884",
+  "events": [
+    {
+      "event_id": "svc-001",
+      "timestamp": "2026-01-19T08:55:01.234Z",
+      "event_type": "system.health_check",
+      "title": "Product Service Health Check",
+      "description": "Health check request received",
+      "context": {
+        "service": "product-service"
+      },
+      "source": "service-logs"
+    },
+    {
+      "event_id": "svc-002",
+      "timestamp": "2026-01-19T09:05:15.567Z",
+      "event_type": "http.request",
+      "title": "GET /api/products",
+      "description": "Request for product list",
+      "context": {
+        "service": "api-gateway",
+        "method": "GET",
+        "endpoint": "/api/products",
+        "trace_id": "t-001",
+        "user_id": "u-101"
+      },
+      "source": "service-logs"
+    },
+    {
+      "event_id": "svc-003",
+      "timestamp": "2026-01-19T09:05:15.601Z",
+      "event_type": "http.response",
+      "title": "Response for /api/products",
+      "description": "Product list returned",
+      "context": {
+        "service": "api-gateway",
+        "status": 200,
+        "latency_ms": 34,
+        "trace_id": "t-001"
+      },
+      "source": "service-logs"
+    },
+    {
+      "event_id": "svc-004",
+      "timestamp": "2026-01-19T09:12:42.890Z",
+      "event_type": "http.request",
+      "title": "GET /api/orders",
+      "description": "User order history requested",
+      "context": {
+        "service": "api-gateway",
+        "method": "GET",
+        "endpoint": "/api/orders",
+        "trace_id": "t-002",
+        "user_id": "u-102"
+      },
+      "source": "service-logs"
+    },
+    {
+      "event_id": "svc-005",
+      "timestamp": "2026-01-19T09:12:42.950Z",
+      "event_type": "db.query",
+      "title": "Fetching orders from database",
+      "description": "SELECT * FROM orders WHERE user_id = ?",
+      "context": {
+        "service": "order-service",
+        "query_type": "SELECT",
+        "table": "orders",
+        "duration_ms": 58,
+        "trace_id": "t-002"
+      },
+      "source": "service-logs"
+    },
+    {
+      "event_id": "svc-006",
+      "timestamp": "2026-01-19T09:12:43.005Z",
+      "event_type": "http.response",
+      "title": "Response for /api/orders",
+      "description": "User order history returned",
+      "context": {
+        "service": "api-gateway",
+        "status": 200,
+        "latency_ms": 65,
+        "trace_id": "t-002"
+      },
+      "source": "service-logs"
+    },
+    {
+      "event_id": "svc-007",
+      "timestamp": "2026-01-19T10:01:10.123Z",
+      "event_type": "inventory-service",
+      "title": "Inventory Sync",
+      "description": "Starting inventory sync task",
+      "context": {
+        "service": "inventory-service",
+        "task": "sync"
+      },
+      "source": "service-logs"
+    },
+    {
+      "event_id": "svc-008",
+      "timestamp": "2026-01-19T10:01:10.223Z",
+      "event_type": "db.query",
+      "title": "Update inventory levels",
+      "description": "UPDATE inventory SET quantity = ? WHERE product_id = ?",
+      "context": {
+        "service": "inventory-service",
+        "query_type": "UPDATE",
+        "table": "inventory",
+        "duration_ms": 9
+      },
+      "source": "service-logs"
+    },
+    {
+      "event_id": "svc-009",
+      "timestamp": "2026-01-19T11:58:30.456Z",
+      "event_type": "http.request",
+      "title": "GET /api/search",
+      "description": "Product search request",
+      "context": {
+        "service": "api-gateway",
+        "method": "GET",
+        "endpoint": "/api/search",
+        "trace_id": "t-003",
+        "query": "shoes"
+      },
+      "source": "service-logs"
+    },
+    {
+      "event_id": "svc-010",
+      "timestamp": "2026-01-19T11:58:30.512Z",
+      "event_type": "http.response",
+      "title": "Response from /api/search",
+      "description": "Search results returned",
+      "context": {
+        "service": "api-gateway",
+        "status": 200,
+        "latency_ms": 56,
+        "trace_id": "t-003"
+      },
+      "source": "service-logs"
+    },
+    {
+      "event_id": "svc-011",
+      "timestamp": "2026-01-19T12:30:00.789Z",
+      "event_type": "http.request",
+      "title": "POST /api/cart/add",
+      "description": "Add product to cart",
+      "context": {
+        "service": "api-gateway",
+        "method": "POST",
+        "endpoint": "/api/cart/add",
+        "trace_id": "t-004",
+        "user_id": "u-103",
+        "product_id": "prod-123"
+      },
+      "source": "service-logs"
+    },
+    {
+      "event_id": "svc-012",
+      "timestamp": "2026-01-19T12:30:00.845Z",
+      "event_type": "cache.set",
+      "title": "Set cart in Redis",
+      "description": "Saving cart state in cache",
+      "context": {
+        "service": "api-gateway",
+        "cache_key": "cart:u-103",
+        "trace_id": "t-004"
+      },
+      "source": "service-logs"
+    },
+    {
+      "event_id": "svc-013",
+      "timestamp": "2026-01-19T12:30:00.901Z",
+      "event_type": "http.response",
+      "title": "Response for /api/cart/add",
+      "description": "Product added to cart",
+      "context": {
+        "service": "api-gateway",
+        "status": 200,
+        "latency_ms": 112,
+        "trace_id": "t-004"
+      },
+      "source": "service-logs"
+    },
+    {
+      "event_id": "svc-014",
+      "timestamp": "2026-01-19T13:05:22.111Z",
+      "event_type": "http.request",
+      "title": "POST /api/checkout",
+      "description": "Checkout request received",
+      "context": {
+        "service": "api-gateway",
+        "method": "POST",
+        "endpoint": "/api/checkout",
+        "trace_id": "t-005",
+        "user_id": "u-104"
+      },
+      "source": "service-logs"
+    },
+    {
+      "event_id": "svc-015",
+      "timestamp": "2026-01-19T13:05:22.222Z",
+      "event_type": "business.order_created",
+      "title": "Order created",
+      "description": "Successfully created order ord-1001",
+      "context": {
+        "service": "order-service",
+        "order_id": "ord-1001",
+        "total": 249.99,
+        "items": 4,
+        "trace_id": "t-005"
+      },
+      "source": "service-logs"
+    },
+    {
+      "event_id": "svc-016",
+      "timestamp": "2026-01-19T13:05:22.333Z",
+      "event_type": "business.payment_processed",
+      "title": "Payment processed successfully",
+      "description": "Payment of $249.99 processed via Stripe",
+      "context": {
+        "service": "payment-service",
+        "order_id": "ord-1001",
+        "amount": 249.99,
+        "payment_method": "stripe",
+        "trace_id": "t-005"
+      },
+      "source": "service-logs"
+    },
+    {
+      "event_id": "svc-017",
+      "timestamp": "2026-01-19T13:05:22.444Z",
+      "event_type": "http.response",
+      "title": "Response for /api/checkout",
+      "description": "Checkout successful",
+      "context": {
+        "service": "api-gateway",
+        "status": 201,
+        "latency_ms": 332,
+        "trace_id": "t-005"
+      },
+      "source": "service-logs"
+    },
+    {
+      "event_id": "svc-018",
+      "timestamp": "2026-01-19T19:15:45.678Z",
+      "event_type": "http.request",
+      "title": "POST /api/orders",
+      "description": "New order request received",
+      "context": {
+        "service": "api-gateway",
+        "method": "POST",
+        "endpoint": "/api/orders",
+        "trace_id": "tr-006",
+        "user_id": "u-500"
+      },
+      "source": "service-logs"
+    },
+    {
+      "event_id": "svc-019",
+      "timestamp": "2026-01-19T19:15:45.700Z",
+      "event_type": "db.query",
+      "title": "Check inventory",
+      "description": "SELECT from inventory table",
+      "context": {
+        "service": "inventory-service",
+        "query_type": "SELECT",
+        "table": "inventory",
+        "duration_ms": 8,
+        "trace_id": "tr-006"
+      },
+      "source": "service-logs"
+    },
+    {
+      "event_id": "svc-020",
+      "timestamp": "2026-01-19T19:15:45.755Z",
+      "event_type": "business.order_created",
+      "title": "Order created",
+      "description": "Successfully created order ord-1002",
+      "context": {
+        "service": "order-service",
+        "order_id": "ord-1002",
+        "total": 149.99,
+        "items": 2,
+        "trace_id": "tr-006"
+      },
+      "source": "service-logs"
+    },
+    {
+      "event_id": "svc-021",
+      "timestamp": "2026-01-19T19:15:50.000Z",
+      "event_type": "http.error",
+      "title": "Payment processing failed",
+      "description": "Stripe API returned error",
+      "context": {
+        "service": "payment-service",
+        "order_id": "ord-1002",
+        "error_code": "card_declined",
+        "trace_id": "tr-006"
+      },
+      "source": "service-logs"
+    },
+    {
+      "event_id": "svc-022",
+      "timestamp": "2026-01-19T19:15:50.050Z",
+      "event_type": "queue.publish",
+      "title": "Publishing order failed event",
+      "description": "Publishing order.payment_failed event to queue",
+      "context": {
+        "service": "payment-service",
+        "queue": "order-events",
+        "event_type": "order.payment_failed",
+        "trace_id": "tr-006"
+      },
+      "source": "service-logs"
+    },
+    {
+      "event_id": "svc-023",
+      "timestamp": "2026-01-19T20:30:10.789Z",
+      "event_type": "auth.login",
+      "title": "User login",
+      "description": "User u-105 logged in successfully",
+      "context": {
+        "service": "user-service",
+        "user_id": "u-105",
+        "ip_address": "192.168.1.10"
+      },
+      "source": "service-logs"
+    },
+    {
+      "event_id": "svc-024",
+      "timestamp": "2026-01-19T23:50:20.123Z",
+      "event_type": "system.config_reload",
+      "title": "Configuration Reload",
+      "description": "Reloading configuration for order-service",
+      "context": {
+        "service": "order-service"
+      },
+      "source": "service-logs"
+    },
+    {
+      "event_id": "svc-025",
+      "timestamp": "2026-01-19T23:59:59.999Z",
+      "event_type": "system.shutdown",
+      "title": "Service Shutdown",
+      "description": "Shutting down api-gateway service",
+      "context": {
+        "service": "api-gateway"
+      },
+      "source": "service-logs"
+    },
+    {
+      "event_id": "svc-026",
+      "timestamp": "2026-01-20T07:00:05.234Z",
+      "event_type": "system.startup",
+      "title": "Service started",
+      "description": "Product service started successfully",
+      "context": {
+        "service": "product-service",
+        "version": "1.2.3"
+      },
+      "source": "service-logs"
+    },
+    {
+      "event_id": "svc-027",
+      "timestamp": "2026-01-20T08:55:12.876Z",
+      "event_type": "system.health_check",
+      "title": "Health check passed",
+      "description": "Inventory service health check passed",
+      "context": {
+        "service": "inventory-service",
+        "status": "OK"
+      },
+      "source": "service-logs"
+    },
+    {
+      "event_id": "svc-028",
+      "timestamp": "2026-01-20T09:10:22.456Z",
+      "event_type": "http.request",
+      "title": "GET /api/products",
+      "description": "Request to retrieve product list",
+      "context": {
+        "service": "api-gateway",
+        "method": "GET",
+        "endpoint": "/api/products",
+        "trace_id": "tr-002",
+        "user_id": "u-789"
+      },
+      "source": "service-logs"
+    },
+    {
+      "event_id": "svc-029",
+      "timestamp": "2026-01-20T09:10:22.478Z",
+      "event_type": "cache.hit",
+      "title": "Cache hit for product list",
+      "description": "Product list retrieved from cache",
+      "context": {
+        "service": "product-service",
+        "key": "product_list",
+        "trace_id": "tr-002"
+      },
+      "source": "service-logs"
+    },
+    {
+      "event_id": "svc-030",
+      "timestamp": "2026-01-20T09:10:22.512Z",
+      "event_type": "http.response",
+      "title": "Response for /api/products",
+      "description": "Product list response sent",
+      "context": {
+        "service": "api-gateway",
+        "status": 200,
+        "latency_ms": 36,
+        "trace_id": "tr-002"
+      },
+      "source": "service-logs"
+    },
+    {
+      "event_id": "svc-031",
+      "timestamp": "2026-01-20T10:05:35.901Z",
+      "event_type": "http.request",
+      "title": "GET /api/orders/u-789",
+      "description": "Request to retrieve orders for user u-789",
+      "context": {
+        "service": "api-gateway",
+        "method": "GET",
+        "endpoint": "/api/orders/u-789",
+        "trace_id": "tr-003",
+        "user_id": "u-789"
+      },
+      "source": "service-logs"
+    },
+    {
+      "event_id": "svc-032",
+      "timestamp": "2026-01-20T10:05:35.922Z",
+      "event_type": "auth.token_refresh",
+      "title": "Token refresh",
+      "description": "User token refreshed",
+      "context": {
+        "service": "user-service",
+        "user_id": "u-789"
+      },
+      "source": "service-logs"
+    },
+    {
+      "event_id": "svc-033",
+      "timestamp": "2026-01-20T10:05:36.011Z",
+      "event_type": "db.query",
+      "title": "Select orders",
+      "description": "SELECT from orders table",
+      "context": {
+        "service": "order-service",
+        "query_type": "SELECT",
+        "table": "orders",
+        "duration_ms": 89,
+        "trace_id": "tr-003"
+      },
+      "source": "service-logs"
+    },
+    {
+      "event_id": "svc-034",
+      "timestamp": "2026-01-20T10:05:36.098Z",
+      "event_type": "http.response",
+      "title": "Response for /api/orders/u-789",
+      "description": "Order list response sent",
+      "context": {
+        "service": "api-gateway",
+        "status": 200,
+        "latency_ms": 187,
+        "trace_id": "tr-003"
+      },
+      "source": "service-logs"
+    },
+    {
+      "event_id": "svc-035",
+      "timestamp": "2026-01-20T11:45:00.234Z",
+      "event_type": "inventory-service.inventory_sync",
+      "title": "Inventory Synchronization",
+      "description": "Inventory data synchronized with product catalog",
+      "context": {
+        "service": "inventory-service",
+        "status": "success",
+        "items_processed": 1250,
+        "duration_ms": 4500
+      },
+      "source": "service-logs"
+    },
+    {
+      "event_id": "svc-036",
+      "timestamp": "2026-01-20T12:30:45.678Z",
+      "event_type": "http.request",
+      "title": "GET /api/search",
+      "description": "Product search request received",
+      "context": {
+        "service": "api-gateway",
+        "method": "GET",
+        "endpoint": "/api/search",
+        "trace_id": "tr-004",
+        "query": "shoes"
+      },
+      "source": "service-logs"
+    },
+    {
+      "event_id": "svc-037",
+      "timestamp": "2026-01-20T12:30:45.701Z",
+      "event_type": "cache.miss",
+      "title": "Cache miss for search query",
+      "description": "Search query not found in cache",
+      "context": {
+        "service": "search-service",
+        "key": "search:shoes",
+        "trace_id": "tr-004"
+      },
+      "source": "service-logs"
+    },
+    {
+      "event_id": "svc-038",
+      "timestamp": "2026-01-20T12:30:45.850Z",
+      "event_type": "db.query",
+      "title": "Search products",
+      "description": "Querying Elasticsearch for products",
+      "context": {
+        "service": "search-service",
+        "query_type": "SEARCH",
+        "index": "products",
+        "duration_ms": 149,
+        "trace_id": "tr-004"
+      },
+      "source": "service-logs"
+    },
+    {
+      "event_id": "svc-039",
+      "timestamp": "2026-01-20T12:30:45.900Z",
+      "event_type": "cache.set",
+      "title": "Cache set for search query",
+      "description": "Caching search results",
+      "context": {
+        "service": "search-service",
+        "key": "search:shoes",
+        "expiry_sec": 300,
+        "trace_id": "tr-004"
+      },
+      "source": "service-logs"
+    },
+    {
+      "event_id": "svc-040",
+      "timestamp": "2026-01-20T12:30:45.912Z",
+      "event_type": "http.response",
+      "title": "Response for /api/search",
+      "description": "Search results sent",
+      "context": {
+        "service": "api-gateway",
+        "status": 200,
+        "latency_ms": 234,
+        "trace_id": "tr-004"
+      },
+      "source": "service-logs"
+    },
+    {
+      "event_id": "svc-041",
+      "timestamp": "2026-01-20T18:50:10.111Z",
+      "event_type": "http.request",
+      "title": "POST /api/orders",
+      "description": "New order request received",
+      "context": {
+        "service": "api-gateway",
+        "method": "POST",
+        "endpoint": "/api/orders",
+        "trace_id": "tr-005",
+        "user_id": "u-456"
+      },
+      "source": "service-logs"
+    },
+    {
+      "event_id": "svc-042",
+      "timestamp": "2026-01-20T18:50:10.130Z",
+      "event_type": "db.query",
+      "title": "Check inventory",
+      "description": "SELECT from inventory table",
+      "context": {
+        "service": "inventory-service",
+        "query_type": "SELECT",
+        "table": "inventory",
+        "duration_ms": 19,
+        "trace_id": "tr-005"
+      },
+      "source": "service-logs"
+    },
+    {
+      "event_id": "svc-043",
+      "timestamp": "2026-01-20T18:50:10.200Z",
+      "event_type": "business.order_created",
+      "title": "Order created",
+      "description": "Successfully created order ord-457",
+      "context": {
+        "service": "order-service",
+        "order_id": "ord-457",
+        "total": 149.99,
+        "items": 2,
+        "trace_id": "tr-005"
+      },
+      "source": "service-logs"
+    },
+    {
+      "event_id": "svc-044",
+      "timestamp": "2026-01-20T18:50:10.250Z",
+      "event_type": "queue.publish",
+      "title": "Order Created Event Published",
+      "description": "Publishing order created event to order-events queue",
+      "context": {
+        "service": "order-service",
+        "queue": "order-events",
+        "event_type": "order.created",
+        "trace_id": "tr-005"
+      },
+      "source": "service-logs"
+    },
+    {
+      "event_id": "svc-045",
+      "timestamp": "2026-01-20T18:50:10.300Z",
+      "event_type": "business.payment_processed",
+      "title": "Payment Processed",
+      "description": "Successfully processed payment for order ord-457",
+      "context": {
+        "service": "payment-service",
+        "order_id": "ord-457",
+        "amount": 149.99,
+        "payment_method": "credit_card",
+        "trace_id": "tr-005"
+      },
+      "source": "service-logs"
+    },
+    {
+      "event_id": "svc-046",
+      "timestamp": "2026-01-20T18:50:10.320Z",
+      "event_type": "http.response",
+      "title": "POST /api/orders response",
+      "description": "Order creation successful",
+      "context": {
+        "service": "api-gateway",
+        "status": 201,
+        "latency_ms": 210,
+        "trace_id": "tr-005"
+      },
+      "source": "service-logs"
+    },
+    {
+      "event_id": "svc-047",
+      "timestamp": "2026-01-20T21:15:22.987Z",
+      "event_type": "auth.logout",
+      "title": "User Logout",
+      "description": "User u-789 logged out",
+      "context": {
+        "service": "user-service",
+        "user_id": "u-789"
+      },
+      "source": "service-logs"
+    }
+  ],
+  "topology": {
+    "name": "ecommerce",
+    "description": "E-commerce platform with product catalog, orders, and payments",
+    "services": [
+      "api-gateway",
+      "product-service",
+      "inventory-service",
+      "order-service",
+      "payment-service",
+      "user-service",
+      "notification-service",
+      "search-service"
+    ],
+    "external_dependencies": [
+      "Stripe (payments)",
+      "Elasticsearch (search)",
+      "Redis (caching)",
+      "PostgreSQL (database)",
+      "SendGrid (email)",
+      "Twilio (SMS)"
+    ],
+    "traffic_patterns": [
+      "Morning spike (9-10am) as users check orders",
+      "Lunch rush (12-1pm) with increased browsing",
+      "Evening peak (7-9pm) highest transaction volume",
+      "Periodic inventory sync every 15 minutes",
+      "Nightly batch jobs for analytics"
+    ],
+    "common_operations": [
+      "Product search and browse",
+      "Add to cart and checkout",
+      "Payment processing",
+      "Order status updates",
+      "Inventory adjustments",
+      "User registration and login"
+    ]
+  }
+}

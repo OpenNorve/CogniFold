@@ -1,0 +1,18 @@
+model:
+  name: "openai:gpt-5.2"
+  temperature: 0.7
+  max_tokens: 4096
+  max_exploration_steps: 3
+
+scoring:
+  alpha: 0.4
+  beta: 0.4
+  gamma: 0.2
+  decay_rate: 0.01
+
+context:
+  max_nodes: 20
+  min_score_threshold: 0.01
+
+logging:
+  level: INFO

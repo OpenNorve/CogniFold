@@ -1,0 +1,96 @@
+[project]
+name = "cognifold"
+version = "0.1.0"
+description = "A dynamic concept graph system that processes real-time event streams and maintains an evolving knowledge representation"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "networkx>=3.2",
+    "numpy>=2.0.2",
+    "pydantic>=2.5",
+    "pytest>=8.4.2",
+    "pyvis>=0.3.2",
+    "pyyaml>=6.0",
+    "scipy>=1.13.1",
+    "dateparser>=1.2",
+]
+
+[project.scripts]
+cognifold = "cognifold.cli:main"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.23",
+    "ruff>=0.4",
+    "pyright==1.1.408",
+]
+agent = [
+    "langgraph>=0.2",
+    "google-genai>=1.0",
+    "openai>=1.0",
+]
+viz = [
+    "pyvis>=0.3",
+    "matplotlib>=3.8",
+]
+search = [
+    "faiss-cpu>=1.7",
+]
+service = [
+    "fastapi>=0.109",
+    "uvicorn[standard]>=0.27",
+    "structlog>=24.1",
+]
+redis = [
+    "redis[hiredis]>=5.0",
+]
+supabase = [
+    "supabase>=2.0",
+]
+production = [
+    "cognifold[service]",
+    "gunicorn>=22.0",
+    "cognifold[redis]",
+    "cognifold[supabase]",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/cognifold"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py39"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "UP", "B", "C4", "SIM", "RUF"]
+ignore = ["E501"]
+
+[tool.ruff.format]
+quote-style = "double"
+
+[tool.pyright]
+pythonVersion = "3.11"
+typeCheckingMode = "strict"
+include = ["src"]
+exclude = ["tests"]
+# Ensure the CLI typechecker resolves third-party packages from our local venv.
+venvPath = "."
+venv = ".venv"
+# Several third-party libs lack type stubs (pyvis, langgraph, google.generativeai,
+# readline, etc.), causing hundreds of "unknown type" warnings in strict mode.
+# Suppress these — our own code is fully typed; these are all third-party noise.
+reportUnknownMemberType = false
+reportUnknownArgumentType = false
+reportUnknownVariableType = false
+reportUnknownParameterType = false
+reportUnknownLambdaType = false
+reportMissingTypeArgument = false
+reportMissingTypeStubs = false
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"

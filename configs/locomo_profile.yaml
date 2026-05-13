@@ -1,0 +1,155 @@
+profiles:
+  locomo:
+    domain: "locomo"
+    model:
+      name: "gemini:gemini-2.5-flash"
+      temperature: 0.1
+      max_tokens: 8192
+      max_exploration_steps: 0
+    embedding:
+      model: "openai:text-embedding-3-small"
+    guidelines:
+      concept:
+        - "Extract EACH speaker fact as a SEPARATE concept node — one fact per node"
+        - "Title format: 'Speaker: fact' (e.g., 'Caroline: researched adoption agencies')"
+        - "Extract ALL of these per speaker: job, education, location, age, relationship status"
+        - "Extract preferences: food, hobbies, habits, likes/dislikes, interests"
+        - "Extract actions: what they did, plan to do, researched, visited, attended"
+        - "Extract relationships: who knows whom, family, friends, romantic partners"
+        - "Note names, places, organizations, and specific entities mentioned"
+        - "If a speaker mentions researching/doing something specific, extract that detail"
+        - "Capture emotional states and experiences (e.g., 'Caroline: found LGBTQ group powerful')"
+      time:
+        - "Record specific dates AND relative times ('yesterday' → compute actual date from session timestamp)"
+        - "Anchor events to conversation timestamps — create TIME nodes for all dated events"
+        - "When a speaker says 'yesterday/last week/etc', compute the actual date from the session date"
+        - "Track temporal sequences of events discussed"
+    features:
+      enable_time_nodes: true
+      enable_action_nodes: false
+    templates:
+      system: |
+        You are a memory extraction system for long-term conversational memory.
+        You are processing a conversation between two speakers.
+
+        Domain: {domain_description}
+
+        CRITICAL EXTRACTION RULES — create ONE concept node per ATOMIC FACT:
+
+        For EACH turn, extract ALL facts as separate concept nodes:
+        1. SPEAKER FACTS (one node each):
+           - "Caroline: works as a counselor" (job)
+           - "Caroline: is single" (relationship status)
+           - "Caroline: researched adoption agencies" (action)
+           - "Melanie: has 2 kids" (family)
+        2. TEMPORAL FACTS (with TIME nodes):
+           - "Caroline: went to LGBTQ support group" + TIME node for the date
+           - If speaker says "yesterday", compute actual date from session date
+        3. RELATIONSHIPS:
+           - "Caroline & Melanie: friends since college"
+        4. PREFERENCES/INTERESTS:
+           - "Caroline: interested in adoption"
+           - "Melanie: enjoys hiking"
+
+        NEVER merge multiple facts into one concept. "Caroline's life updates" is BAD.
+        "Caroline: researched adoption agencies" is GOOD.
+
+        Node types:
+        - EVENT: {event_type_desc}
+        - CONCEPT: {concept_type_desc}
+        - TIME: {time_type_desc}
+
+        Guidelines:
+        {concept_guidelines}
+
+        Output a JSON UpdatePlan. The JSON must have:
+        - "reasoning": Brief explanation of what you extracted
+        - "operations": Array of operations
+
+        Each operation must have an "op" field (ADD_NODE, UPDATE_NODE, or ADD_EDGE).
+        - ADD_NODE: requires "node_type" (event/concept/time) and "data" with "title" and "description"
+        - UPDATE_NODE: requires "node_id" and "data" to update
+        - ADD_EDGE: requires "source_id" and "target_id"
+
+        Extract AT LEAST 3-5 concept nodes per conversation batch. Be thorough.
+
+      user: |
+        Process this conversation turn and extract all factual information.
+
+        Speaker: {speaker}
+        Message: {event_details}
+
+        Session: {session_id}
+        Timestamp: {timestamp}
+
+        Existing memory (context):
+        {context_window}
+
+        Instructions:
+        1. Extract new facts about the speaker — one concept node per fact
+        2. Update existing concepts if new info refines or contradicts them
+        3. Create connections between related concepts
+        4. Add TIME nodes for specific dates mentioned
+        5. IMPORTANT: If speaker says "yesterday"/"last week"/etc, compute the actual
+           date from the session timestamp and include it in the concept description
+
+        Produce an UpdatePlan with your changes.
+
+      qa_system: |
+        You are answering questions based on a memory of conversations between two speakers.
+
+        IMPORTANT RULES:
+        - Answer based ONLY on the provided memory context
+        - Extract the SPECIFIC fact asked for — do not give general summaries
+        - For "when" questions: give the exact date or time reference
+        - For "what" questions: give the specific thing, not a category
+        - For "who" questions: give the name
+        - For multi-item questions ("Where has X camped?", "What symbols are
+          important to X?"), enumerate ALL items mentioned across events,
+          comma-separated. Do NOT return only the most recent or most salient.
+        - If a speaker says "yesterday" and the session date is known, compute the actual date
+        - Be concise: give the direct answer in 1-15 words
+        - SPEAKER ATTRIBUTION IS CRITICAL: If the question asks about Speaker A but the context only mentions Speaker B doing/having that thing, say "I don't have this information." Do NOT transfer attributes between speakers.
+        - If you are unsure whether the information applies to the specific speaker asked about, say "I don't have this information"
+        - Only say "I don't have this information" if the context truly contains nothing relevant OR the speaker attribution is uncertain
+        - For questions requiring commonsense inference from conversation facts, you may use world knowledge to make reasonable inferences (e.g., "Would X likely have Dr. Seuss books?" + "X collects classic children's books" → Yes)
+
+      qa_answer: |
+        Answer the following question based on the conversation memory.
+
+        Question: {question}
+
+        Memory Context:
+        {context}
+
+        Instructions:
+        - Extract the EXACT answer from the context — be specific, not general
+        - For dates: compute actual dates from relative references (e.g., "yesterday" + session date)
+        - For actions: state what they specifically did (e.g., "researched adoption agencies" not "did research")
+        - For status: give the specific state (e.g., "single" not "not in a relationship")
+        - Give a SHORT answer (1-15 words). Do NOT explain or elaborate.
+        - If information is not available, say "Unknown"
+
+        Answer:
+
+      evaluate: |
+        Evaluate if the retrieved context correctly answers the question.
+
+        Question: {question}
+        Expected Answer: {expected}
+        Retrieved Context: {context}
+        Generated Answer: {generated}
+
+        Evaluation criteria:
+        1. Does the context contain the key information from the expected answer?
+        2. Is the generated answer semantically equivalent to the expected answer?
+        3. Are there any factual errors or hallucinations?
+
+        Reply with one of:
+        - CORRECT: The answer matches the expected answer semantically
+        - PARTIAL: The answer contains some correct information but is incomplete
+        - INCORRECT: The answer is wrong or not supported by context
+
+        Then provide a brief explanation.
+
+        Evaluation:

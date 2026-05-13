@@ -1,0 +1,101 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+
+# Type checking
+.mypy_cache/
+.pyright/
+
+# Ruff
+.ruff_cache/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project specific
+*.log
+cognifold_graph.json
+data/output/
+logs/
+output/
+
+# User added
+cognifold-ui/
+chroma_db_gemini_run/
+chroma_db/
+cognifold_gemini_run.duckdb
+cognifold_gemini_run.duckdb.wal
+cognifold.duckdb
+cognifold.duckdb.wal
+docs/replay_alex_chen_timeline_20260118_200148.jsonl
+docs/replay_alex_chen_timeline_new.jsonl
+docs/runs/*
+.env
+.env.production
+.env.local
+
+# Deploy logs
+deploy/deploys.log
+
+# Doc-guard sentinel (local state)
+.claude/docguard_last_run
+
+# Service runtime data
+sessions/
+actions.json
+
+# Benchmarks data
+benchmarks/longmemeval/data/*.json
+benchmarks/futurex/miroflow/
+benchmarks/futurex/output/
+benchmarks/*/data/
+benchmarks/*/output/
+!benchmarks/*/output/benchmark_results.json
+!benchmarks/*/output/wrong_cases.json
+benchmarks/*/results/
+benchmarks/*/*.log
+memory/
+papers/research_mindset_v0.md
+my_prompt.md
+papers/current_writing_guide.md

@@ -1,0 +1,124 @@
+profiles:
+  narrativeqa:
+    domain: "narrativeqa"
+    model:
+      name: "openai:gpt-4o-mini"
+      temperature: 0.1
+      max_tokens: 8192
+      max_exploration_steps: 0
+    embedding:
+      model: "openai:text-embedding-3-small"
+    guidelines:
+      concept:
+        - "Create a SEPARATE concept node for EVERY named character, even minor ones"
+        - "Create concept nodes for specific entities: organizations, objects, songs, locations"
+        - "Each concept description MUST include specific details (names, actions, relationships)"
+        - "NEVER merge distinct characters or entities into a single concept"
+        - "Track character relationships with ADD_EDGE operations between character concepts"
+        - "Create ADD_EDGE from every event to the characters and entities mentioned in it"
+        - "Preserve specific facts: theme songs, locations, objects, organizations (e.g. FCC)"
+      time:
+        - "Track the chronological ordering of plot events"
+    features:
+      enable_time_nodes: false
+      enable_action_nodes: false
+    templates:
+      system: |
+        You are a narrative comprehension system analyzing long-form stories
+        (books, movie scripts). Your job is to extract and maintain deep
+        understanding of characters, plot, themes, and narrative structure.
+
+        Domain: {domain_description}
+
+        CRITICAL RULES:
+        - Create a SEPARATE concept for EVERY character mentioned by name
+        - NEVER skip minor characters - they are often the answer to questions
+        - For EVERY sentence, create at least one event AND link it to character/entity concepts
+        - ALWAYS use ADD_EDGE to connect events to the characters and entities they mention
+        - Keep concept descriptions SPECIFIC with names and facts, not generic summaries
+        - Track CHARACTERS: names, roles, traits, motivations, relationships
+        - Track PLOT: key events, conflicts, cause-and-effect chains, resolutions
+        - Track SETTINGS: locations, time periods, atmosphere
+        - Create concept nodes for organizations, objects, songs, and specific entities
+
+        Node types:
+        - EVENT: {event_type_desc}
+        - CONCEPT: {concept_type_desc}
+
+        Guidelines:
+        {concept_guidelines}
+
+        Output a JSON UpdatePlan with:
+        - "reasoning": Brief explanation of narrative elements identified
+        - "operations": Array of operations
+
+        Each operation must have an "op" field (ADD_NODE, UPDATE_NODE, or ADD_EDGE).
+        - ADD_NODE: requires "node_type" and "data" with "title" and "description"
+        - UPDATE_NODE: requires "node_id" and "data" to update
+        - ADD_EDGE: requires "source_id" and "target_id"
+
+      user: |
+        Process this narrative passage and extract key story elements.
+
+        Passage: {event_details}
+
+        Existing narrative context:
+        {context_window}
+
+        Instructions:
+        1. Identify characters, events, settings, and themes in this passage
+        2. Update existing character/plot concepts with new developments
+        3. Create new concepts for newly introduced narrative elements
+        4. Link events to broader plot arcs and thematic concepts
+
+        Produce an UpdatePlan with your changes.
+
+      qa_system: |
+        Answer the question with ONLY the single most important fact. Maximum 5 words.
+        Rules:
+        - "Where" questions: answer with a PLACE NAME, not a type of place
+        - "Who" questions: answer with a PERSON NAME
+        - "Why" questions: give the PRIMARY reason only
+        - "What does X do" questions: give the MAIN ACTION only
+        - NEVER list multiple facts separated by commas
+        - NEVER write sentences or explanations
+        Examples:
+        - Q: Who commits suicide? A: Malcolm
+        - Q: Where does Mark broadcast? A: parents' basement
+        - Q: What is the theme song? A: Everybody Knows
+        - Q: Where does Mark go to school? A: Phoenix, Arizona
+
+      qa_answer: |
+        Question: {question}
+
+        Context:
+        {context}
+
+        Reply with ONLY the single most important answer (1-5 words).
+        Do NOT list multiple facts. Give only the primary answer.
+
+        Answer:
+
+      evaluate: |
+        You are evaluating a question-answering system on narrative comprehension.
+
+        Question: {question}
+        Reference Answer: {expected}
+        Generated Answer: {generated}
+        Story Context: {context}
+
+        Rate the generated answer on a 1-5 scale:
+        5: Exactly matches the reference or is a valid paraphrase/synonym
+        4: Captures the key information but with minor phrasing differences
+        3: Partially correct — gets the right topic/entity but misses details
+        2: Tangentially related but misses the main point
+        1: Completely wrong or irrelevant
+
+        Reply with ONLY a single digit (1-5) on the first line, then a brief explanation.
+        Example:
+        5
+        Both answers refer to the same character Malcolm.
+    post_ingest:
+      consolidation: false
+      fact_extraction: false
+      entity_index: false

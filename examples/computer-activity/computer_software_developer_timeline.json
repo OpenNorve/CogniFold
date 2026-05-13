@@ -1,0 +1,680 @@
+{
+  "timeline_id": "generated-9f6568b6",
+  "source": "computer-activity",
+  "description": "Generated computer activity for software_developer (50 events, 2 days)",
+  "generated_at": "2026-01-19T00:29:49.039241",
+  "events": [
+    {
+      "event_id": "ca-001",
+      "timestamp": "2026-01-19T08:05:00Z",
+      "event_type": "system.login",
+      "title": "Morning login",
+      "description": "Started work day on laptop.",
+      "context": {
+        "device": "MacBook Pro",
+        "location": "home"
+      },
+      "source": "computer-activity"
+    },
+    {
+      "event_id": "ca-002",
+      "timestamp": "2026-01-19T08:06:00Z",
+      "event_type": "app.launch",
+      "title": "Launch VS Code",
+      "description": "Opened VS Code to start the day.",
+      "context": {
+        "app": "VS Code"
+      },
+      "source": "computer-activity"
+    },
+    {
+      "event_id": "ca-003",
+      "timestamp": "2026-01-19T08:07:00Z",
+      "event_type": "app.launch",
+      "title": "Launch Chrome",
+      "description": "Opened Chrome to check email.",
+      "context": {
+        "app": "Chrome"
+      },
+      "source": "computer-activity"
+    },
+    {
+      "event_id": "ca-004",
+      "timestamp": "2026-01-19T08:08:00Z",
+      "event_type": "browser.page_visit",
+      "title": "Read Gmail",
+      "description": "Checking for important emails.",
+      "context": {
+        "url": "https://mail.google.com/mail/u/0/#inbox",
+        "browser": "Chrome",
+        "tab_id": 1,
+        "referrer": null
+      },
+      "source": "computer-activity"
+    },
+    {
+      "event_id": "ca-005",
+      "timestamp": "2026-01-19T08:15:00Z",
+      "event_type": "app.launch",
+      "title": "Launch Slack",
+      "description": "Opened Slack to check for messages.",
+      "context": {
+        "app": "Slack"
+      },
+      "source": "computer-activity"
+    },
+    {
+      "event_id": "ca-006",
+      "timestamp": "2026-01-19T08:20:00Z",
+      "event_type": "communication.message_receive",
+      "title": "Slack message received",
+      "description": "Received a message from a colleague.",
+      "context": {
+        "platform": "Slack",
+        "channel": "#general",
+        "message_preview": "Good morning!"
+      },
+      "source": "computer-activity"
+    },
+    {
+      "event_id": "ca-007",
+      "timestamp": "2026-01-19T08:30:00Z",
+      "event_type": "file.open",
+      "title": "Open project file",
+      "description": "Opened a Python file in VS Code.",
+      "context": {
+        "file_path": "/projects/my_app/backend/api.py",
+        "app": "VS Code"
+      },
+      "source": "computer-activity"
+    },
+    {
+      "event_id": "ca-008",
+      "timestamp": "2026-01-19T08:45:00Z",
+      "event_type": "editor.code_change",
+      "title": "Code editing",
+      "description": "Modified backend API endpoint.",
+      "context": {
+        "file_path": "/projects/my_app/backend/api.py",
+        "app": "VS Code",
+        "language": "Python"
+      },
+      "source": "computer-activity"
+    },
+    {
+      "event_id": "ca-009",
+      "timestamp": "2026-01-19T09:00:00Z",
+      "event_type": "communication.message_send",
+      "title": "Slack message sent",
+      "description": "Sent a question to the team.",
+      "context": {
+        "platform": "Slack",
+        "channel": "#backend",
+        "message_preview": "Anyone familiar with this error?"
+      },
+      "source": "computer-activity"
+    },
+    {
+      "event_id": "ca-010",
+      "timestamp": "2026-01-19T09:15:00Z",
+      "event_type": "terminal.command",
+      "title": "Run tests",
+      "description": "Ran unit tests in the terminal.",
+      "context": {
+        "command": "pytest backend/",
+        "working_dir": "/projects/my_app",
+        "exit_code": 0
+      },
+      "source": "computer-activity"
+    },
+    {
+      "event_id": "ca-011",
+      "timestamp": "2026-01-19T09:45:00Z",
+      "event_type": "meeting.join",
+      "title": "Join standup meeting",
+      "description": "Joining the daily standup meeting.",
+      "context": {
+        "platform": "Zoom",
+        "meeting_title": "Daily Standup",
+        "participants": 7
+      },
+      "source": "computer-activity"
+    },
+    {
+      "event_id": "ca-012",
+      "timestamp": "2026-01-19T10:15:00Z",
+      "event_type": "meeting.leave",
+      "title": "Leave standup meeting",
+      "description": "Leaving the daily standup meeting.",
+      "context": {
+        "platform": "Zoom",
+        "meeting_title": "Daily Standup",
+        "duration_minutes": 30
+      },
+      "source": "computer-activity"
+    },
+    {
+      "event_id": "ca-013",
+      "timestamp": "2026-01-19T10:20:00Z",
+      "event_type": "app.switch",
+      "title": "Switch to VS Code",
+      "description": "Switched back to VS Code after the meeting.",
+      "context": {
+        "from_app": "Zoom",
+        "to_app": "VS Code",
+        "window_title": "api.py - my_app"
+      },
+      "source": "computer-activity"
+    },
+    {
+      "event_id": "ca-014",
+      "timestamp": "2026-01-19T11:00:00Z",
+      "event_type": "editor.code_change",
+      "title": "Implement new feature",
+      "description": "Implementing a new feature in the API.",
+      "context": {
+        "file_path": "/projects/my_app/backend/api.py",
+        "app": "VS Code",
+        "language": "Python"
+      },
+      "source": "computer-activity"
+    },
+    {
+      "event_id": "ca-015",
+      "timestamp": "2026-01-19T12:30:00Z",
+      "event_type": "browser.page_visit",
+      "title": "Check Stack Overflow",
+      "description": "Looking up a solution to a coding problem.",
+      "context": {
+        "url": "https://stackoverflow.com/questions/1234567/example",
+        "browser": "Chrome",
+        "tab_id": 2,
+        "referrer": "google.com"
+      },
+      "source": "computer-activity"
+    },
+    {
+      "event_id": "ca-016",
+      "timestamp": "2026-01-19T13:30:00Z",
+      "event_type": "app.switch",
+      "title": "Switch to Postman",
+      "description": "Switched to Postman to test API endpoint.",
+      "context": {
+        "from_app": "VS Code",
+        "to_app": "Postman",
+        "window_title": "My API"
+      },
+      "source": "computer-activity"
+    },
+    {
+      "event_id": "ca-017",
+      "timestamp": "2026-01-19T14:00:00Z",
+      "event_type": "terminal.command",
+      "title": "Docker compose up",
+      "description": "Starting docker containers for local development",
+      "context": {
+        "command": "docker-compose up",
+        "working_dir": "/projects/my_app",
+        "exit_code": 0
+      },
+      "source": "computer-activity"
+    },
+    {
+      "event_id": "ca-018",
+      "timestamp": "2026-01-19T14:30:00Z",
+      "event_type": "browser.page_visit",
+      "title": "Frontend debugging",
+      "description": "Debugging React component in Chrome DevTools.",
+      "context": {
+        "url": "http://localhost:3000/",
+        "browser": "Chrome",
+        "tab_id": 5
+      },
+      "source": "computer-activity"
+    },
+    {
+      "event_id": "ca-019",
+      "timestamp": "2026-01-19T15:00:00Z",
+      "event_type": "editor.code_change",
+      "title": "Fixing frontend bug",
+      "description": "Fixed a bug in a React component.",
+      "context": {
+        "file_path": "/projects/my_app/frontend/src/components/MyComponent.js",
+        "app": "VS Code",
+        "language": "JavaScript"
+      },
+      "source": "computer-activity"
+    },
+    {
+      "event_id": "ca-020",
+      "timestamp": "2026-01-19T15:30:00Z",
+      "event_type": "communication.message_receive",
+      "title": "Slack message received",
+      "description": "Received a message about a production issue.",
+      "context": {
+        "platform": "Slack",
+        "channel": "#alerts",
+        "message_preview": "Production issue detected!"
+      },
+      "source": "computer-activity"
+    },
+    {
+      "event_id": "ca-021",
+      "timestamp": "2026-01-19T15:45:00Z",
+      "event_type": "browser.page_visit",
+      "title": "Check AWS CloudWatch",
+      "description": "Investigating logs to diagnose production issue.",
+      "context": {
+        "url": "https://console.aws.amazon.com/cloudwatch/home",
+        "browser": "Chrome",
+        "tab_id": 6
+      },
+      "source": "computer-activity"
+    },
+    {
+      "event_id": "ca-022",
+      "timestamp": "2026-01-19T16:15:00Z",
+      "event_type": "terminal.command",
+      "title": "Deploying fix",
+      "description": "Triggered a deploy to fix the production issue.",
+      "context": {
+        "command": "npm run deploy",
+        "working_dir": "/projects/my_app",
+        "exit_code": 0
+      },
+      "source": "computer-activity"
+    },
+    {
+      "event_id": "ca-023",
+      "timestamp": "2026-01-19T17:00:00Z",
+      "event_type": "file.save",
+      "title": "Save documentation",
+      "description": "Saving documentation updates.",
+      "context": {
+        "file_path": "/projects/my_app/docs/api.md",
+        "app": "VS Code",
+        "file_size_kb": 12
+      },
+      "source": "computer-activity"
+    },
+    {
+      "event_id": "ca-024",
+      "timestamp": "2026-01-19T17:30:00Z",
+      "event_type": "communication.message_send",
+      "title": "Slack status update",
+      "description": "Sending a status update to the team.",
+      "context": {
+        "platform": "Slack",
+        "channel": "#general",
+        "message_preview": "Fixed production issue, deploying now."
+      },
+      "source": "computer-activity"
+    },
+    {
+      "event_id": "ca-025",
+      "timestamp": "2026-01-19T17:55:00Z",
+      "event_type": "system.lock",
+      "title": "Lock screen",
+      "description": "Locking screen before leaving for the day.",
+      "context": {
+        "device": "MacBook Pro"
+      },
+      "source": "computer-activity"
+    },
+    {
+      "event_id": "ca-026",
+      "timestamp": "2026-01-20T08:05:00Z",
+      "event_type": "system.login",
+      "title": "Morning login",
+      "description": "Started work day.",
+      "context": {
+        "device": "MacBook Pro",
+        "location": "home"
+      },
+      "source": "computer-activity"
+    },
+    {
+      "event_id": "ca-027",
+      "timestamp": "2026-01-20T08:06:00Z",
+      "event_type": "app.launch",
+      "title": "Launch Slack",
+      "description": "Opened Slack to check messages.",
+      "context": {
+        "app": "Slack"
+      },
+      "source": "computer-activity"
+    },
+    {
+      "event_id": "ca-028",
+      "timestamp": "2026-01-20T08:07:00Z",
+      "event_type": "communication.message_receive",
+      "title": "Slack message received",
+      "description": "Received a message in the #general channel.",
+      "context": {
+        "platform": "Slack",
+        "channel": "#general",
+        "message_preview": "Good morning team!"
+      },
+      "source": "computer-activity"
+    },
+    {
+      "event_id": "ca-029",
+      "timestamp": "2026-01-20T08:10:00Z",
+      "event_type": "app.launch",
+      "title": "Launch VS Code",
+      "description": "Started working on backend API.",
+      "context": {
+        "app": "VS Code"
+      },
+      "source": "computer-activity"
+    },
+    {
+      "event_id": "ca-030",
+      "timestamp": "2026-01-20T08:15:00Z",
+      "event_type": "file.open",
+      "title": "Open API route file",
+      "description": "Opening the file for user authentication routes.",
+      "context": {
+        "file_path": "/projects/my-app/backend/routes/auth.py",
+        "app": "VS Code"
+      },
+      "source": "computer-activity"
+    },
+    {
+      "event_id": "ca-031",
+      "timestamp": "2026-01-20T08:30:00Z",
+      "event_type": "editor.code_change",
+      "title": "Modify auth route",
+      "description": "Adding rate limiting middleware.",
+      "context": {
+        "file_path": "/projects/my-app/backend/routes/auth.py",
+        "app": "VS Code",
+        "language": "Python"
+      },
+      "source": "computer-activity"
+    },
+    {
+      "event_id": "ca-032",
+      "timestamp": "2026-01-20T08:45:00Z",
+      "event_type": "file.save",
+      "title": "Save auth route file",
+      "description": "Saving changes to the authentication route file.",
+      "context": {
+        "file_path": "/projects/my-app/backend/routes/auth.py",
+        "app": "VS Code",
+        "file_size_kb": 47
+      },
+      "source": "computer-activity"
+    },
+    {
+      "event_id": "ca-033",
+      "timestamp": "2026-01-20T09:00:00Z",
+      "event_type": "terminal.command",
+      "title": "Run backend tests",
+      "description": "Running the pytest suite for the backend.",
+      "context": {
+        "command": "pytest backend",
+        "working_dir": "/projects/my-app",
+        "exit_code": 0
+      },
+      "source": "computer-activity"
+    },
+    {
+      "event_id": "ca-034",
+      "timestamp": "2026-01-20T09:15:00Z",
+      "event_type": "browser.page_visit",
+      "title": "Check API documentation",
+      "description": "Referencing the Flask documentation.",
+      "context": {
+        "url": "https://flask.palletsprojects.com/en/2.3.x/api/",
+        "browser": "Chrome",
+        "tab_id": 2
+      },
+      "source": "computer-activity"
+    },
+    {
+      "event_id": "ca-035",
+      "timestamp": "2026-01-20T09:30:00Z",
+      "event_type": "communication.message_send",
+      "title": "Slack question",
+      "description": "Asking for help with a Docker issue.",
+      "context": {
+        "platform": "Slack",
+        "channel": "#backend",
+        "message_preview": "Anyone seen this Docker error before?"
+      },
+      "source": "computer-activity"
+    },
+    {
+      "event_id": "ca-036",
+      "timestamp": "2026-01-20T09:45:00Z",
+      "event_type": "communication.message_receive",
+      "title": "Slack help received",
+      "description": "Received suggestions on the Docker issue.",
+      "context": {
+        "platform": "Slack",
+        "channel": "#backend",
+        "message_preview": "Try rebuilding the image..."
+      },
+      "source": "computer-activity"
+    },
+    {
+      "event_id": "ca-037",
+      "timestamp": "2026-01-20T10:00:00Z",
+      "event_type": "meeting.join",
+      "title": "Join standup",
+      "description": "Joining the daily standup meeting.",
+      "context": {
+        "platform": "Zoom",
+        "meeting_title": "Daily Standup",
+        "participants": 6
+      },
+      "source": "computer-activity"
+    },
+    {
+      "event_id": "ca-038",
+      "timestamp": "2026-01-20T10:15:00Z",
+      "event_type": "meeting.leave",
+      "title": "Leave standup",
+      "description": "Finished the daily standup meeting.",
+      "context": {
+        "platform": "Zoom",
+        "meeting_title": "Daily Standup",
+        "duration_minutes": 15
+      },
+      "source": "computer-activity"
+    },
+    {
+      "event_id": "ca-039",
+      "timestamp": "2026-01-20T10:20:00Z",
+      "event_type": "app.switch",
+      "title": "Switch to Terminal",
+      "description": "Switching back to terminal to rebuild the Docker image.",
+      "context": {
+        "from_app": "Zoom",
+        "to_app": "Terminal"
+      },
+      "source": "computer-activity"
+    },
+    {
+      "event_id": "ca-040",
+      "timestamp": "2026-01-20T10:22:00Z",
+      "event_type": "terminal.command",
+      "title": "Rebuild Docker image",
+      "description": "Attempting to rebuild the Docker image.",
+      "context": {
+        "command": "docker-compose build",
+        "working_dir": "/projects/my-app",
+        "exit_code": 0
+      },
+      "source": "computer-activity"
+    },
+    {
+      "event_id": "ca-041",
+      "timestamp": "2026-01-20T12:00:00Z",
+      "event_type": "browser.page_visit",
+      "title": "Check StackOverflow",
+      "description": "Looking for solution on StackOverflow.",
+      "context": {
+        "url": "https://stackoverflow.com/questions/tagged/docker",
+        "browser": "Chrome",
+        "tab_id": 5
+      },
+      "source": "computer-activity"
+    },
+    {
+      "event_id": "ca-042",
+      "timestamp": "2026-01-20T13:00:00Z",
+      "event_type": "app.switch",
+      "title": "Switch to VS Code",
+      "description": "Switching back to VS Code to edit files.",
+      "context": {
+        "from_app": "Chrome",
+        "to_app": "VS Code"
+      },
+      "source": "computer-activity"
+    },
+    {
+      "event_id": "ca-043",
+      "timestamp": "2026-01-20T13:15:00Z",
+      "event_type": "editor.code_change",
+      "title": "Modify Dockerfile",
+      "description": "Updating the Dockerfile with new instructions.",
+      "context": {
+        "file_path": "/projects/my-app/Dockerfile",
+        "app": "VS Code",
+        "language": "Dockerfile"
+      },
+      "source": "computer-activity"
+    },
+    {
+      "event_id": "ca-044",
+      "timestamp": "2026-01-20T14:00:00Z",
+      "event_type": "terminal.command",
+      "title": "Run Docker Compose",
+      "description": "Running Docker Compose Up to start the containers.",
+      "context": {
+        "command": "docker-compose up",
+        "working_dir": "/projects/my-app",
+        "exit_code": 0
+      },
+      "source": "computer-activity"
+    },
+    {
+      "event_id": "ca-045",
+      "timestamp": "2026-01-20T14:30:00Z",
+      "event_type": "app.launch",
+      "title": "Launch Postman",
+      "description": "Testing API endpoints with Postman.",
+      "context": {
+        "app": "Postman"
+      },
+      "source": "computer-activity"
+    },
+    {
+      "event_id": "ca-046",
+      "timestamp": "2026-01-20T15:00:00Z",
+      "event_type": "browser.page_visit",
+      "title": "Check GitHub issues",
+      "description": "Checking project issues on GitHub.",
+      "context": {
+        "url": "https://github.com/team/project/issues",
+        "browser": "Chrome",
+        "tab_id": 2
+      },
+      "source": "computer-activity"
+    },
+    {
+      "event_id": "ca-047",
+      "timestamp": "2026-01-20T15:30:00Z",
+      "event_type": "file.open",
+      "title": "Open README file",
+      "description": "Opening the README.md file to update documentation.",
+      "context": {
+        "file_path": "/projects/my-app/README.md",
+        "app": "VS Code"
+      },
+      "source": "computer-activity"
+    },
+    {
+      "event_id": "ca-048",
+      "timestamp": "2026-01-20T16:00:00Z",
+      "event_type": "editor.code_change",
+      "title": "Update README",
+      "description": "Adding documentation for new features.",
+      "context": {
+        "file_path": "/projects/my-app/README.md",
+        "app": "VS Code",
+        "language": "Markdown"
+      },
+      "source": "computer-activity"
+    },
+    {
+      "event_id": "ca-049",
+      "timestamp": "2026-01-20T16:15:00Z",
+      "event_type": "file.save",
+      "title": "Save README file",
+      "description": "Saving the updated README.md file.",
+      "context": {
+        "file_path": "/projects/my-app/README.md",
+        "app": "VS Code",
+        "file_size_kb": 12
+      },
+      "source": "computer-activity"
+    },
+    {
+      "event_id": "ca-050",
+      "timestamp": "2026-01-20T17:30:00Z",
+      "event_type": "system.lock",
+      "title": "Lock screen",
+      "description": "Locking screen at end of day.",
+      "context": {
+        "device": "MacBook Pro",
+        "reason": "end of day"
+      },
+      "source": "computer-activity"
+    }
+  ],
+  "work_profile": {
+    "name": "software_developer",
+    "role": "Full-stack software developer working on web applications",
+    "primary_apps": [
+      "VS Code",
+      "Terminal",
+      "Docker Desktop",
+      "Postman",
+      "Slack",
+      "Chrome",
+      "Firefox"
+    ],
+    "common_websites": [
+      "github.com",
+      "stackoverflow.com",
+      "docs.python.org",
+      "developer.mozilla.org",
+      "npmjs.com",
+      "aws.amazon.com"
+    ],
+    "communication_tools": [
+      "Slack",
+      "Zoom",
+      "Gmail",
+      "GitHub Issues"
+    ],
+    "work_patterns": [
+      "Morning code review and PR feedback",
+      "Deep coding sessions in late morning",
+      "Standup meetings around 10am",
+      "Afternoon debugging and testing",
+      "Documentation updates before end of day",
+      "Context switching between multiple projects"
+    ],
+    "focus_areas": [
+      "Backend API development",
+      "Frontend React components",
+      "Database queries and optimization",
+      "CI/CD pipeline maintenance",
+      "Code review and mentoring"
+    ]
+  }
+}

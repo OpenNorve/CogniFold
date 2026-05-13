@@ -1,0 +1,133 @@
+profiles:
+  streamingqa:
+    domain: "streamingqa"
+    model:
+      name: "openai:gpt-4o-mini"
+      temperature: 0.1
+      max_tokens: 2048
+      max_exploration_steps: 1
+    embedding:
+      model: "openai:text-embedding-3-small"
+    guidelines:
+      concept:
+        - "Track key facts, events, and developments as they arrive in temporal order"
+        - "Maintain an evolving knowledge state - newer information may update or supersede older facts"
+        - "Capture who, what, when, where for each news event or article"
+        - "Distinguish between ongoing situations and concluded events"
+        - "Track how stories develop over time with new information"
+        - "Extract EACH key fact as a separate concept node with ADD_EDGE to ground in source event"
+        - "When a story develops, UPDATE the existing concept with new information"
+      time:
+        - "Create time nodes for publication dates and event dates"
+        - "Track the temporal ordering of information arrival"
+        - "Distinguish between when something happened and when it was reported"
+    features:
+      enable_time_nodes: true
+      enable_action_nodes: false
+    templates:
+      system: |
+        You are a streaming knowledge system that processes information
+        arriving over time. Your job is to maintain an evolving knowledge base
+        where newer information may update or supersede older facts.
+
+        Domain: {domain_description}
+
+        CRITICAL RULES — extract ALL facts as separate concept nodes:
+        - For each passage, create AT LEAST 3-5 concept nodes, one per key fact
+        - Title format: "Entity property: value" (e.g., "Greek navy: refused Papanikolis delivery")
+        - Include WHO, WHAT, WHEN, WHERE as separate concepts when available
+        - Process information in TEMPORAL ORDER - earlier facts may be updated by later ones
+        - When new information CONTRADICTS old, UPDATE the concept with the latest state
+        - Track developing stories - connect related events across time
+        - Give concise, factual answers (name, date, number, short phrase)
+
+        Node types:
+        - EVENT: {event_type_desc}
+        - CONCEPT: {concept_type_desc}
+        - TIME: temporal anchors for publication and event dates
+
+        Guidelines:
+        {concept_guidelines}
+
+        Output a JSON UpdatePlan with:
+        - "reasoning": Brief explanation of knowledge updates
+        - "operations": Array of operations
+
+        Each operation must have an "op" field (ADD_NODE, UPDATE_NODE, or ADD_EDGE).
+        - ADD_NODE: requires "node_type" and "data" with "title" and "description"
+        - UPDATE_NODE: requires "node_id" and "data" to update
+        - ADD_EDGE: requires "source_id" and "target_id"
+
+      user: |
+        Process this incoming information and update the knowledge base.
+
+        New information: {event_details}
+
+        Existing knowledge (context):
+        {context_window}
+
+        Instructions:
+        1. Extract key facts, entities, and temporal information
+        2. Check if this updates, contradicts, or extends any existing knowledge
+        3. Update existing concepts if new information supersedes them
+        4. Create new concepts for genuinely new information
+        5. Link temporal nodes to track when information arrived
+
+        Produce an UpdatePlan with your changes.
+
+      qa_system: |
+        You are a factual QA system for time-stamped news.
+        Extract the answer from the context and output ONLY the bare answer span.
+
+        STRICT OUTPUT FORMAT — do NOT violate:
+        - Output the minimal span that answers the question. No subject, no
+          verb, no preamble, no trailing clause, no date prefix, no quotation marks.
+        - 1-5 words for entities/numbers/dates. Up to ~12 words only when the
+          gold answer is itself a short phrase (e.g., reasons / descriptions).
+        - For yes/no questions answer exactly "Yes" or "No".
+        - If the context truly lacks the answer, output exactly: unknown
+        - Match the surface form found in the context (keep "$", "%", "BST",
+          "billion", etc.). Do NOT rewrite "$5.5 billion" as "5.5 billion dollars".
+
+        EXAMPLES (question -> answer):
+        - "Which US state did X happen in on Feb 10 2016?" -> "New Hampshire"
+        - "How many specialists were required?" -> "75"
+        - "By what percent did costs drop?" -> "2%"
+        - "Was the U.S. in support of the action?" -> "No"
+        - "How much was Briggs Equipment fined?" -> "£150,000"
+        - "What injury caused the player to miss the tour?" -> "Arthroscopic surgery of the elbow"
+        - "Which micro-algae is used?" -> "Spirulina"
+        - "What was the topic of the study?" -> "How texting affects walking"
+        - "Roughly what time did the accident take place?" -> "10:20 BST"
+
+        BAD outputs (DO NOT produce these — they are penalized):
+        - "The answer is Spirulina." (preamble)
+        - "As of October 2009, the United States team had won..." (date prefix + verbose)
+        - "Spirulina is the micro-algae IKEA is using" (full sentence)
+
+      qa_answer: |
+        Question: {question}
+
+        Context:
+        {context}
+
+        Output ONLY the minimal answer span (1-5 words for entities/numbers/dates;
+        a short phrase when the gold itself is a phrase). No "As of <date>", no
+        full sentences, no preamble. If unknown, output: unknown
+
+        Answer:
+
+      evaluate: |
+        Evaluate if the generated answer matches the expected answer.
+
+        Question: {question}
+        Expected Answer: {expected}
+        Generated Answer: {generated}
+        Context: {context}
+
+        Reply with one of:
+        - CORRECT: The answer matches (even if phrased differently)
+        - PARTIAL: The answer is partially correct
+        - INCORRECT: The answer is wrong
+
+        Evaluation:

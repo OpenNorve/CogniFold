@@ -1,0 +1,233 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1>Graph State - computer_software_developer_timeline (20260119_004053)</h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1>Graph State - computer_software_developer_timeline (20260119_004053)</h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 700px;
+                 background-color: #ffffff;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+
+<style>
+    #sidebar {
+        position: fixed;
+        right: 0;
+        top: 0;
+        width: 280px;
+        height: 100%;
+        background: #f8f9fa;
+        border-left: 2px solid #dee2e6;
+        padding: 15px;
+        overflow-y: auto;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        font-size: 13px;
+        z-index: 1000;
+    }
+    #sidebar h3 {
+        margin: 0 0 10px 0;
+        padding: 8px 10px;
+        border-radius: 4px;
+        color: white;
+        font-size: 14px;
+    }
+    #sidebar ul {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 20px 0;
+    }
+    #sidebar li {
+        padding: 6px 10px;
+        margin: 2px 0;
+        background: white;
+        border-radius: 3px;
+        border-left: 3px solid #ccc;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+    #sidebar li:hover {
+        background: #e9ecef;
+    }
+    .concept-header { background: #228B22; }
+    .concept-item { border-left-color: #228B22; }
+    .action-header { background: #FF8C00; }
+    .action-item { border-left-color: #FF8C00; }
+    .time-header { background: #9932CC; }
+    .time-item { border-left-color: #9932CC; }
+    #mynetwork {
+        width: calc(100% - 300px) !important;
+    }
+    .card {
+        width: calc(100% - 300px) !important;
+    }
+</style>
+<div id="sidebar">
+    <h3 class="concept-header">Top Concepts</h3>
+    <ul>
+        <li title="ID: c-work-start, Score: 0.6458">Work Start (str: 1.75)</li>
+<li title="ID: c-debugging, Score: 0.5675">Debugging (str: 1.75)</li>
+<li title="ID: c-local-development, Score: 0.5257">Local Development (str: 1.40)</li>
+<li title="ID: c-documentation, Score: 0.4517">Documentation (str: 0.80)</li>
+<li title="ID: c-standup-meeting, Score: 0.4416">Standup Meeting (str: 0.90)</li>
+<li title="ID: c-work-end, Score: 0.4130">Work End (str: 0.50)</li>
+<li title="ID: c-security-implementation, Score: 0.4130">Security Implementation (str: 0.50)</li>
+<li title="ID: c-looking-up-solutions-online, Score: 0.4043">Looking Up Solutions Online (str: 0.40)</li>
+<li title="ID: c-documentation-updates, Score: 0.4030">Documentation Updates (str: 0.40)</li>
+    </ul>
+
+    <h3 class="action-header">Actions</h3>
+    <ul>
+        <li title="ID: a-prepare-standup, Score: 0.6542">Prepare for standup meeting [medium]</li>
+    </ul>
+
+    <h3 class="time-header">Time Anchors</h3>
+    <ul>
+        <li title="ID: t-daily-standup, Score: 0.4102">Daily Standup Meeting</li>
+    </ul>
+</div>
+
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"borderWidth": 4, "color": {"background": "#4169E1", "border": "#FFD700", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "ca-001", "label": "Morning login\n(event)", "shape": "dot", "size": 16.05102856521471, "title": "ID: ca-001\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#228B22", "border": "#FFD700", "highlight": {"background": "#228B22", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "c-work-start", "label": "Work Start\n(concept)", "shape": "dot", "size": 47.78451038788151, "title": "ID: c-work-start\nType: concept\nAccess: 20"}, {"borderWidth": 1, "color": {"background": "#4169E1", "border": "#4169E1", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "ca-002", "label": "Launch VS Code\n(event)", "shape": "dot", "size": 15.0, "title": "ID: ca-002\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#4169E1", "border": "#FFD700", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "ca-003", "label": "Launch Chrome\n(event)", "shape": "dot", "size": 16.05177083844169, "title": "ID: ca-003\nType: event\nAccess: 0"}, {"borderWidth": 1, "color": {"background": "#4169E1", "border": "#4169E1", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "ca-004", "label": "Read Gmail\n(event)", "shape": "dot", "size": 15.000753937944019, "title": "ID: ca-004\nType: event\nAccess: 0"}, {"borderWidth": 1, "color": {"background": "#4169E1", "border": "#4169E1", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "ca-005", "label": "Launch Slack\n(event)", "shape": "dot", "size": 15.001080123804535, "title": "ID: ca-005\nType: event\nAccess: 0"}, {"borderWidth": 1, "color": {"background": "#4169E1", "border": "#4169E1", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "ca-006", "label": "Slack message received\n(event)", "shape": "dot", "size": 15.001426713637318, "title": "ID: ca-006\nType: event\nAccess: 0"}, {"borderWidth": 1, "color": {"background": "#4169E1", "border": "#4169E1", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "ca-007", "label": "Open project file\n(event)", "shape": "dot", "size": 15.001802736948932, "title": "ID: ca-007\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#4169E1", "border": "#FFD700", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "ca-008", "label": "Code editing\n(event)", "shape": "dot", "size": 16.053576500528862, "title": "ID: ca-008\nType: event\nAccess: 0"}, {"borderWidth": 1, "color": {"background": "#4169E1", "border": "#4169E1", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "ca-009", "label": "Slack message sent\n(event)", "shape": "dot", "size": 15.002536205016252, "title": "ID: ca-009\nType: event\nAccess: 0"}, {"borderWidth": 1, "color": {"background": "#4169E1", "border": "#4169E1", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "ca-010", "label": "Run tests\n(event)", "shape": "dot", "size": 15.002901611687976, "title": "ID: ca-010\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#4169E1", "border": "#FFD700", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "ca-011", "label": "Join standup meeting\n(event)", "shape": "dot", "size": 50.0, "title": "ID: ca-011\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#228B22", "border": "#FFD700", "highlight": {"background": "#228B22", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "c-standup-meeting", "label": "Standup Meeting\n(concept)", "shape": "dot", "size": 20.217877462888662, "title": "ID: c-standup-meeting\nType: concept\nAccess: 3"}, {"borderWidth": 4, "color": {"background": "#9932CC", "border": "#FFD700", "highlight": {"background": "#9932CC", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "t-daily-standup", "label": "Daily Standup Meeting\n(time)", "shape": "dot", "size": 15.98386544897387, "title": "ID: t-daily-standup\nType: time\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#FF8C00", "border": "#FFD700", "highlight": {"background": "#FF8C00", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "a-prepare-standup", "label": "Prepare for standup meeting\n(action)", "shape": "dot", "size": 48.92022197670339, "title": "ID: a-prepare-standup\nType: action\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#4169E1", "border": "#FFD700", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "ca-012", "label": "Leave standup meeting\n(event)", "shape": "dot", "size": 15.66911547507838, "title": "ID: ca-012\nType: event\nAccess: 0"}, {"borderWidth": 1, "color": {"background": "#4169E1", "border": "#4169E1", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "ca-013", "label": "Switch to VS Code\n(event)", "shape": "dot", "size": 15.004519897188386, "title": "ID: ca-013\nType: event\nAccess: 0"}, {"borderWidth": 1, "color": {"background": "#4169E1", "border": "#4169E1", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "ca-014", "label": "Implement new feature\n(event)", "shape": "dot", "size": 15.00491868942764, "title": "ID: ca-014\nType: event\nAccess: 0"}, {"borderWidth": 1, "color": {"background": "#4169E1", "border": "#4169E1", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "ca-015", "label": "Check Stack Overflow\n(event)", "shape": "dot", "size": 15.005390063315634, "title": "ID: ca-015\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#228B22", "border": "#FFD700", "highlight": {"background": "#228B22", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "c-debugging", "label": "Debugging\n(concept)", "shape": "dot", "size": 37.21569712365249, "title": "ID: c-debugging\nType: concept\nAccess: 14"}, {"borderWidth": 1, "color": {"background": "#4169E1", "border": "#4169E1", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "ca-016", "label": "Switch to Postman\n(event)", "shape": "dot", "size": 15.005741159889386, "title": "ID: ca-016\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#4169E1", "border": "#FFD700", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "ca-017", "label": "Docker compose up\n(event)", "shape": "dot", "size": 15.743351207220824, "title": "ID: ca-017\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#228B22", "border": "#FFD700", "highlight": {"background": "#228B22", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "c-local-development", "label": "Local Development\n(concept)", "shape": "dot", "size": 31.571721389223924, "title": "ID: c-local-development\nType: concept\nAccess: 10"}, {"borderWidth": 4, "color": {"background": "#4169E1", "border": "#FFD700", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "ca-018", "label": "Frontend debugging\n(event)", "shape": "dot", "size": 15.00657668525933, "title": "ID: ca-018\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#4169E1", "border": "#FFD700", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "ca-019", "label": "Fixing frontend bug\n(event)", "shape": "dot", "size": 15.006991264283148, "title": "ID: ca-019\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#4169E1", "border": "#FFD700", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "ca-020", "label": "Slack message received\n(event)", "shape": "dot", "size": 15.00737199820001, "title": "ID: ca-020\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#4169E1", "border": "#FFD700", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "ca-021", "label": "Check AWS CloudWatch\n(event)", "shape": "dot", "size": 15.007707541847978, "title": "ID: ca-021\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#4169E1", "border": "#FFD700", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "ca-022", "label": "Deploying fix\n(event)", "shape": "dot", "size": 15.00811302293258, "title": "ID: ca-022\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#4169E1", "border": "#FFD700", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "ca-023", "label": "Save documentation\n(event)", "shape": "dot", "size": 15.679443854180192, "title": "ID: ca-023\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#228B22", "border": "#FFD700", "highlight": {"background": "#228B22", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "c-documentation", "label": "Documentation\n(concept)", "shape": "dot", "size": 21.585855965113375, "title": "ID: c-documentation\nType: concept\nAccess: 4"}, {"borderWidth": 4, "color": {"background": "#4169E1", "border": "#FFD700", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "ca-024", "label": "Slack status update\n(event)", "shape": "dot", "size": 15.00899962138068, "title": "ID: ca-024\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#4169E1", "border": "#FFD700", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "ca-025", "label": "Lock screen\n(event)", "shape": "dot", "size": 16.23518596955139, "title": "ID: ca-025\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#228B22", "border": "#FFD700", "highlight": {"background": "#228B22", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "c-work-end", "label": "Work End\n(concept)", "shape": "dot", "size": 16.369439717308165, "title": "ID: c-work-end\nType: concept\nAccess: 1"}, {"borderWidth": 4, "color": {"background": "#4169E1", "border": "#FFD700", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "ca-026", "label": "Morning login\n(event)", "shape": "dot", "size": 16.061138306732197, "title": "ID: ca-026\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#4169E1", "border": "#FFD700", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "ca-027", "label": "Launch Slack\n(event)", "shape": "dot", "size": 15.184440474402566, "title": "ID: ca-027\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#4169E1", "border": "#FFD700", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "ca-028", "label": "Slack message received\n(event)", "shape": "dot", "size": 15.01050596939714, "title": "ID: ca-028\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#4169E1", "border": "#FFD700", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "ca-029", "label": "Launch VS Code\n(event)", "shape": "dot", "size": 15.010905994445471, "title": "ID: ca-029\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#4169E1", "border": "#FFD700", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "ca-030", "label": "Open API route file\n(event)", "shape": "dot", "size": 15.011279007862333, "title": "ID: ca-030\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#4169E1", "border": "#FFD700", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "ca-031", "label": "Modify auth route\n(event)", "shape": "dot", "size": 16.309709840124214, "title": "ID: ca-031\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#228B22", "border": "#FFD700", "highlight": {"background": "#228B22", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "c-security-implementation", "label": "Security Implementation\n(concept)", "shape": "dot", "size": 16.361741154303278, "title": "ID: c-security-implementation\nType: concept\nAccess: 1"}, {"borderWidth": 4, "color": {"background": "#4169E1", "border": "#FFD700", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "ca-032", "label": "Save auth route file\n(event)", "shape": "dot", "size": 15.92379341545638, "title": "ID: ca-032\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#4169E1", "border": "#FFD700", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "ca-033", "label": "Run backend tests\n(event)", "shape": "dot", "size": 15.7497756274892, "title": "ID: ca-033\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#4169E1", "border": "#FFD700", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "ca-034", "label": "Check API documentation\n(event)", "shape": "dot", "size": 15.012965390404643, "title": "ID: ca-034\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#4169E1", "border": "#FFD700", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "ca-035", "label": "Slack question\n(event)", "shape": "dot", "size": 15.129703572665203, "title": "ID: ca-035\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#4169E1", "border": "#FFD700", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "ca-036", "label": "Slack help received\n(event)", "shape": "dot", "size": 15.013957395074343, "title": "ID: ca-036\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#4169E1", "border": "#FFD700", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "ca-037", "label": "Join standup\n(event)", "shape": "dot", "size": 48.93754206501115, "title": "ID: ca-037\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#4169E1", "border": "#FFD700", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "ca-038", "label": "Leave standup\n(event)", "shape": "dot", "size": 48.93824613196862, "title": "ID: ca-038\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#4169E1", "border": "#FFD700", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "ca-039", "label": "Switch to Terminal\n(event)", "shape": "dot", "size": 15.015263091970843, "title": "ID: ca-039\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#4169E1", "border": "#FFD700", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "ca-040", "label": "Rebuild Docker image\n(event)", "shape": "dot", "size": 15.015680694876187, "title": "ID: ca-040\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#4169E1", "border": "#FFD700", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "ca-041", "label": "Check StackOverflow\n(event)", "shape": "dot", "size": 15.016240392088125, "title": "ID: ca-041\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#228B22", "border": "#FFD700", "highlight": {"background": "#228B22", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "c-looking-up-solutions-online", "label": "Looking Up Solutions Online\n(concept)", "shape": "dot", "size": 15.190610448102328, "title": "ID: c-looking-up-solutions-online\nType: concept\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#4169E1", "border": "#FFD700", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "ca-042", "label": "Switch to VS Code\n(event)", "shape": "dot", "size": 15.016629390851172, "title": "ID: ca-042\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#4169E1", "border": "#FFD700", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "ca-043", "label": "Modify Dockerfile\n(event)", "shape": "dot", "size": 15.017116000437534, "title": "ID: ca-043\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#4169E1", "border": "#FFD700", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "ca-044", "label": "Run Docker Compose\n(event)", "shape": "dot", "size": 15.754668464474078, "title": "ID: ca-044\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#4169E1", "border": "#FFD700", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "ca-045", "label": "Launch Postman\n(event)", "shape": "dot", "size": 15.01786001682431, "title": "ID: ca-045\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#4169E1", "border": "#FFD700", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "ca-046", "label": "Check GitHub issues\n(event)", "shape": "dot", "size": 15.018196396678622, "title": "ID: ca-046\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#4169E1", "border": "#FFD700", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "ca-047", "label": "Open README file\n(event)", "shape": "dot", "size": 15.689404089162773, "title": "ID: ca-047\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#4169E1", "border": "#FFD700", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "ca-048", "label": "Update README\n(event)", "shape": "dot", "size": 15.019027511469318, "title": "ID: ca-048\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#4169E1", "border": "#FFD700", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "ca-049", "label": "Save README file\n(event)", "shape": "dot", "size": 15.368299921026628, "title": "ID: ca-049\nType: event\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#228B22", "border": "#FFD700", "highlight": {"background": "#228B22", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "c-documentation-updates", "label": "Documentation Updates\n(concept)", "shape": "dot", "size": 15.019559853830138, "title": "ID: c-documentation-updates\nType: concept\nAccess: 0"}, {"borderWidth": 4, "color": {"background": "#4169E1", "border": "#FFD700", "highlight": {"background": "#4169E1", "border": "#FF0000"}}, "font": {"color": "#000000"}, "id": "ca-050", "label": "Lock screen\n(event)", "shape": "dot", "size": 15.194295793310845, "title": "ID: ca-050\nType: event\nAccess: 0"}]);
+                  edges = new vis.DataSet([{"from": "c-work-start", "to": "ca-001"}, {"from": "c-work-start", "to": "ca-003"}, {"from": "c-work-start", "to": "ca-008"}, {"from": "c-work-start", "to": "ca-025"}, {"from": "c-work-start", "to": "ca-026"}, {"from": "ca-002", "to": "c-work-start"}, {"from": "ca-004", "to": "c-work-start"}, {"from": "ca-005", "to": "c-work-start"}, {"from": "ca-006", "to": "c-work-start"}, {"from": "ca-007", "to": "c-work-start"}, {"from": "ca-009", "to": "c-work-start"}, {"from": "ca-010", "to": "c-work-start"}, {"from": "ca-011", "to": "c-standup-meeting"}, {"from": "ca-011", "to": "t-daily-standup"}, {"from": "c-standup-meeting", "to": "ca-012"}, {"from": "a-prepare-standup", "to": "c-standup-meeting"}, {"from": "a-prepare-standup", "to": "t-daily-standup"}, {"from": "ca-013", "to": "c-work-start"}, {"from": "ca-013", "to": "c-standup-meeting"}, {"from": "ca-014", "to": "c-work-start"}, {"from": "ca-015", "to": "c-debugging"}, {"from": "ca-015", "to": "c-work-start"}, {"from": "ca-016", "to": "c-debugging"}, {"from": "ca-017", "to": "c-local-development"}, {"from": "c-local-development", "to": "ca-032"}, {"from": "c-local-development", "to": "ca-033"}, {"from": "c-local-development", "to": "ca-044"}, {"from": "ca-018", "to": "c-debugging"}, {"from": "ca-018", "to": "c-local-development"}, {"from": "ca-019", "to": "c-debugging"}, {"from": "ca-019", "to": "c-local-development"}, {"from": "ca-020", "to": "c-debugging"}, {"from": "ca-021", "to": "c-debugging"}, {"from": "ca-022", "to": "c-debugging"}, {"from": "ca-023", "to": "c-work-start"}, {"from": "c-documentation", "to": "ca-023"}, {"from": "c-documentation", "to": "ca-047"}, {"from": "ca-024", "to": "c-work-start"}, {"from": "c-work-end", "to": "ca-025"}, {"from": "c-work-end", "to": "ca-050"}, {"from": "ca-027", "to": "c-work-start"}, {"from": "ca-028", "to": "c-work-start"}, {"from": "ca-028", "to": "ca-027"}, {"from": "ca-029", "to": "c-work-start"}, {"from": "ca-030", "to": "c-local-development"}, {"from": "ca-030", "to": "c-work-start"}, {"from": "c-security-implementation", "to": "ca-031"}, {"from": "c-security-implementation", "to": "ca-032"}, {"from": "ca-032", "to": "ca-031"}, {"from": "ca-034", "to": "c-documentation"}, {"from": "ca-035", "to": "c-debugging"}, {"from": "ca-035", "to": "c-local-development"}, {"from": "ca-036", "to": "c-debugging"}, {"from": "ca-036", "to": "c-local-development"}, {"from": "ca-036", "to": "ca-035"}, {"from": "ca-037", "to": "c-standup-meeting"}, {"from": "ca-037", "to": "t-daily-standup"}, {"from": "ca-038", "to": "c-standup-meeting"}, {"from": "ca-038", "to": "t-daily-standup"}, {"from": "ca-039", "to": "c-local-development"}, {"from": "ca-039", "to": "c-debugging"}, {"from": "ca-040", "to": "c-local-development"}, {"from": "ca-040", "to": "c-debugging"}, {"from": "ca-041", "to": "c-debugging"}, {"from": "ca-041", "to": "c-looking-up-solutions-online"}, {"from": "ca-042", "to": "c-local-development"}, {"from": "ca-043", "to": "c-local-development"}, {"from": "ca-045", "to": "c-debugging"}, {"from": "ca-045", "to": "c-local-development"}, {"from": "ca-046", "to": "c-debugging"}, {"from": "ca-048", "to": "c-documentation"}, {"from": "ca-048", "to": "c-work-start"}, {"from": "ca-049", "to": "c-documentation"}, {"from": "c-documentation-updates", "to": "ca-049"}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>

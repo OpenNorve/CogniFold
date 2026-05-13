@@ -1,0 +1,29 @@
+name: Promote to stable
+
+on:
+  push:
+    branches: [cognifold-dev]
+
+jobs:
+  create-pr:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create PR to cognifold-stable
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          existing=$(gh pr list --base cognifold-stable --head cognifold-dev --state open --json number -q '.[0].number')
+          if [ -n "$existing" ]; then
+            echo "PR #$existing already exists, skipping"
+            exit 0
+          fi
+          gh pr create \
+            --base cognifold-stable \
+            --head cognifold-dev \
+            --title "Promote cognifold-dev to cognifold-stable" \
+            --body "Automated PR to promote latest changes from \`cognifold-dev\` to \`cognifold-stable\`."

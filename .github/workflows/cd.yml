@@ -1,0 +1,144 @@
+name: CD
+
+on:
+  push:
+    branches: [cognifold-stable]
+
+permissions:
+  contents: read
+  packages: write
+  id-token: write  # Required for Workload Identity Federation
+
+env:
+  GCP_PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
+  GCP_REGION: ${{ vars.GCP_REGION || 'us-central1' }}
+  AR_REPO: cognifold
+  IMAGE_NAME: cognifold
+
+jobs:
+  build-and-push:
+    name: Build & Push Docker Image
+    runs-on: ubuntu-latest
+
+    outputs:
+      image_tag: ${{ steps.tag.outputs.tag }}
+      ar_image: ${{ steps.tag.outputs.ar_image }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # --- GHCR auth ---
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # --- GCP auth (Workload Identity Federation) ---
+      - name: Authenticate to GCP
+        id: gcp-auth
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+          token_format: access_token
+
+      - name: Log in to Artifact Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.GCP_REGION }}-docker.pkg.dev
+          username: oauth2accesstoken
+          password: ${{ steps.gcp-auth.outputs.access_token }}
+
+      # --- Metadata + tags ---
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: |
+            ghcr.io/${{ github.repository }}
+            ${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.AR_REPO }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=raw,value=latest
+            type=sha,prefix=sha-
+
+      - name: Compute image tag
+        id: tag
+        run: |
+          TAG="sha-$(echo '${{ github.sha }}' | cut -c1-7)"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "ar_image=${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.AR_REPO }}/${{ env.IMAGE_NAME }}:$TAG" >> "$GITHUB_OUTPUT"
+
+      # --- Build + push to both registries ---
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: linux/amd64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+  # --- Cloud Run deploy ---
+  deploy-cloudrun:
+    name: Deploy to Cloud Run
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/cognifold-stable'
+    environment: production-gcp
+
+    steps:
+      - name: Authenticate to GCP
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+
+      - name: Deploy to Cloud Run
+        id: deploy
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: cognifold
+          image: ${{ needs.build-and-push.outputs.ar_image }}
+          region: ${{ env.GCP_REGION }}
+          flags: |
+            --service-account=cognifold-runtime@${{ env.GCP_PROJECT_ID }}.iam.gserviceaccount.com
+            --vpc-connector=cognifold-connector
+            --vpc-egress=private-ranges-only
+            --memory=2Gi
+            --cpu=2
+            --min-instances=1
+            --max-instances=5
+            --concurrency=4
+            --timeout=300
+            --session-affinity
+            --no-cpu-throttling
+            --cpu-boost
+            --port=8000
+            --set-env-vars=COGNIFOLD_HOST=0.0.0.0,COGNIFOLD_PORT=8000,COGNIFOLD_WORKERS=2,COGNIFOLD_TIMEOUT=300,COGNIFOLD_LOG_LEVEL=info,COGNIFOLD_SESSION_BACKEND=redis,COGNIFOLD_REDIS_URL=redis://${{ secrets.REDIS_HOST }}:6379/0,COGNIFOLD_SUPABASE_URL=https://mjvzrlmnsvhzmhbswsfv.supabase.co,COGNIFOLD_SUPABASE_KEY=${{ secrets.COGNIFOLD_SUPABASE_KEY }}
+            --set-secrets=GOOGLE_API_KEY=google-api-key:latest,COGNIFOLD_API_KEY=cognifold-api-key:latest
+            --allow-unauthenticated
+
+      - name: Post-deploy health check
+        run: |
+          SERVICE_URL="${{ steps.deploy.outputs.url }}"
+          echo "Service URL: $SERVICE_URL"
+          for i in 1 2 3 4 5; do
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$SERVICE_URL/health" || true)
+            if [ "$STATUS" = "200" ]; then
+              echo "Health check passed (attempt $i)"
+              # Also check /ready for store health
+              READY=$(curl -s "$SERVICE_URL/ready" || true)
+              echo "Ready check: $READY"
+              exit 0
+            fi
+            echo "Health check attempt $i: HTTP $STATUS (waiting 10s...)"
+            sleep 10
+          done
+          echo "Health check failed after 5 attempts"
+          exit 1
