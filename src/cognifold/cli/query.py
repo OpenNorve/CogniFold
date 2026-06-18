@@ -175,6 +175,26 @@ Examples:
         help="Get detailed explanation of a specific node",
     )
 
+    # Prompt profile (validated for parity with `run`; see note below)
+    parser.add_argument(
+        "--prompt-profile",
+        "--profile",
+        dest="prompt_profile",
+        type=str,
+        help=(
+            "Prompt profile ID (e.g., wiki-v1). Validated against the profiles "
+            "file; surfaced in --verbose output. Note: query is read-only "
+            "retrieval over a pre-built graph, so the profile does not change "
+            "retrieval results -- profiles shape graph *building* via `run`."
+        ),
+    )
+    parser.add_argument(
+        "--prompt-profiles",
+        type=str,
+        default="configs/prompt_profiles.yaml",
+        help="Path to prompt profiles YAML (default: configs/prompt_profiles.yaml)",
+    )
+
     # Verbosity
     parser.add_argument(
         "--verbose",
@@ -182,6 +202,31 @@ Examples:
         action="store_true",
         help="Show detailed query information",
     )
+
+
+def _resolve_prompt_profile(name: str, profiles_path: str):
+    """Load and return the named prompt profile, or None on error.
+
+    On an unknown profile name (or missing file) prints the available profile
+    names to stderr and returns None so the caller can exit non-zero. Uses the
+    same loader the run command and benchmarks use
+    (:func:`cognifold.agent.prompt_profile.load_prompt_profiles`).
+    """
+    from cognifold.agent.prompt_profile import load_prompt_profiles
+
+    path = Path(profiles_path)
+    if not path.exists():
+        print(f"Error: Prompt profiles file not found: {path}", file=sys.stderr)
+        return None
+
+    profiles = load_prompt_profiles(path)
+    profile = profiles.get(name)
+    if profile is None:
+        available = ", ".join(profiles) if profiles else "(none defined)"
+        print(f"Error: Prompt profile not found: {name}", file=sys.stderr)
+        print(f"Available profiles: {available}", file=sys.stderr)
+        return None
+    return profile
 
 
 def _create_embedder(args: argparse.Namespace):
@@ -246,6 +291,13 @@ def query_command(args: argparse.Namespace) -> int:
     except Exception as e:
         print(f"Error loading graph: {e}", file=sys.stderr)
         return 1
+
+    # Validate prompt profile if provided (fails fast on typos, parity with `run`)
+    prompt_profile = None
+    if getattr(args, "prompt_profile", None):
+        prompt_profile = _resolve_prompt_profile(args.prompt_profile, args.prompt_profiles)
+        if prompt_profile is None:
+            return 1
 
     # Map retrieval mode
     retrieval_mode_map = {
@@ -317,6 +369,11 @@ def query_command(args: argparse.Namespace) -> int:
         print(f"Query: {args.query}")
         print(f"Type: {args.type}")
         print(f"Retrieval: {args.retrieval}")
+        if prompt_profile is not None:
+            print(
+                f"Prompt profile: {prompt_profile.profile_id} "
+                "(validated; does not affect retrieval)"
+            )
         print()
 
     result = agent.query(

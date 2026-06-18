@@ -93,6 +93,153 @@ profiles:
         custom.speaker: "## Speaker Attribution\nHandle speakers..."
 ```
 
+## Scenario Profiles (Gallery)
+
+Prompt profiles are named, ready-to-use bundles of domain + reasoning mode +
+model + guidelines (+ optional custom template and section toggles). They live
+in `configs/prompt_profiles.yaml` and are loaded by
+`cognifold.agent.prompt_profile.load_prompt_profiles(path)`, which returns a
+`dict[str, PromptProfile]` keyed by profile name.
+
+The shipped profiles:
+
+| Profile          | Target scenario                                  | Mode       | When to use                                                                 | Provider / model                  |
+|------------------|--------------------------------------------------|------------|-----------------------------------------------------------------------------|-----------------------------------|
+| `personal-v1`    | Personal timeline (daily-life event streams)     | quick      | Fast ingest of personal activity logs; minimal concept creation             | default (from config)             |
+| `wiki-v1`        | Wiki / notes / long-form documents               | analytical | Deep analysis of document chunks; synthesis-focused actions; no TIME nodes   | default (temperature 0.4)         |
+| `wiki-v3-openai` | Wiki / novels via OpenAI with a strict template  | analytical | OpenAI run that enforces connectivity + mandatory actions per concept       | `openai:gpt-5.2-2025-12-11`       |
+| `wiki-v3-gemini` | Wiki / novels via Gemini with a strict template  | analytical | Same strict graph-building rules on a Gemini model                          | `gemini-2.5-flash`                |
+| `wiki-v4-openai` | Wiki / novels via OpenAI (refined v3 template)   | analytical | Latest OpenAI wiki template; prioritizes high-value synthesis actions       | `openai:gpt-5.2-2025-12-11`       |
+
+Notes:
+- "Mode" is the `ReasoningMode` enum — `quick`, `analytical`, or
+  `consolidation`. The wiki profiles use the strict custom `templates.system`
+  override (which bypasses section composition); the personal/wiki-v1 profiles
+  use the default composed prompt for their domain.
+- A profile's model (`model.name`) overrides the config model only when set;
+  otherwise the model comes from `CognifoldConfig` / `AgentConfig`.
+
+### Listing and using profiles from the CLI
+
+List every profile (name + domain + mode + model) and exit:
+
+```bash
+cognifold --list-profiles
+# point at a different profiles file:
+cognifold --list-profiles --prompt-profiles path/to/profiles.yaml
+```
+
+Run graph-building with a profile (agent mode required — the profile configures
+the graph-update LLM agent):
+
+```bash
+# --profile is an alias for --prompt-profile
+cognifold run examples/wiki/notes_timeline.json --agent --prompt-profile wiki-v1
+cognifold run data/timeline.json --agent --profile wiki-v3-openai
+# custom profiles file:
+cognifold run data/timeline.json --agent --profile my-profile \
+  --prompt-profiles configs/my_profiles.yaml
+```
+
+The same `--profile` works in fast (layered) mode:
+
+```bash
+cognifold run data/timeline.json --fast --agent --profile wiki-v1
+```
+
+If an unknown profile name is given, the command prints the available profiles
+and exits non-zero:
+
+```text
+Error: Prompt profile not found: nope
+Available profiles: personal-v1, wiki-v1, wiki-v4-openai, wiki-v3-openai, wiki-v3-gemini
+```
+
+For `query`:
+
+```bash
+cognifold query --graph output/graph.json --profile wiki-v1 -v "key themes?"
+```
+
+`query` accepts `--profile` / `--prompt-profile` for parity and validates the
+name (so typos fail fast and the resolved profile is shown in `--verbose`
+output). **It does not change retrieval results** — `query` is read-only
+retrieval over a pre-built graph, whereas profiles shape graph *building* via
+`run`. Use profiles when building the graph; query the result however you like.
+
+### Authoring a custom profile
+
+A profile is one entry under the top-level `profiles:` key. All fields are
+optional except an implicit identity (the YAML key becomes `profile_id`). The
+full shape understood by `load_prompt_profiles`:
+
+```yaml
+profiles:
+  my-profile:                      # -> PromptProfile.profile_id
+    domain: wiki                   # DomainConfig name (DOMAIN_REGISTRY key)
+    mode: analytical               # ReasoningMode: quick | analytical | consolidation
+    model:
+      name: openai:gpt-5.2-2025-12-11  # optional; overrides config model
+      temperature: 0.3
+      max_tokens: 4096
+      max_exploration_steps: 3
+    guidelines:                    # injected into {concept_guidelines}/{action_guidelines}
+      concept:
+        - Prefer updating existing concepts over duplicates
+      action:
+        - Create synthesis actions for strong recurring concepts
+      time:
+        - Create TIME nodes only for explicit dates
+    templates:                     # optional; OVERRIDES section composition entirely
+      system: |
+        You are a cognitive graph agent...
+        {concept_guidelines}
+        {action_guidelines}
+      user: |
+        Process this event: {event}
+    sections:                      # optional; only applies when NOT using templates.system
+      disabled:                    # section or group names to exclude
+        - intents
+        - time
+      extra:                       # custom sections to inject
+        custom.speaker: "## Speaker Attribution\n..."
+    features:                      # free-form flags consumed downstream
+      enable_time_nodes: false
+```
+
+Then load and verify:
+
+```bash
+cognifold --list-profiles --prompt-profiles configs/my_profiles.yaml
+cognifold run data/timeline.json --agent --profile my-profile \
+  --prompt-profiles configs/my_profiles.yaml
+```
+
+### Toggling sections via DomainConfig
+
+Profiles inherit their domain's section composition from
+`DomainConfig` (`src/cognifold/agent/domain.py`). The relevant fields:
+
+- `disabled_sections: frozenset[str]` — exclude individual sections
+  (e.g., `core.tools`) or whole groups (`"intents"`, `"time"`, `"concepts"`,
+  `"core"`, `"symbolic"`). Group names are expanded to their member sections.
+  Example: `LOCOMO_DOMAIN` uses `disabled_sections=frozenset({"intents"})` to
+  drop all intent sections for the benchmark.
+- `extra_sections: dict[str, str]` — inject custom prompt text keyed by a
+  custom section name (e.g., `CLAUDE_CODE_DOMAIN`'s `claude_code.tool_context`).
+- `extra_section_position: str` — where extras are injected:
+  `"before_rules"` (default), `"after_tools"`, or `"after_rules"`.
+
+A profile can override these per-run via its `sections:` block (`disabled` /
+`extra` above), which feeds `PromptProfile.disabled_sections` /
+`PromptProfile.extra_sections`. Section names and groups are defined in
+`SECTION_REGISTRY` / `SECTION_GROUPS` and resolved by `resolve_sections()` in
+`src/cognifold/agent/prompt_sections.py`.
+
+> Note: when a profile sets `templates.system`, section composition is bypassed
+> entirely — the raw template (with `{concept_guidelines}` / `{action_guidelines}`
+> placeholders) is used as-is. Use `sections:` only with the default composed prompt.
+
 ## System Prompt Structure
 
 The system prompt includes these sections in order:

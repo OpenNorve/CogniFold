@@ -8,6 +8,34 @@ from pathlib import Path
 from typing import Any
 
 
+def _resolve_prompt_profile(name: str, profiles_path: str, logger: Any) -> Any | None:
+    """Load and return the named prompt profile, or None on error.
+
+    On an unknown profile name (or missing file) this logs/prints the available
+    profile names and returns None so the caller can exit non-zero. Uses the
+    same loader the service and benchmarks use
+    (:func:`cognifold.agent.prompt_profile.load_prompt_profiles`).
+    """
+    from cognifold.agent.prompt_profile import load_prompt_profiles
+
+    path = Path(profiles_path)
+    if not path.exists():
+        msg = f"Prompt profiles file not found: {path}"
+        logger.error(msg)
+        print(f"Error: {msg}")
+        return None
+
+    profiles = load_prompt_profiles(path)
+    profile = profiles.get(name)
+    if profile is None:
+        available = ", ".join(profiles) if profiles else "(none defined)"
+        logger.error(f"Prompt profile not found: {name}")
+        print(f"Error: Prompt profile not found: {name}")
+        print(f"Available profiles: {available}")
+        return None
+    return profile
+
+
 def add_run_parser(subparsers: argparse._SubParsersAction) -> None:  # type: ignore
     """Add the run subcommand parser."""
     run_parser = subparsers.add_parser("run", help="Run simulation on a timeline")
@@ -31,6 +59,8 @@ def add_run_parser(subparsers: argparse._SubParsersAction) -> None:  # type: ign
     )
     run_parser.add_argument(
         "--prompt-profile",
+        "--profile",
+        dest="prompt_profile",
         type=str,
         help="Prompt profile ID for agent mode (e.g., wiki-v1, personal-v1)",
     )
@@ -161,7 +191,6 @@ def run_command(args: argparse.Namespace) -> int:
     prompt_profile = None
     if args.agent:
         from cognifold.agent import AgentConfig
-        from cognifold.agent.prompt_profile import load_prompt_profiles
 
         base_agent_config = AgentConfig(
             model_name=config.model.name,
@@ -171,13 +200,10 @@ def run_command(args: argparse.Namespace) -> int:
         )
 
         if args.prompt_profile:
-            profiles_path = Path(args.prompt_profiles)
-            if profiles_path.exists():
-                profiles = load_prompt_profiles(profiles_path)
-                prompt_profile = profiles.get(args.prompt_profile)
-            if not prompt_profile:
-                logger.error(f"Prompt profile not found: {args.prompt_profile}")
-                print(f"Error: Prompt profile not found: {args.prompt_profile}")
+            prompt_profile = _resolve_prompt_profile(
+                args.prompt_profile, args.prompt_profiles, logger
+            )
+            if prompt_profile is None:
                 return 1
             agent_config = prompt_profile.to_agent_config(base_agent_config)
         else:
@@ -404,7 +430,6 @@ def _run_fast_mode(
     prompt_profile: Any = None
     if args.agent:
         from cognifold.agent import AgentConfig
-        from cognifold.agent.prompt_profile import load_prompt_profiles
 
         base_agent_config = AgentConfig(
             model_name=config.model.name,
@@ -414,12 +439,10 @@ def _run_fast_mode(
         )
 
         if getattr(args, "prompt_profile", None):
-            profiles_path = Path(args.prompt_profiles)
-            if profiles_path.exists():
-                profiles = load_prompt_profiles(profiles_path)
-                prompt_profile = profiles.get(args.prompt_profile)
-            if not prompt_profile:
-                print(f"Error: Prompt profile not found: {args.prompt_profile}")
+            prompt_profile = _resolve_prompt_profile(
+                args.prompt_profile, args.prompt_profiles, logger
+            )
+            if prompt_profile is None:
                 return 1
             agent_config = prompt_profile.to_agent_config(base_agent_config)
         else:

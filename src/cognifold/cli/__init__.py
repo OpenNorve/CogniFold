@@ -82,7 +82,24 @@ Examples:
     # Version
     parser.add_argument("--version", action="version", version="cognifold 0.1.0")
 
+    # List available prompt profiles and exit
+    parser.add_argument(
+        "--list-profiles",
+        action="store_true",
+        help="List available prompt profiles (from configs/prompt_profiles.yaml) and exit",
+    )
+    parser.add_argument(
+        "--prompt-profiles",
+        type=str,
+        default="configs/prompt_profiles.yaml",
+        help="Path to prompt profiles YAML used by --list-profiles "
+        "(default: configs/prompt_profiles.yaml)",
+    )
+
     args = parser.parse_args()
+
+    if getattr(args, "list_profiles", False):
+        return list_profiles_command(args.prompt_profiles)
 
     if args.command == "run":
         return run_command(args)
@@ -103,6 +120,53 @@ Examples:
     else:
         parser.print_help()
         return 0
+
+
+def _profile_summary(profile: object) -> str:
+    """Build a one-line human description of a prompt profile.
+
+    Pulls domain, reasoning mode, and model (when set) from the profile so the
+    listing is informative without dumping the full YAML.
+    """
+    domain = getattr(profile, "domain", None) or "default"
+    mode = getattr(profile, "mode", None)
+    mode_str = mode.value if mode is not None else "default"
+    model = getattr(profile, "model_name", None)
+    parts = [f"domain={domain}", f"mode={mode_str}"]
+    if model:
+        parts.append(f"model={model}")
+    return ", ".join(parts)
+
+
+def list_profiles_command(profiles_path: str) -> int:
+    """Print all prompt profiles found in *profiles_path* and exit.
+
+    Uses the same loader the run command and benchmarks use
+    (:func:`cognifold.agent.prompt_profile.load_prompt_profiles`).
+    """
+    from pathlib import Path
+
+    from cognifold.agent.prompt_profile import load_prompt_profiles
+
+    path = Path(profiles_path)
+    if not path.exists():
+        print(f"Error: Prompt profiles file not found: {path}", file=sys.stderr)
+        return 1
+
+    profiles = load_prompt_profiles(path)
+    if not profiles:
+        print(f"No prompt profiles defined in {path}")
+        return 0
+
+    print(f"Available prompt profiles ({path}):\n")
+    width = max(len(name) for name in profiles)
+    for name, profile in profiles.items():
+        print(f"  {name.ljust(width)}  {_profile_summary(profile)}")
+    print(
+        "\nUse with: cognifold run <timeline> --agent --prompt-profile <name>"
+        " [--prompt-profiles <path>]"
+    )
+    return 0
 
 
 if __name__ == "__main__":
