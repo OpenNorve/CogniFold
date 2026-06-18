@@ -1,28 +1,17 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="CogniFold — a brain-inspired always-on agent memory, roughly 60% of human memory modeled">
   <defs>
-    <radialGradient id="pg" cx="28%" cy="18%" r="95%">
-      <stop offset="0%" stop-color="#f5ecd7"/>
-      <stop offset="55%" stop-color="#ece0c4"/>
-      <stop offset="100%" stop-color="#d8c39a"/>
-    </radialGradient>
-    <filter id="grain">
-      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/>
-      <feColorMatrix type="saturate" values="0"/>
-      <feComponentTransfer><feFuncA type="linear" slope="0.05"/></feComponentTransfer>
-      <feComposite operator="over" in2="SourceGraphic"/>
-    </filter>
     <filter id="wax" x="-20%" y="-20%" width="140%" height="140%">
       <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="3" seed="5" result="t"/>
       <feDisplacementMap in="SourceGraphic" in2="t" scale="4" xChannelSelector="R" yChannelSelector="G"/>
     </filter>
   </defs>
 
-  <!-- parchment -->
-  <rect width="1200" height="630" fill="url(#pg)"/>
-  <rect width="1200" height="630" filter="url(#grain)" opacity="0.5"/>
+  <!-- clean white canvas (Apple), da Vinci as accent only -->
+  <rect width="1200" height="630" fill="#ffffff"/>
+  <rect x="0" y="0" width="1200" height="630" fill="#f5f5f7" opacity="0"/>
 
   <!-- faint vitruvian guides -->
-  <g stroke="#2b2118" stroke-opacity="0.12" fill="none">
+  <g stroke="#1d1d1f" stroke-opacity="0.08" fill="none">
     <circle cx="880" cy="315" r="250"/>
     <circle cx="880" cy="315" r="155"/>
     <rect x="660" y="95" width="440" height="440"/>
@@ -43,16 +32,16 @@
   </g>
 
   <!-- title plate -->
-  <text x="90" y="250" font-family="Cormorant Garamond, Georgia, serif" font-weight="700" font-size="128" fill="#2b2118">CogniFold</text>
-  <text x="94" y="320" font-family="EB Garamond, Georgia, serif" font-style="italic" font-size="38" fill="#4a3b2b">A brain-inspired, always-on agent memory</text>
-  <text x="94" y="368" font-family="EB Garamond, Georgia, serif" font-style="italic" font-size="38" fill="#4a3b2b">that folds events into cognitive structure.</text>
+  <text x="90" y="248" font-family="Cormorant Garamond, Georgia, serif" font-weight="700" font-size="120" letter-spacing="-3" fill="#1d1d1f">CogniFold</text>
+  <text x="94" y="316" font-family="-apple-system, Helvetica, Arial, sans-serif" font-size="34" fill="#515154">A brain-inspired, always-on agent memory</text>
+  <text x="94" y="362" font-family="-apple-system, Helvetica, Arial, sans-serif" font-size="34" fill="#515154">that folds events into cognitive structure.</text>
 
   <!-- coverage chip -->
-  <g transform="translate(94,440)">
-    <rect x="0" y="0" width="430" height="74" rx="37" fill="none" stroke="#8a6a2c" stroke-width="3"/>
-    <text x="32" y="50" font-family="Cormorant Garamond, Georgia, serif" font-weight="700" font-size="46" fill="#2b2118">~60%</text>
-    <text x="150" y="48" font-family="EB Garamond, Georgia, serif" font-size="28" fill="#4a3b2b">of human memory modeled</text>
+  <g transform="translate(94,432)">
+    <rect x="0" y="0" width="420" height="68" rx="34" fill="#f5f5f7" stroke="#1d1d1f" stroke-opacity="0.12" stroke-width="2"/>
+    <text x="30" y="47" font-family="Cormorant Garamond, Georgia, serif" font-weight="700" font-size="42" fill="#1d1d1f">~60%</text>
+    <text x="142" y="45" font-family="-apple-system, Helvetica, Arial, sans-serif" font-size="26" fill="#515154">of human memory modeled</text>
   </g>
 
-  <text x="94" y="575" font-family="IBM Plex Mono, monospace" font-size="22" letter-spacing="4" fill="#b9842f">OPENNORVE · CODEX OF ARTIFICIAL MEMORY</text>
+  <text x="94" y="572" font-family="IBM Plex Mono, monospace" font-size="20" letter-spacing="4" fill="#86868b">OPENNORVE · COGNIFOLD</text>
 </svg>
