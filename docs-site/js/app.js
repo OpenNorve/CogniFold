@@ -1,4 +1,4 @@
-// app.js — data-driven entry point for the CogniFold codex.
+// app.js — data-driven entry point for the CogniFold site.
 // Loads memory_coverage.json (single source of truth) and wires up: nav,
 // scroll-reveal, the coverage ring, the interactive brain, the notebook
 // cards + system index, the CLS architecture diagram, and the results ledger.
@@ -8,6 +8,9 @@
 import { renderBrain } from "./brain.js";
 
 const SVG_NS = "http://www.w3.org/2000/svg";
+// System font stacks for in-SVG text (no web fonts).
+const SANS = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
+const MONO = "ui-monospace, 'SF Mono', Menlo, Consolas, monospace";
 const reduceMotion =
   window.matchMedia &&
   window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -308,14 +311,14 @@ function renderArchDiagram(rough) {
     { x: 825, y: 170, label: "INTENT", sub: "prefrontal", color: "#3f4f6b" },
   ];
 
-  // sketchy arrows between nodes
+  // arrows between nodes
   const arrow = (x1, y, x2, label) => {
     const g = el("g", {});
-    g.appendChild(rc.line(x1, y, x2, y, { stroke: "#2b2118", strokeWidth: 2, roughness: 2, bowing: 1.5 }));
-    g.appendChild(rc.line(x2, y, x2 - 14, y - 8, { stroke: "#2b2118", strokeWidth: 2, roughness: 1.6 }));
-    g.appendChild(rc.line(x2, y, x2 - 14, y + 8, { stroke: "#2b2118", strokeWidth: 2, roughness: 1.6 }));
-    const t = el("text", { x: (x1 + x2) / 2, y: y - 18, "text-anchor": "middle",
-      "font-family": "Caveat, cursive", "font-size": "22", fill: "#9c4a2f" });
+    g.appendChild(rc.line(x1, y, x2, y, { stroke: "#1d1d1f", strokeWidth: 1.6, roughness: 1, bowing: 0.8 }));
+    g.appendChild(rc.line(x2, y, x2 - 13, y - 7, { stroke: "#1d1d1f", strokeWidth: 1.6, roughness: 0.8 }));
+    g.appendChild(rc.line(x2, y, x2 - 13, y + 7, { stroke: "#1d1d1f", strokeWidth: 1.6, roughness: 0.8 }));
+    const t = el("text", { x: (x1 + x2) / 2, y: y - 16, "text-anchor": "middle",
+      "font-family": SANS, "font-size": "15", "font-weight": "500", fill: "#515154" });
     t.textContent = label;
     g.appendChild(t);
     return g;
@@ -323,28 +326,28 @@ function renderArchDiagram(rough) {
   svg.appendChild(arrow(255, 170, 415, "fold"));
   svg.appendChild(arrow(580, 170, 745, "crystallize"));
 
-  // feedback arc back (CONCEPT informs new EVENTs) — curved sketchy
+  // feedback arc back (CONCEPT informs new EVENTs)
   svg.appendChild(rc.curve(
     [[825, 235], [650, 320], [400, 320], [175, 235]],
-    { stroke: "#6f7d55", strokeWidth: 1.6, roughness: 2.2, bowing: 2 }
+    { stroke: "#86868b", strokeWidth: 1.4, roughness: 1, bowing: 1 }
   ));
   const fb = el("text", { x: 500, y: 340, "text-anchor": "middle",
-    "font-family": "Caveat, cursive", "font-size": "20", fill: "#6f7d55" });
+    "font-family": SANS, "font-size": "14", fill: "#86868b" });
   fb.textContent = "intent reshapes attention — the loop closes";
   svg.appendChild(fb);
 
-  // nodes (hand-drawn circles + hachure)
+  // nodes
   nodes.forEach((n, i) => {
-    const g = el("g", { filter: "url(#crayon)" });
+    const g = el("g", {});
     g.appendChild(rc.circle(n.x, n.y, 130, {
-      stroke: n.color, strokeWidth: 2.4, roughness: 1.8, bowing: 1.3,
-      fill: n.color, fillStyle: "hachure", fillWeight: 1, hachureGap: 7,
+      stroke: n.color, strokeWidth: 2, roughness: 0.9, bowing: 0.8,
+      fill: n.color, fillStyle: "hachure", fillWeight: 0.8, hachureGap: 9,
     }));
-    const t1 = el("text", { x: n.x, y: n.y - 2, "text-anchor": "middle",
-      "font-family": "Cormorant Garamond, serif", "font-weight": "700", "font-size": "30", fill: "#2b2118" });
+    const t1 = el("text", { x: n.x, y: n.y - 1, "text-anchor": "middle",
+      "font-family": SANS, "font-weight": "700", "font-size": "24", fill: "#1d1d1f" });
     t1.textContent = n.label;
-    const t2 = el("text", { x: n.x, y: n.y + 22, "text-anchor": "middle",
-      "font-family": "IBM Plex Mono, monospace", "font-size": "11", fill: "#4a3b2b",
+    const t2 = el("text", { x: n.x, y: n.y + 20, "text-anchor": "middle",
+      "font-family": MONO, "font-size": "10", fill: "#515154",
       "letter-spacing": "0.12em" });
     t2.textContent = n.sub.toUpperCase();
     svg.append(g, t1, t2);
@@ -353,11 +356,11 @@ function renderArchDiagram(rough) {
   // TIME axis threading underneath
   const timeY = 40;
   svg.appendChild(rc.line(120, timeY, 880, timeY, {
-    stroke: "#3f4f6b", strokeWidth: 1.2, roughness: 2.6, bowing: 1.5, strokeLineDash: [2, 8],
+    stroke: "#86868b", strokeWidth: 1, roughness: 1, bowing: 1, strokeLineDash: [2, 8],
   }));
   const tlabel = el("text", { x: 500, y: timeY - 12, "text-anchor": "middle",
-    "font-family": "Caveat, cursive", "font-size": "22", fill: "#3f4f6b" });
-  tlabel.textContent = "TIME — the fourth axis";
+    "font-family": MONO, "font-size": "11", "letter-spacing": "0.1em", fill: "#86868b" });
+  tlabel.textContent = "TIME · the fourth axis";
   svg.appendChild(tlabel);
   // tick marks down to each node
   nodes.forEach((n) => {
@@ -401,7 +404,7 @@ function renderBrainFallback(host, data) {
   wrap.setAttribute("role", "list");
   wrap.setAttribute("aria-label", "Memory systems mapped to brain regions");
   wrap.innerHTML =
-    `<p class="brain-fallback__note caveat">interactive sketch unavailable — the atlas, in plain ink:</p>` +
+    `<p class="brain-fallback__note">Interactive diagram unavailable. Memory systems:</p>` +
     data.systems
       .map(
         (s) => `<div class="brain-fallback__row" data-status="${s.status}" role="listitem">
@@ -428,8 +431,8 @@ function renderHardFallback() {
   const host = document.getElementById("brainHost");
   if (host) {
     host.innerHTML =
-      `<div class="brain-fallback"><p class="brain-fallback__note caveat">` +
-      `The memory atlas could not be loaded right now. CogniFold models roughly 60% of ` +
+      `<div class="brain-fallback"><p class="brain-fallback__note">` +
+      `Coverage data could not be loaded. CogniFold models roughly 60% of ` +
       `human memory systems — see the architecture and results below.</p></div>`;
   }
 }

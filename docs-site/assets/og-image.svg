@@ -32,16 +32,16 @@
   </g>
 
   <!-- title plate -->
-  <text x="90" y="248" font-family="Cormorant Garamond, Georgia, serif" font-weight="700" font-size="120" letter-spacing="-3" fill="#1d1d1f">CogniFold</text>
+  <text x="90" y="248" font-family="-apple-system, Helvetica, Arial, sans-serif" font-weight="700" font-size="112" letter-spacing="-5" fill="#1d1d1f">CogniFold</text>
   <text x="94" y="316" font-family="-apple-system, Helvetica, Arial, sans-serif" font-size="34" fill="#515154">A brain-inspired, always-on agent memory</text>
   <text x="94" y="362" font-family="-apple-system, Helvetica, Arial, sans-serif" font-size="34" fill="#515154">that folds events into cognitive structure.</text>
 
   <!-- coverage chip -->
   <g transform="translate(94,432)">
     <rect x="0" y="0" width="420" height="68" rx="34" fill="#f5f5f7" stroke="#1d1d1f" stroke-opacity="0.12" stroke-width="2"/>
-    <text x="30" y="47" font-family="Cormorant Garamond, Georgia, serif" font-weight="700" font-size="42" fill="#1d1d1f">~60%</text>
+    <text x="30" y="46" font-family="-apple-system, Helvetica, Arial, sans-serif" font-weight="700" font-size="38" fill="#1d1d1f">~60%</text>
     <text x="142" y="45" font-family="-apple-system, Helvetica, Arial, sans-serif" font-size="26" fill="#515154">of human memory modeled</text>
   </g>
 
-  <text x="94" y="572" font-family="IBM Plex Mono, monospace" font-size="20" letter-spacing="4" fill="#86868b">OPENNORVE · COGNIFOLD</text>
+  <text x="94" y="572" font-family="ui-monospace, 'SF Mono', Menlo, Consolas, monospace" font-size="20" letter-spacing="4" fill="#86868b">OPENNORVE · COGNIFOLD</text>
 </svg>

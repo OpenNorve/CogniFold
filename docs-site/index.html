@@ -23,20 +23,16 @@
   <meta property="og:image:type" content="image/svg+xml" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
-  <meta property="og:image:alt" content="CogniFold codex title plate with a hand-drawn crayon brain and the line: ~60% of human memory modeled." />
+  <meta property="og:image:alt" content="CogniFold — a brain-inspired agent memory; ~60% of human memory systems modeled." />
 
   <!-- Twitter / X card -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="CogniFold — A brain-inspired always-on agent memory" />
   <meta name="twitter:description" content="An always-on agent memory that folds events into self-emerging cognitive structure. ~60% of human memory systems modeled." />
   <meta name="twitter:image" content="https://opennorve.github.io/CogniFold/assets/og-image.svg" />
-  <meta name="twitter:image:alt" content="CogniFold codex title plate with a hand-drawn crayon brain." />
+  <meta name="twitter:image:alt" content="CogniFold — memory-system coverage map." />
 
-  <!-- Google Fonts: Cormorant Garamond (display serif), EB Garamond (body serif), Caveat (handwriting) -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
-
+  <!-- System fonts only; no web-font dependency. -->
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
@@ -94,24 +90,14 @@
   </header>
 
   <main id="top">
-    <!-- ============ 1. HERO — manuscript title plate ============ -->
+    <!-- ============ 1. HERO ============ -->
     <section class="hero" id="hero">
-      <div class="hero__guides" aria-hidden="true">
-        <svg viewBox="0 0 1000 700" preserveAspectRatio="xMidYMid slice">
-          <circle cx="500" cy="350" r="300" fill="none" stroke="var(--ink-faint)" stroke-width="0.8" />
-          <circle cx="500" cy="350" r="185" fill="none" stroke="var(--ink-faint)" stroke-width="0.6" />
-          <rect x="200" y="50" width="600" height="600" fill="none" stroke="var(--ink-faint)" stroke-width="0.6" />
-          <line x1="500" y1="50" x2="500" y2="650" stroke="var(--ink-faint)" stroke-width="0.5" />
-          <line x1="200" y1="350" x2="800" y2="350" stroke="var(--ink-faint)" stroke-width="0.5" />
-        </svg>
-      </div>
-
       <div class="hero__inner reveal">
-        <p class="hero__eyebrow">Codex of Artificial Memory · MMXXVI</p>
+        <p class="hero__eyebrow">Brain-inspired agent memory</p>
         <h1 class="hero__title">CogniFold</h1>
         <p class="hero__tagline">
-          A brain-inspired, always-on agent memory that folds events into
-          <em>self-emerging cognitive structure.</em>
+          An always-on agent memory that folds events into self-emerging
+          cognitive structure, with proactive intent crystallization.
         </p>
 
         <div class="hero__ring" id="heroRing" aria-label="Approximately 60 percent of human memory systems modeled">
@@ -122,31 +108,29 @@
           <a class="pill pill--ink" href="https://github.com/OpenNorve/CogniFold" target="_blank" rel="noopener">
             View on GitHub
           </a>
-          <a class="pill pill--ghost" href="#brain">
-            Explore the brain <span aria-hidden="true">↓</span>
+          <a class="pill pill--ghost" href="https://arxiv.org/abs/2605.13438" target="_blank" rel="noopener">
+            Read the paper
           </a>
         </div>
 
-        <p class="margin-note hero__note">
-          <span class="caveat">“The noblest pleasure is the joy of understanding.”</span>
-        </p>
+        <p class="hero__note">Apache-2.0 · Python · MCP-compatible</p>
       </div>
       <div class="ink-divider" aria-hidden="true"></div>
     </section>
 
-    <!-- ============ 2. THE MEMORY BRAIN — interactive centerpiece ============ -->
+    <!-- ============ 2. MEMORY-SYSTEM COVERAGE — interactive map ============ -->
     <section class="brain-sec" id="brain">
       <div class="section-head reveal">
-        <p class="kicker">Plate I</p>
-        <h2 class="display">The Memory Brain</h2>
+        <p class="kicker">Coverage map</p>
+        <h2 class="display">Memory systems</h2>
         <p class="lede">
-          A living atlas of human memory, drawn by hand. Each region maps to a memory system —
-          hover, tab, or tap to wake its neurons and read the field notes.
+          CogniFold maps twelve human memory systems onto its topology. Each brain region links to a
+          system — hover, tab, or tap to inspect its mechanism, evidence, and status.
         </p>
       </div>
 
       <div class="brain-layout">
-        <figure class="brain-stage reveal" aria-label="Interactive hand-drawn anatomical brain mapping memory systems">
+        <figure class="brain-stage reveal" aria-label="Interactive brain diagram mapping human memory systems to CogniFold mechanisms">
           <div id="brainHost" class="brain-host"></div>
           <figcaption class="brain-legend" aria-hidden="true">
             <span class="lg lg--covered"><i></i>covered</span>
@@ -172,16 +156,16 @@
     <!-- ============ 3. ARCHITECTURE — tri-layer CLS loop ============ -->
     <section class="arch" id="architecture">
       <div class="section-head reveal">
-        <p class="kicker">Plate II</p>
-        <h2 class="display">The Folding Loop</h2>
+        <p class="kicker">Architecture</p>
+        <h2 class="display">The folding loop</h2>
         <p class="lede">
-          Complementary Learning Systems, redrawn for an agent. Episodes are inked, folded into
-          concepts, and — the differentiator — crystallized forward into <em>intent</em>.
+          A Complementary Learning Systems design for agents: episodes are captured, folded into
+          concepts, and crystallized forward into intent. Proactive intent is the differentiator.
         </p>
       </div>
 
       <div class="arch__diagram reveal" id="archDiagram" aria-label="Three-layer memory loop: Event, Concept, Intent, anchored by Time">
-        <!-- sketched CLS diagram injected by app.js -->
+        <!-- CLS diagram injected by app.js -->
       </div>
 
       <div class="arch__cards">
@@ -201,16 +185,16 @@
           <p>Concepts and time anchors crystallize into proactive intent — remembering to act, by topology.</p>
         </div>
       </div>
-      <p class="margin-note arch__note caveat">tempus — the fourth axis — threads through every layer</p>
+      <p class="arch__note note">Time is the fourth axis, threading through every layer.</p>
       <div class="ink-divider" aria-hidden="true"></div>
     </section>
 
-    <!-- ============ 4. BENCHMARKS — results ledger ============ -->
+    <!-- ============ 4. BENCHMARKS ============ -->
     <section class="ledger" id="benchmarks">
       <div class="section-head reveal">
-        <p class="kicker">Plate III</p>
-        <h2 class="display">The Results Ledger</h2>
-        <p class="lede">Measured on public benchmarks. No competitor figures invented; entries are CogniFold's own marks.</p>
+        <p class="kicker">Results</p>
+        <h2 class="display">Benchmarks</h2>
+        <p class="lede">CogniFold's measured results on public benchmarks. Figures are CogniFold's own; no competitor numbers are shown.</p>
       </div>
       <div class="ledger__grid" id="ledgerGrid">
         <!-- benchmark cards injected by app.js -->
@@ -221,29 +205,29 @@
     <!-- ============ 5. QUICKSTART + INTEGRATIONS ============ -->
     <section class="quick" id="quickstart">
       <div class="section-head reveal">
-        <p class="kicker">Plate IV</p>
-        <h2 class="display">A Recipe for Memory</h2>
-        <p class="lede">Install, serve, and connect over MCP. Three steps to an agent that remembers.</p>
+        <p class="kicker">Quickstart</p>
+        <h2 class="display">Get started</h2>
+        <p class="lede">Install, run the server, and connect any MCP-capable agent.</p>
       </div>
 
       <div class="quick__layout">
         <div class="recipe reveal">
-          <div class="recipe__tab">recipe · in vitro</div>
-          <pre class="recipe__code"><code><span class="c"># 1 · install</span>
+          <div class="recipe__tab">shell</div>
+          <pre class="recipe__code"><code><span class="c"># install</span>
 pip install cognifold
 
-<span class="c"># 2 · run the memory server</span>
+<span class="c"># run the memory server</span>
 cognifold serve --port 8800
 
-<span class="c"># 3 · connect any MCP-capable agent</span>
+<span class="c"># connect any MCP-capable agent</span>
 cognifold mcp --transport stdio</code></pre>
         </div>
 
         <ul class="quick__links reveal" aria-label="Documentation links">
-          <li><a href="../docs/DEPLOYMENT.md"><span class="caveat">i.</span> Deployment guide</a></li>
-          <li><a href="../docs/INTEGRATIONS.md"><span class="caveat">ii.</span> Integrations &amp; MCP</a></li>
-          <li><a href="../docs/PROMPTS.md"><span class="caveat">iii.</span> Prompt library</a></li>
-          <li><a href="https://github.com/OpenNorve/CogniFold" target="_blank" rel="noopener"><span class="caveat">iv.</span> Source on GitHub</a></li>
+          <li><a href="../docs/DEPLOYMENT.md"><span class="idx">01</span> Deployment guide</a></li>
+          <li><a href="../docs/INTEGRATIONS.md"><span class="idx">02</span> Integrations &amp; MCP</a></li>
+          <li><a href="../docs/PROMPTS.md"><span class="idx">03</span> Prompt library</a></li>
+          <li><a href="https://github.com/OpenNorve/CogniFold" target="_blank" rel="noopener"><span class="idx">04</span> Source on GitHub</a></li>
         </ul>
       </div>
       <div class="ink-divider" aria-hidden="true"></div>
@@ -258,11 +242,6 @@ cognifold mcp --transport stdio</code></pre>
         Apache-2.0 ·
         <a href="https://arxiv.org/abs/2605.13438" target="_blank" rel="noopener">arXiv:2605.13438</a> ·
         <a href="https://github.com/OpenNorve/CogniFold" target="_blank" rel="noopener">OpenNorve / CogniFold</a>
-      </p>
-      <p class="footer__mirror">
-        <span class="mirror" tabindex="0" role="img"
-              aria-label="Mirror-writing easter egg, reading: memoria plicat ante — memory folds forward"
-              title="memoria plicat ante — read in the mirror, as Leonardo wrote">memoria plicat ante</span>
       </p>
     </div>
   </footer>

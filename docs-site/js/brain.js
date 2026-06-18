@@ -27,8 +27,8 @@ const reduceMotion =
   window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 // --- Region geometry (lateral view, hand-tuned) -------------------------
-// Each region: closed polygon (for rough fill), a label anchor, the systems
-// it hosts, and whether the label is rendered as mirror-writing (easter egg).
+// Each region: closed polygon (for rough fill), a label anchor, and the
+// memory systems it hosts.
 const REGIONS = [
   {
     id: "prefrontal",
@@ -42,7 +42,6 @@ const REGIONS = [
     label: "neocortex",
     systems: ["semantic", "priming"],
     labelAt: [430, 95],
-    mirror: true,
     poly: [[235, 150], [300, 110], [400, 95], [500, 110], [560, 160], [520, 215], [420, 215], [320, 210], [250, 190]],
   },
   {
@@ -71,7 +70,6 @@ const REGIONS = [
     label: "cerebellum",
     systems: ["procedural"],
     labelAt: [600, 380],
-    mirror: true,
     poly: [[540, 320], [620, 310], [675, 350], [675, 420], [610, 450], [545, 420], [525, 365]],
   },
   {
@@ -279,16 +277,7 @@ export function renderBrain(host, data, onSelect, rough) {
     // label
     const [lx, ly] = reg.labelAt;
     const label = el("text", { class: "region__label", x: lx, y: ly, "text-anchor": "middle" });
-    if (reg.mirror) {
-      label.setAttribute("class", "region__label region__mirror");
-      label.setAttribute("transform", `translate(${2 * lx} 0) scale(-1 1)`);
-      label.textContent = reg.label;
-      const t = el("title");
-      t.textContent = `${reg.label} (mirror-writing, as Leonardo wrote)`;
-      label.appendChild(t);
-    } else {
-      label.textContent = reg.label;
-    }
+    label.textContent = reg.label;
     g.appendChild(label);
 
     regionEls.set(reg.id, { g, status, systems: reg.systems });
