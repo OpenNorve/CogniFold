@@ -127,6 +127,26 @@
 
 ---
 
+## Differentiation vs SOTA
+
+The North-Star process says a mechanism only earns its place if it pays off where incumbents leave a gap. Here is where CogniFold's surviving mechanisms diverge from the current memory-system landscape:
+
+- **Proactive intent (unique).** CogniFold's INTENT (`i-`) layer crystallizes goals from graph *topology* — it remembers to act, not just to recall. No mainstream memory system models prospective memory as an emergent structural property; they are all reactive retrieval stores. This is the differentiator the compass points at, not a bolt-on.
+- **CLS tri-layer substrate.** Episodic EVENTs fold into semantic CONCEPTs into prefrontal INTENTs, mapped to hippocampal → neocortical → prefrontal regions (see `src/cognifold/brain/memory_coverage.json` for the honest ~60% taxonomy coverage). Most systems collapse memory into a single embedding store; the tri-layer is what makes consolidation and proactivity expressible at all.
+- **Explainable graph rewrites.** Accumulation / compression / decay / completion are transparent, auditable graph operations — test-time learning with no gradient updates and no surface-text rewriting. The rewrite log *is* the explanation.
+
+Positioned against named incumbents:
+
+| System | Core strength | What CogniFold adds |
+|---|---|---|
+| **Mem0** | Portable, framework-agnostic memory layer | Proactive intent + tri-layer structure rather than flat extracted facts |
+| **Zep / Graphiti** | Temporal knowledge graph, bi-temporal edges | Prospective-memory layer and CLS consolidation on top of the temporal graph |
+| **EverOS** | Local-first, human-readable markdown memory | Emergent typed/weighted graph topology where goals surface on their own, not hand-authored notes |
+
+Honesty clause (per the North-Star kill discipline): non-declarative systems — procedural, priming, conditioning — and affective/sensory memory are **planned, not modeled**. The published coverage number recomputes from the per-system status so it cannot drift upward without the evidence.
+
+---
+
 ## In one line
 
 **Let problems drive and the brain supply; put every mechanism through the cheap "feasibility" gate and the hard "pre-deployment validation" gate; quantify and publish both success (transfer width) and failure (kill).** Lock this process down, and "what to research next" falls out of the gaps on its own.

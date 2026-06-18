@@ -9,7 +9,9 @@
 
 </div>
 
-<p><em>A <strong>brain-inspired always-on agent memory</strong> that folds continuously arriving events into self-emerging cognitive structure — designed for the next generation of proactive assistants.</em></p>
+<p><em>A <strong>brain-inspired always-on agent memory</strong> that folds continuously arriving events into self-emerging cognitive structure — designed for the next generation of proactive assistants. Neural-inspired by design: memory systems are mapped to the brain regions that implement them, not metaphorically borrowed.</em></p>
+
+<p align="center"><strong>🧠 Brain Memory Coverage: ~60%</strong> of the human memory taxonomy modeled (working, episodic, semantic, prospective, temporal) — see the live breakdown at <a href="https://opennorve.github.io/CogniFold/">opennorve.github.io/CogniFold</a> or query <code>GET /api/v1/brain/coverage</code>.</p>
 
 <div align="center">
 

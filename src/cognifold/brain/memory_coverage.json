@@ -1,0 +1,144 @@
+{
+  "version": "1.0",
+  "methodology": "Squire taxonomy (declarative/non-declarative) + Baddeley working memory + CoALA (arXiv:2309.02427) agent-memory mapping",
+  "status_scores": {
+    "covered": 1.0,
+    "partial": 0.5,
+    "planned": 0.0
+  },
+  "overall_coverage_pct": 60,
+  "systems": [
+    {
+      "id": "working",
+      "name": "Working memory",
+      "taxonomy_group": "Baddeley working memory",
+      "brain_region": "prefrontal / parietal cortex",
+      "status": "covered",
+      "weight": 1.0,
+      "cognifold_mechanism": "hierarchical immediate band — src/cognifold/scoring/hierarchical.py",
+      "evidence": "BABILong 96%",
+      "description": "Short-lived, capacity-limited active store. CogniFold models this as the immediate hierarchical context band that keeps recently activated nodes salient during scoring."
+    },
+    {
+      "id": "episodic",
+      "name": "Episodic memory",
+      "taxonomy_group": "declarative",
+      "brain_region": "hippocampus",
+      "status": "covered",
+      "weight": 1.0,
+      "cognifold_mechanism": "EVENT nodes — src/cognifold/models/node.py",
+      "evidence": "LoCoMo 82.8%",
+      "description": "Memory for specific events bound to time and context. CogniFold stores these as EVENT (e-) nodes, the hippocampal/episodic substrate of the graph."
+    },
+    {
+      "id": "semantic",
+      "name": "Semantic memory",
+      "taxonomy_group": "declarative",
+      "brain_region": "neocortex",
+      "status": "covered",
+      "weight": 1.0,
+      "cognifold_mechanism": "CONCEPT nodes — src/cognifold/models/node.py",
+      "evidence": "LongMemEval ~93%",
+      "description": "General world knowledge abstracted away from individual episodes. CogniFold consolidates recurring EVENTs into CONCEPT (c-) nodes, the neocortical/semantic layer."
+    },
+    {
+      "id": "prospective",
+      "name": "Prospective / intent memory",
+      "taxonomy_group": "intent / prospective",
+      "brain_region": "prefrontal cortex",
+      "status": "covered",
+      "weight": 1.0,
+      "cognifold_mechanism": "INTENT nodes — src/cognifold/intent/ (UNIQUE: emerges from topology)",
+      "evidence": "ToMi 91.6%",
+      "description": "Remembering to act on goals in the future. CogniFold's INTENT (i-) nodes are a differentiator: proactive goals emerge from graph topology rather than being stored verbatim."
+    },
+    {
+      "id": "temporal",
+      "name": "Temporal memory",
+      "taxonomy_group": "temporal cognition",
+      "brain_region": "hippocampus / entorhinal cortex",
+      "status": "covered",
+      "weight": 0.8,
+      "cognifold_mechanism": "TIME nodes + src/cognifold/temporal/",
+      "evidence": "StreamingQA",
+      "description": "Ordering and dating of memories. CogniFold extracts and resolves temporal references into TIME (t-) nodes, anchoring events on a timeline."
+    },
+    {
+      "id": "consolidation",
+      "name": "Systems consolidation",
+      "taxonomy_group": "systems consolidation",
+      "brain_region": "hippocampo-neocortical",
+      "status": "partial",
+      "weight": 0.8,
+      "cognifold_mechanism": "src/cognifold/graph/consolidation.py",
+      "evidence": "internal benchmarks",
+      "description": "Gradual transfer of episodic detail into stable semantic structure. CogniFold consolidates EVENTs into CONCEPTs offline; the schedule and replay dynamics are still maturing."
+    },
+    {
+      "id": "forgetting",
+      "name": "Forgetting / pruning",
+      "taxonomy_group": "decay / pruning",
+      "brain_region": "synaptic / hippocampal",
+      "status": "partial",
+      "weight": 0.7,
+      "cognifold_mechanism": "recency decay + orphan prune",
+      "evidence": "internal benchmarks",
+      "description": "Adaptive removal of low-value memories. CogniFold applies recency decay and prunes orphaned nodes; richer interference-based forgetting is not yet modeled."
+    },
+    {
+      "id": "procedural",
+      "name": "Procedural memory",
+      "taxonomy_group": "non-declarative",
+      "brain_region": "basal ganglia / cerebellum",
+      "status": "planned",
+      "weight": 0.9,
+      "cognifold_mechanism": "planned",
+      "evidence": "",
+      "description": "Skills and habits acquired through practice. Not yet modeled; a candidate for learned action policies over the graph."
+    },
+    {
+      "id": "priming",
+      "name": "Priming",
+      "taxonomy_group": "non-declarative",
+      "brain_region": "neocortex",
+      "status": "planned",
+      "weight": 0.5,
+      "cognifold_mechanism": "planned",
+      "evidence": "",
+      "description": "Implicit facilitation of recognition by prior exposure. Not yet modeled as a distinct activation-history mechanism."
+    },
+    {
+      "id": "conditioning",
+      "name": "Classical conditioning",
+      "taxonomy_group": "non-declarative",
+      "brain_region": "amygdala / cerebellum",
+      "status": "planned",
+      "weight": 0.5,
+      "cognifold_mechanism": "planned",
+      "evidence": "",
+      "description": "Learned stimulus-response associations. Not yet modeled in the graph."
+    },
+    {
+      "id": "affective",
+      "name": "Affective / emotional memory",
+      "taxonomy_group": "emotional tagging",
+      "brain_region": "amygdala",
+      "status": "planned",
+      "weight": 0.6,
+      "cognifold_mechanism": "planned",
+      "evidence": "",
+      "description": "Emotional salience that modulates what is remembered. Not yet modeled; a candidate for affective weighting of node importance."
+    },
+    {
+      "id": "sensory",
+      "name": "Sensory register",
+      "taxonomy_group": "sensory register",
+      "brain_region": "sensory cortices",
+      "status": "planned",
+      "weight": 0.4,
+      "cognifold_mechanism": "planned",
+      "evidence": "",
+      "description": "Very brief, high-fidelity buffer for raw perceptual input. Out of scope for a text-centric memory graph today."
+    }
+  ]
+}

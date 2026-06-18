@@ -102,6 +102,11 @@ def create_app(settings: AppSettings | None = None) -> FastAPI:
 
     app.include_router(api_router, dependencies=[Depends(auth_validator)])
 
+    # Brain memory coverage (public, no auth — consumed by the showcase site)
+    from cognifold.service.routes.brain import router as brain_router
+
+    app.include_router(brain_router, prefix="/api/v1")
+
     # Health endpoints (no auth)
     @app.get("/health", tags=["health"])
     async def health() -> dict[str, str]:  # pyright: ignore[reportUnusedFunction]
