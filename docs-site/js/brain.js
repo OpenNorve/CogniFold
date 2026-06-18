@@ -1,200 +1,431 @@
-// brain.js — renders a stylized anatomical brain (SVG) with labeled regions.
-// Each region maps to one or more memory-system ids. Regions light up by the
-// aggregated status of the systems they host, and expose hover highlighting.
+// brain.js — the interactive "Memory Brain".
+// A hand-drawn (rough.js) anatomical brain rendered in SVG, with a crayon-
+// textured neuron network overlaid. Regions map to memory systems from the
+// data file; firing/pulse animation runs on interaction and as an idle
+// ambient shimmer. Honors prefers-reduced-motion.
+//
+// The rough.js instance is passed in from app.js (vendored locally) rather than
+// imported here, so a missing rough.js degrades gracefully instead of crashing
+// the whole module graph — app.js falls back to a static panel in that case.
 
-// Region geometry: a lateral (side) view of the brain. Paths are hand-tuned
-// blobs approximating the major lobes / structures. Coordinates live in a
-// 0..600 x 0..420 viewBox.
-export const REGIONS = [
+const SVG_NS = "http://www.w3.org/2000/svg";
+const W = 760;
+const H = 560;
+
+const PALETTE = {
+  covered: "#8a6a2c",
+  partial: "#8a7d52",
+  planned: "#9a8c74",
+  ink: "#2b2118",
+  sanguine: "#9c4a2f",
+  ochre: "#b9842f",
+  indigo: "#3f4f6b",
+};
+
+const reduceMotion =
+  window.matchMedia &&
+  window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+// --- Region geometry (lateral view, hand-tuned) -------------------------
+// Each region: closed polygon (for rough fill), a label anchor, the systems
+// it hosts, and whether the label is rendered as mirror-writing (easter egg).
+const REGIONS = [
   {
     id: "prefrontal",
-    label: "Prefrontal cortex",
+    label: "prefrontal cortex",
     systems: ["working", "prospective"],
-    // front of brain (left side of viewBox)
-    path: "M70 150 C60 110 95 70 150 64 C180 60 205 74 214 100 C200 130 196 165 192 196 C170 206 130 214 104 206 C80 198 76 176 70 150 Z",
-    labelXY: [118, 138],
+    labelAt: [150, 150],
+    poly: [[120, 250], [110, 190], [140, 150], [210, 140], [250, 175], [235, 235], [185, 270]],
   },
   {
     id: "neocortex",
-    label: "Neocortex",
-    systems: ["semantic"],
-    // top / parietal-occipital dome
-    path: "M214 100 C232 60 300 44 372 56 C448 68 498 110 500 158 C470 168 420 170 372 168 C310 166 250 158 200 150 C202 132 208 114 214 100 Z",
-    labelXY: [350, 100],
+    label: "neocortex",
+    systems: ["semantic", "priming"],
+    labelAt: [430, 95],
+    mirror: true,
+    poly: [[235, 150], [300, 110], [400, 95], [500, 110], [560, 160], [520, 215], [420, 215], [320, 210], [250, 190]],
   },
   {
     id: "hippocampus",
-    label: "Hippocampus",
-    systems: ["episodic", "temporal", "consolidation"],
-    // central medial-temporal seahorse region
-    path: "M250 200 C270 188 320 188 348 200 C372 210 378 234 360 248 C330 262 282 262 256 248 C238 238 234 210 250 200 Z",
-    labelXY: [305, 226],
+    label: "hippocampus",
+    systems: ["episodic", "temporal"],
+    labelAt: [355, 365],
+    poly: [[300, 320], [360, 300], [420, 315], [445, 345], [410, 372], [345, 372], [305, 350]],
   },
   {
-    id: "temporal-lobe",
-    label: "Temporal lobe",
-    systems: ["sensory", "priming"],
-    // lower-front lobe
-    path: "M150 230 C140 268 168 300 220 306 C268 312 300 296 306 270 C282 264 256 256 238 246 C210 232 178 226 150 230 Z",
-    labelXY: [212, 286],
+    id: "basal",
+    label: "basal ganglia",
+    systems: ["procedural"],
+    labelAt: [470, 300],
+    poly: [[440, 270], [500, 260], [545, 285], [535, 325], [480, 330], [450, 305]],
   },
   {
     id: "amygdala",
-    label: "Amygdala",
+    label: "amygdala",
     systems: ["affective", "conditioning"],
-    // small almond near hippocampus
-    path: "M236 252 C232 240 252 234 266 240 C278 246 276 262 262 266 C248 270 240 264 236 252 Z",
-    labelXY: [214, 264],
-  },
-  {
-    id: "neocortex-back",
-    label: "Cortical assoc.",
-    systems: ["forgetting"],
-    // occipital back lobe
-    path: "M448 168 C492 168 522 192 520 226 C518 256 488 274 452 270 C424 266 408 244 410 218 C412 192 426 172 448 168 Z",
-    labelXY: [468, 222],
+    labelAt: [275, 395],
+    poly: [[250, 360], [295, 350], [320, 375], [300, 405], [255, 400], [240, 380]],
   },
   {
     id: "cerebellum",
-    label: "Cerebellum",
+    label: "cerebellum",
     systems: ["procedural"],
-    // bottom-back ridged structure
-    path: "M380 268 C420 262 470 276 480 308 C486 334 456 356 410 356 C368 356 340 338 338 312 C336 290 352 272 380 268 Z",
-    labelXY: [418, 322],
+    labelAt: [600, 380],
+    mirror: true,
+    poly: [[540, 320], [620, 310], [675, 350], [675, 420], [610, 450], [545, 420], [525, 365]],
   },
   {
-    id: "basal-ganglia",
-    label: "Basal ganglia",
-    systems: ["procedural"],
-    // deep central nucleus
-    path: "M300 232 C322 226 350 234 356 252 C360 268 342 282 318 282 C296 282 282 268 284 252 C286 240 292 234 300 232 Z",
-    labelXY: [322, 258],
+    id: "sensory",
+    label: "sensory cortices",
+    systems: ["sensory"],
+    labelAt: [555, 130],
+    poly: [[505, 115], [575, 130], [600, 170], [560, 200], [515, 185], [510, 145]],
   },
 ];
 
-const STATUS_COLOR = { covered: "#38e8ff", partial: "#ffb347", planned: "#4a5380" };
+// Annotated nodes (not anatomical regions): consolidation & forgetting.
+// Rendered as small margin annotations with sketchy leader lines.
+const ANNOT_NODES = [
+  { id: "consolidation", at: [320, 470], leadTo: [400, 360], label: "consolidation" },
+  { id: "forgetting", at: [600, 480], leadTo: [560, 400], label: "forgetting" },
+];
 
-// Aggregate a region's status from the systems it hosts.
-function regionStatus(region, systemsById) {
-  const statuses = region.systems
-    .map((sid) => systemsById[sid]?.status)
-    .filter(Boolean);
-  if (statuses.some((s) => s === "covered")) return "covered";
-  if (statuses.some((s) => s === "partial")) return "partial";
-  return "planned";
+// Brain outer hull (the iconic side-profile cortex) for the inked outline.
+const HULL = [
+  [110, 250], [105, 185], [150, 130], [240, 100], [360, 86],
+  [480, 92], [575, 120], [630, 165], [660, 215],
+  [675, 345], [678, 420], [620, 458], [545, 430],
+  [470, 445], [400, 455], [320, 470], [255, 440],
+  [220, 405], [180, 380], [150, 340], [122, 300],
+];
+
+// --- helpers ------------------------------------------------------------
+function el(tag, attrs = {}) {
+  const n = document.createElementNS(SVG_NS, tag);
+  for (const [k, v] of Object.entries(attrs)) n.setAttribute(k, v);
+  return n;
 }
 
-const SVGNS = "http://www.w3.org/2000/svg";
-function el(name, attrs = {}) {
-  const e = document.createElementNS(SVGNS, name);
-  for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v);
-  return e;
+function aggregateStatus(systemIds, systemsById) {
+  // covered if any covered, else partial if any partial, else planned.
+  let best = "planned";
+  for (const id of systemIds) {
+    const s = systemsById.get(id)?.status;
+    if (s === "covered") return "covered";
+    if (s === "partial") best = "partial";
+  }
+  return best;
 }
 
-/**
- * Render the brain into `mount`.
- * @returns {{ highlightBySystem: (sid:string|null)=>void, regionForSystem: (sid:string)=>string|undefined }}
- */
-export function renderBrain(mount, systems, { onRegionEnter, onRegionLeave } = {}) {
-  const systemsById = Object.fromEntries(systems.map((s) => [s.id, s]));
+function centroid(poly) {
+  const n = poly.length;
+  let x = 0, y = 0;
+  for (const [px, py] of poly) { x += px; y += py; }
+  return [x / n, y / n];
+}
 
-  const svg = el("svg", {
-    viewBox: "0 0 600 420",
-    role: "img",
-    "aria-label": "Anatomical brain showing which memory systems CogniFold models",
-  });
-
-  // glow filter
-  const defs = el("defs");
-  const filter = el("filter", { id: "brainGlow", x: "-40%", y: "-40%", width: "180%", height: "180%" });
-  const blur = el("feGaussianBlur", { in: "SourceGraphic", stdDeviation: "5", result: "b" });
-  const merge = el("feMerge");
-  merge.appendChild(el("feMergeNode", { in: "b" }));
-  merge.appendChild(el("feMergeNode", { in: "SourceGraphic" }));
-  filter.appendChild(blur);
-  filter.appendChild(merge);
-  defs.appendChild(filter);
-  svg.appendChild(defs);
-
-  // faint full-brain silhouette behind regions for cohesion
-  const silhouette = el("path", {
-    d: "M70 150 C55 95 110 52 180 50 C250 48 320 42 400 50 C480 58 528 104 522 160 C530 210 512 262 480 300 C470 345 420 366 360 360 C300 372 250 360 210 320 C160 318 130 300 120 270 C90 262 70 234 66 196 C62 178 64 164 70 150 Z",
-    fill: "rgba(155,107,255,0.04)",
-    stroke: "rgba(155,107,255,0.18)",
-    "stroke-width": "1.5",
-  });
-  svg.appendChild(silhouette);
-
-  // central connective threads (subtle neural net feel)
-  const threads = [
-    [118, 138, 305, 226], [305, 226, 350, 100], [305, 226, 322, 258],
-    [322, 258, 418, 322], [214, 264, 305, 226], [468, 222, 350, 100],
-    [118, 138, 212, 286],
-  ];
-  for (const [x1, y1, x2, y2] of threads) {
-    svg.appendChild(el("line", {
-      x1, y1, x2, y2, stroke: "rgba(56,232,255,0.10)", "stroke-width": "1",
+// Build a small neuron (soma + dendrites + axon) at a point, hand-drawn.
+function makeNeuron(rc, cx, cy, color, scale = 1) {
+  const g = el("g", { class: "neuron" });
+  const r = 9 * scale;
+  // soma
+  g.appendChild(rc.circle(cx, cy, r * 2, {
+    stroke: color, strokeWidth: 1.4, roughness: 2.1, bowing: 1.8,
+    fill: color, fillStyle: "hachure", fillWeight: 0.7, hachureGap: 3,
+  }));
+  // dendrites (radiating wobbly lines)
+  const dend = 5;
+  for (let i = 0; i < dend; i++) {
+    const a = (i / dend) * Math.PI * 2 + 0.4;
+    const len = (16 + Math.random() * 10) * scale;
+    g.appendChild(rc.line(cx, cy, cx + Math.cos(a) * len, cy + Math.sin(a) * len, {
+      stroke: color, strokeWidth: 1, roughness: 2.4, bowing: 2.5,
     }));
   }
+  return g;
+}
 
-  const regionEls = {};
-  const systemToRegion = {};
+// --- main render --------------------------------------------------------
+export function renderBrain(host, data, onSelect, rough) {
+  const systemsById = new Map(data.systems.map((s) => [s.id, s]));
+  host.innerHTML = "";
 
-  for (const region of REGIONS) {
-    const status = regionStatus(region, systemsById);
-    const color = STATUS_COLOR[status];
+  const svg = el("svg", {
+    viewBox: `0 0 ${W} ${H}`,
+    role: "group",
+    "aria-label": "Hand-drawn anatomical brain. Tab through regions to inspect memory systems.",
+  });
+  host.appendChild(svg);
 
-    const g = el("g", { class: `region ${status === "planned" ? "dim" : "active"}` });
-    g.style.color = color; // drives currentColor in CSS glow
-    g.dataset.region = region.id;
+  const rc = rough.svg(svg);
 
-    const lobe = el("path", {
-      d: region.path,
-      fill: status === "planned" ? "rgba(74,83,128,0.12)" : `${color}22`,
-      stroke: color,
-    });
-    lobe.classList.add("lobe");
+  // layers
+  const lNet = el("g", { class: "net-layer", filter: "url(#crayon-soft)" });
+  const lHull = el("g", { class: "hull-layer", filter: "url(#crayon)" });
+  const lRegions = el("g", { class: "regions-layer" });
+  const lAnnot = el("g", { class: "annot-layer" });
+  svg.append(lNet, lHull, lRegions, lAnnot);
 
-    // pulsing animation for partial regions
-    if (status === "partial") {
-      const anim = el("animate", {
-        attributeName: "fill-opacity", values: "0.35;0.85;0.35",
-        dur: "2.6s", repeatCount: "indefinite",
-      });
-      lobe.appendChild(anim);
+  // ---- inked brain hull ----
+  const hull = rc.polygon(
+    HULL,
+    { stroke: PALETTE.ink, strokeWidth: 2.4, roughness: 1.8, bowing: 1.4,
+      fill: "rgba(176,138,62,0.05)", fillStyle: "solid" }
+  );
+  lHull.appendChild(hull);
+  // a couple of inner gyri folds (sketchy)
+  lHull.appendChild(rc.curve(
+    [[160, 220], [240, 180], [330, 205], [410, 175], [500, 200], [580, 180]],
+    { stroke: PALETTE.ink, strokeWidth: 1, roughness: 2.4, bowing: 2.2 }
+  ));
+  lHull.appendChild(rc.curve(
+    [[150, 300], [250, 280], [350, 300], [450, 280], [560, 300]],
+    { stroke: PALETTE.ink, strokeWidth: 1, roughness: 2.4, bowing: 2.2 }
+  ));
+  // brain stem
+  lHull.appendChild(rc.curve(
+    [[330, 470], [330, 510], [360, 540]],
+    { stroke: PALETTE.ink, strokeWidth: 2, roughness: 1.6, bowing: 1.5 }
+  ));
+
+  // ---- neuron network overlay ----
+  const realRegions = REGIONS.filter((r) => r.poly);
+  const neuronPts = [];
+  realRegions.forEach((reg) => {
+    const [cx, cy] = centroid(reg.poly);
+    const status = aggregateStatus(reg.systems, systemsById);
+    neuronPts.push({ x: cx, y: cy, status, color: PALETTE[status], regionId: reg.id });
+  });
+  // a few extra free-floating neurons for density
+  const filler = [[210, 200], [380, 150], [470, 180], [300, 250], [430, 250], [500, 360], [250, 320]];
+  filler.forEach(([x, y], i) => {
+    neuronPts.push({ x, y, status: "covered", color: PALETTE.covered, regionId: null, scale: 0.6 });
+  });
+
+  // synaptic connections (curved, crayon) — connect nearby neurons
+  const connections = [];
+  for (let i = 0; i < neuronPts.length; i++) {
+    for (let j = i + 1; j < neuronPts.length; j++) {
+      const a = neuronPts[i], b = neuronPts[j];
+      const d = Math.hypot(a.x - b.x, a.y - b.y);
+      if (d < 150 && Math.random() < 0.55) {
+        const status =
+          a.status === "planned" || b.status === "planned"
+            ? "planned"
+            : a.status === "partial" || b.status === "partial"
+            ? "partial"
+            : "covered";
+        const dash = status === "planned" ? "2 7" : status === "partial" ? "6 6" : null;
+        const path = el("path", {
+          d: `M${a.x} ${a.y} Q${(a.x + b.x) / 2 + (Math.random() * 30 - 15)} ${(a.y + b.y) / 2 + (Math.random() * 30 - 15)} ${b.x} ${b.y}`,
+          fill: "none",
+          stroke: PALETTE[status],
+          "stroke-width": status === "covered" ? 1.4 : 1,
+          "stroke-linecap": "round",
+          opacity: status === "planned" ? 0.4 : 0.7,
+          class: "synapse",
+        });
+        if (dash) path.setAttribute("stroke-dasharray", dash);
+        lNet.appendChild(path);
+        connections.push({ path, a: i, b: j, status });
+      }
     }
-
-    const [lx, ly] = region.labelXY;
-    const label = el("text", { x: lx, y: ly, "text-anchor": "middle" });
-    label.classList.add("region-label");
-    label.textContent = region.label;
-
-    g.appendChild(lobe);
-    g.appendChild(label);
-
-    g.addEventListener("mouseenter", (ev) => onRegionEnter?.(region, status, ev));
-    g.addEventListener("mouseleave", () => onRegionLeave?.(region));
-
-    svg.appendChild(g);
-    regionEls[region.id] = g;
-    for (const sid of region.systems) systemToRegion[sid] = region.id;
   }
 
-  mount.appendChild(svg);
+  // neurons
+  const neuronEls = neuronPts.map((p) => {
+    const g = makeNeuron(rc, p.x, p.y, p.color, p.scale || 1);
+    g.dataset.region = p.regionId || "";
+    g.dataset.status = p.status;
+    if (p.status === "planned") g.style.opacity = "0.45";
+    lNet.appendChild(g);
+    return g;
+  });
 
+  // ---- interactive regions ----
+  const regionEls = new Map();
+  realRegions.forEach((reg) => {
+    const status = aggregateStatus(reg.systems, systemsById);
+    const color = PALETTE[status];
+    const g = el("g", {
+      class: "region",
+      tabindex: "0",
+      role: "button",
+      "aria-label": `${reg.label}, ${status}. Activate to read field notes.`,
+    });
+    g.dataset.region = reg.id;
+
+    // hand-drawn region fill
+    const fillStyle = status === "covered" ? "hachure" : status === "partial" ? "cross-hatch" : "solid";
+    const opts = {
+      stroke: color,
+      strokeWidth: status === "planned" ? 1.1 : 2,
+      roughness: status === "planned" ? 2.8 : 1.9,
+      bowing: 2,
+      fill: status === "planned" ? "transparent" : color,
+      fillStyle,
+      fillWeight: status === "covered" ? 1.4 : 0.9,
+      hachureGap: status === "covered" ? 5 : 7,
+    };
+    if (status === "planned") opts.strokeLineDash = [3, 5];
+    g.appendChild(rc.polygon(reg.poly, opts));
+
+    // transparent hit area on top for robust pointer/focus
+    g.appendChild(el("polygon", {
+      class: "region__hit",
+      points: reg.poly.map((p) => p.join(",")).join(" "),
+    }));
+
+    // label
+    const [lx, ly] = reg.labelAt;
+    const label = el("text", { class: "region__label", x: lx, y: ly, "text-anchor": "middle" });
+    if (reg.mirror) {
+      label.setAttribute("class", "region__label region__mirror");
+      label.setAttribute("transform", `translate(${2 * lx} 0) scale(-1 1)`);
+      label.textContent = reg.label;
+      const t = el("title");
+      t.textContent = `${reg.label} (mirror-writing, as Leonardo wrote)`;
+      label.appendChild(t);
+    } else {
+      label.textContent = reg.label;
+    }
+    g.appendChild(label);
+
+    regionEls.set(reg.id, { g, status, systems: reg.systems });
+    lRegions.appendChild(g);
+
+    const fire = () => fireRegion(reg.id);
+    const select = () => {
+      onSelect(reg.systems[0], reg.id);
+      fireRegion(reg.id);
+    };
+    g.addEventListener("mouseenter", () => { highlight(reg.id); onSelect(reg.systems[0], reg.id, true); });
+    g.addEventListener("mouseleave", () => highlight(null));
+    g.addEventListener("focus", () => { highlight(reg.id); onSelect(reg.systems[0], reg.id, true); });
+    g.addEventListener("click", select);
+    g.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); select(); }
+    });
+  });
+
+  // ---- annotation nodes (consolidation / forgetting) ----
+  ANNOT_NODES.forEach((n) => {
+    const sys = systemsById.get(n.id);
+    const status = sys?.status || "partial";
+    const color = PALETTE[status];
+    // leader line
+    lAnnot.appendChild(rc.line(n.at[0], n.at[1], n.leadTo[0], n.leadTo[1], {
+      stroke: PALETTE.sanguine, strokeWidth: 0.9, roughness: 2.6, bowing: 3,
+    }));
+    // little arrowhead
+    lAnnot.appendChild(el("circle", { cx: n.leadTo[0], cy: n.leadTo[1], r: 2.5, fill: PALETTE.sanguine }));
+    const t = el("text", {
+      class: "region__label", x: n.at[0], y: n.at[1], "text-anchor": "middle",
+      fill: PALETTE.sanguine, "font-size": "13",
+    });
+    t.textContent = n.label;
+    t.style.cursor = "pointer";
+    t.setAttribute("tabindex", "0");
+    t.setAttribute("role", "button");
+    t.setAttribute("aria-label", `${n.label}, ${status}. Activate to read field notes.`);
+    const pick = () => onSelect(n.id, null);
+    t.addEventListener("click", pick);
+    t.addEventListener("mouseenter", () => onSelect(n.id, null, true));
+    t.addEventListener("focus", () => onSelect(n.id, null, true));
+    t.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pick(); }
+    });
+    lAnnot.appendChild(t);
+  });
+
+  // ---- highlight / dim logic ----
+  function highlight(activeId) {
+    regionEls.forEach(({ g }, id) => {
+      g.classList.toggle("is-active", id === activeId);
+      g.classList.toggle("is-dim", activeId !== null && id !== activeId);
+    });
+  }
+
+  // ---- firing animation: pulse travels along connections from a region ----
+  function fireRegion(regionId) {
+    if (reduceMotion) return;
+    // light the region's neuron + propagate along touching synapses
+    neuronEls.forEach((g) => {
+      if (g.dataset.region === regionId) pulseNeuron(g);
+    });
+    connections.forEach((c) => {
+      const an = neuronPts[c.a], bn = neuronPts[c.b];
+      if (an.regionId === regionId || bn.regionId === regionId) {
+        pulseSynapse(c.path);
+      }
+    });
+  }
+
+  function pulseNeuron(g) {
+    g.setAttribute("filter", "url(#ink-glow)");
+    g.animate(
+      [{ opacity: 1 }, { opacity: 0.55 }, { opacity: 1 }],
+      { duration: 700, easing: "ease-in-out" }
+    ).onfinish = () => g.removeAttribute("filter");
+  }
+
+  function pulseSynapse(path) {
+    const len = path.getTotalLength ? path.getTotalLength() : 100;
+    path.style.strokeDasharray = `${len}`;
+    const anim = path.animate(
+      [
+        { strokeDashoffset: len, stroke: PALETTE.ochre, strokeWidth: 2.6, opacity: 1 },
+        { strokeDashoffset: 0, stroke: PALETTE.ochre, strokeWidth: 2.6, opacity: 1 },
+      ],
+      { duration: 650, easing: "cubic-bezier(0.4,0,0.2,1)" }
+    );
+    anim.onfinish = () => {
+      // restore original dash style
+      const orig =
+        path.dataset.dash || (path.getAttribute("stroke-dasharray") || "");
+      path.style.strokeDasharray = "";
+      path.style.strokeDashoffset = "";
+      path.style.stroke = "";
+      path.style.strokeWidth = "";
+      path.style.opacity = "";
+    };
+  }
+
+  // ---- idle ambient "thinking" shimmer ----
+  let idleTimer = null;
+  if (!reduceMotion) {
+    const tick = () => {
+      // fire one random covered/partial neuron softly
+      const live = neuronEls.filter((g) => g.dataset.status !== "planned");
+      if (live.length) {
+        const g = live[Math.floor(Math.random() * live.length)];
+        pulseNeuron(g);
+        // fire a couple of its connections
+        const reg = g.dataset.region;
+        if (reg) {
+          connections
+            .filter((c) => neuronPts[c.a].regionId === reg || neuronPts[c.b].regionId === reg)
+            .slice(0, 2)
+            .forEach((c) => pulseSynapse(c.path));
+        }
+      }
+      idleTimer = setTimeout(tick, 1400 + Math.random() * 1600);
+    };
+    idleTimer = setTimeout(tick, 1200);
+  }
+
+  // public API for app.js (e.g. system-index hover → light region)
   return {
-    highlightBySystem(sid) {
-      for (const g of Object.values(regionEls)) g.classList.remove("highlight");
-      if (!sid) return;
-      const rid = systemToRegion[sid];
-      if (rid && regionEls[rid]) regionEls[rid].classList.add("highlight");
+    focusSystem(systemId) {
+      // find region hosting this system
+      let target = null;
+      for (const [rid, info] of regionEls) {
+        if (info.systems.includes(systemId)) { target = rid; break; }
+      }
+      highlight(target);
+      if (target) fireRegion(target);
     },
-    highlightRegion(rid) {
-      for (const g of Object.values(regionEls)) g.classList.remove("highlight");
-      if (rid && regionEls[rid]) regionEls[rid].classList.add("highlight");
-    },
-    regionForSystem(sid) {
-      return systemToRegion[sid];
-    },
+    clearHighlight() { highlight(null); },
+    destroy() { if (idleTimer) clearTimeout(idleTimer); },
   };
 }

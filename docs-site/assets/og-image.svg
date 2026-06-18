@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="CogniFold — a brain-inspired always-on agent memory, roughly 60% of human memory modeled">
+  <defs>
+    <radialGradient id="pg" cx="28%" cy="18%" r="95%">
+      <stop offset="0%" stop-color="#f5ecd7"/>
+      <stop offset="55%" stop-color="#ece0c4"/>
+      <stop offset="100%" stop-color="#d8c39a"/>
+    </radialGradient>
+    <filter id="grain">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feComponentTransfer><feFuncA type="linear" slope="0.05"/></feComponentTransfer>
+      <feComposite operator="over" in2="SourceGraphic"/>
+    </filter>
+    <filter id="wax" x="-20%" y="-20%" width="140%" height="140%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="3" seed="5" result="t"/>
+      <feDisplacementMap in="SourceGraphic" in2="t" scale="4" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+  </defs>
+
+  <!-- parchment -->
+  <rect width="1200" height="630" fill="url(#pg)"/>
+  <rect width="1200" height="630" filter="url(#grain)" opacity="0.5"/>
+
+  <!-- faint vitruvian guides -->
+  <g stroke="#2b2118" stroke-opacity="0.12" fill="none">
+    <circle cx="880" cy="315" r="250"/>
+    <circle cx="880" cy="315" r="155"/>
+    <rect x="660" y="95" width="440" height="440"/>
+  </g>
+
+  <!-- crayon brain glyph -->
+  <g filter="url(#wax)" transform="translate(820,250) scale(1.15)">
+    <path d="M-150 70 Q-160 -20 -110 -55 Q-60 -85 0 -80 Q70 -88 120 -55 Q165 -25 158 60 Q120 105 60 90 Q0 110 -60 92 Q-120 108 -150 70 Z"
+          fill="rgba(176,138,62,0.10)" stroke="#2b2118" stroke-width="4" stroke-linejoin="round"/>
+    <path d="M-90 -30 Q-30 -55 20 -35 Q70 -58 120 -30 M-110 25 Q-40 5 20 28 Q80 6 140 30 M-20 -70 Q-25 0 -15 85"
+          fill="none" stroke="#2b2118" stroke-width="2.4" stroke-opacity="0.7"/>
+    <!-- neurons -->
+    <g stroke="#9c4a2f" stroke-width="2.4" fill="#9c4a2f">
+      <circle cx="-70" cy="-10" r="9"/><circle cx="30" cy="20" r="9"/><circle cx="95" cy="-15" r="8"/>
+      <line x1="-70" y1="-10" x2="30" y2="20" stroke-opacity="0.6" fill="none"/>
+      <line x1="30" y1="20" x2="95" y2="-15" stroke-opacity="0.6" fill="none"/>
+    </g>
+  </g>
+
+  <!-- title plate -->
+  <text x="90" y="250" font-family="Cormorant Garamond, Georgia, serif" font-weight="700" font-size="128" fill="#2b2118">CogniFold</text>
+  <text x="94" y="320" font-family="EB Garamond, Georgia, serif" font-style="italic" font-size="38" fill="#4a3b2b">A brain-inspired, always-on agent memory</text>
+  <text x="94" y="368" font-family="EB Garamond, Georgia, serif" font-style="italic" font-size="38" fill="#4a3b2b">that folds events into cognitive structure.</text>
+
+  <!-- coverage chip -->
+  <g transform="translate(94,440)">
+    <rect x="0" y="0" width="430" height="74" rx="37" fill="none" stroke="#8a6a2c" stroke-width="3"/>
+    <text x="32" y="50" font-family="Cormorant Garamond, Georgia, serif" font-weight="700" font-size="46" fill="#2b2118">~60%</text>
+    <text x="150" y="48" font-family="EB Garamond, Georgia, serif" font-size="28" fill="#4a3b2b">of human memory modeled</text>
+  </g>
+
+  <text x="94" y="575" font-family="IBM Plex Mono, monospace" font-size="22" letter-spacing="4" fill="#b9842f">OPENNORVE · CODEX OF ARTIFICIAL MEMORY</text>
+</svg>
