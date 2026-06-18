@@ -3,7 +3,7 @@ name = "cognifold"
 version = "0.1.0"
 description = "A dynamic concept graph system that processes real-time event streams and maintains an evolving knowledge representation"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 dependencies = [
     "networkx>=3.2",
     "numpy>=2.0.2",
@@ -17,6 +17,7 @@ dependencies = [
 
 [project.scripts]
 cognifold = "cognifold.cli:main"
+cognifold-mcp = "cognifold.mcp:main"
 
 [project.optional-dependencies]
 dev = [
@@ -36,6 +37,9 @@ viz = [
 ]
 search = [
     "faiss-cpu>=1.7",
+]
+mcp = [
+    "mcp>=1.0",
 ]
 service = [
     "fastapi>=0.109",
