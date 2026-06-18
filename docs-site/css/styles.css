@@ -1,8 +1,8 @@
 /* ==========================================================================
    CogniFold
-   Apple-clean structure on a white canvas. The da Vinci / crayon language is
-   a textural accent reserved for the brain art + a few annotations — not the
-   page surface. Tight type scale, high information density.
+   Apple-clean structure on a white canvas, with a "neural ink" aesthetic:
+   crisp vector ink linework and an electric-blue accent reserved for the brain
+   art, synapses, and key highlights. System fonts, tight type, high density.
    No build step; CSS custom properties drive all.
    ========================================================================== */
 
@@ -259,7 +259,7 @@ section { padding: var(--section-pad) var(--gutter); position: relative; }
 .brain-host { width: 100%; }
 .brain-host svg { width: 100%; height: auto; display: block; }
 
-/* static fallback when rough.js / data is unavailable */
+/* static fallback when coverage data is unavailable */
 .brain-fallback { padding: 1rem clamp(0.5rem, 2vw, 1.4rem) 0.5rem; }
 .brain-fallback__note { color: var(--ink-soft); font-size: 0.95rem; margin: 0 0 0.8rem; }
 .brain-fallback__row {

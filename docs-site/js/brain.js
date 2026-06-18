@@ -4,8 +4,7 @@
 // accent on interaction, plus a slow ambient idle shimmer. Honors
 // prefers-reduced-motion (then static).
 //
-// Pure native SVG — no external library — so it always renders. (app.js still
-// passes a `rough` arg for API compatibility; it is intentionally ignored.)
+// Pure native SVG — no external library — so it always renders.
 
 const SVG_NS = "http://www.w3.org/2000/svg";
 const W = 760;
@@ -161,7 +160,7 @@ function makeNeuron(cx, cy, color, scale = 1) {
 }
 
 // --- main render --------------------------------------------------------
-export function renderBrain(host, data, onSelect /*, rough (ignored) */) {
+export function renderBrain(host, data, onSelect) {
   const systemsById = new Map(data.systems.map((s) => [s.id, s]));
   host.innerHTML = "";
 

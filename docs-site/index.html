@@ -9,7 +9,7 @@
   <meta name="theme-color" content="#ece0c4" />
   <meta name="color-scheme" content="light" />
 
-  <!-- Favicon (crayon brain glyph) -->
+  <!-- Favicon (neural brain glyph) -->
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
   <link rel="apple-touch-icon" href="favicon.svg" />
 
@@ -36,31 +36,6 @@
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
-  <!-- ============ Global SVG filters: parchment grain + crayon displacement ============ -->
-  <svg class="svg-defs" aria-hidden="true" focusable="false" width="0" height="0">
-    <defs>
-      <!-- Crayon / waxy edge displacement for hand-drawn strokes -->
-      <filter id="crayon" x="-20%" y="-20%" width="140%" height="140%">
-        <feTurbulence type="fractalNoise" baseFrequency="0.018 0.022" numOctaves="4" seed="3" result="t" />
-        <feDisplacementMap in="SourceGraphic" in2="t" scale="3.2" xChannelSelector="R" yChannelSelector="G" />
-      </filter>
-
-      <!-- Softer waxy texture for fills -->
-      <filter id="crayon-soft" x="-20%" y="-20%" width="140%" height="140%">
-        <feTurbulence type="fractalNoise" baseFrequency="0.012" numOctaves="3" seed="11" result="t" />
-        <feDisplacementMap in="SourceGraphic" in2="t" scale="2" xChannelSelector="R" yChannelSelector="G" />
-      </filter>
-
-      <!-- Soft ink glow for firing neurons -->
-      <filter id="ink-glow" x="-60%" y="-60%" width="220%" height="220%">
-        <feGaussianBlur stdDeviation="2.4" result="b" />
-        <feMerge>
-          <feMergeNode in="b" />
-          <feMergeNode in="SourceGraphic" />
-        </feMerge>
-      </filter>
-    </defs>
-  </svg>
 
   <!-- ============ Sticky translucent nav ============ -->
   <header class="nav" id="nav">

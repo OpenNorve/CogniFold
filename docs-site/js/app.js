@@ -2,9 +2,8 @@
 // Loads memory_coverage.json (single source of truth) and wires up: nav,
 // scroll-reveal, the coverage ring, the interactive brain, the notebook
 // cards + system index, the CLS architecture diagram, and the results ledger.
-// rough.js is vendored locally and loaded with a dynamic import wrapped in
-// try/catch, so a missing/broken rough.js degrades gracefully (static fallback)
-// instead of white-screening the page. No build step.
+// All visuals are native SVG (no external libraries, no build step). A
+// data-load failure degrades gracefully to a static panel.
 import { renderBrain } from "./brain.js";
 
 const SVG_NS = "http://www.w3.org/2000/svg";
@@ -342,7 +341,7 @@ function renderLedger() {
 }
 
 // -------------------------------------------------------------- fallbacks
-// Static brain panel: shown when rough.js is missing or the brain throws.
+// Static brain panel: shown if the brain render throws, so it is never blank.
 // Renders the systems as a tasteful inline list inside the brain stage so the
 // section is never blank.
 function renderBrainFallback(host, data) {
