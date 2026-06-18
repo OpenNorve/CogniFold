@@ -2,9 +2,8 @@
 // Loads memory_coverage.json (single source of truth) and wires up: nav,
 // scroll-reveal, the coverage ring, the interactive brain, the notebook
 // cards + system index, the CLS architecture diagram, and the results ledger.
-// rough.js is vendored locally and loaded with a dynamic import wrapped in
-// try/catch, so a missing/broken rough.js degrades gracefully (static fallback)
-// instead of white-screening the page. No build step.
+// All visuals are native SVG (no external libraries, no build step). A
+// data-load failure degrades gracefully to a static panel.
 import { renderBrain } from "./brain.js";
 
 const SVG_NS = "http://www.w3.org/2000/svg";
@@ -59,33 +58,22 @@ async function init() {
 
   const systemsById = new Map(data.systems.map((s) => [s.id, s]));
 
-  // --- load rough.js (vendored). If it fails, we still render everything
-  //     except the hand-drawn art, and fall back to a static brain panel. ---
-  let rough = null;
-  try {
-    const mod = await import("./vendor/rough.esm.js");
-    rough = mod.default || mod;
-  } catch (err) {
-    console.warn("rough.js unavailable — using static fallbacks for hand-drawn art.", err);
-  }
-
-  renderCoverageRing(data.overall_coverage_pct, rough);
-  renderArchDiagram(rough);
+  // All visuals are native SVG (no external libraries), so they always render.
+  renderCoverageRing(data.overall_coverage_pct);
+  renderArchDiagram();
   renderLedger();
   renderSystemIndex(data, onSelectSystem);
   showNotecard(null); // default state
 
   const host = document.getElementById("brainHost");
   let brain = null;
-  if (rough) {
-    try {
-      brain = renderBrain(host, data, (systemId, regionId, isHover) => {
-        onSelectSystem(systemId, !isHover);
-      }, rough);
-    } catch (err) {
-      console.error("Brain render failed — using static fallback.", err);
-      brain = null;
-    }
+  try {
+    brain = renderBrain(host, data, (systemId, regionId, isHover) => {
+      onSelectSystem(systemId, !isHover);
+    });
+  } catch (err) {
+    console.error("Brain render failed — using static fallback.", err);
+    brain = null;
   }
   if (!brain) renderBrainFallback(host, data);
 
@@ -152,7 +140,8 @@ function setupReveal() {
 }
 
 // -------------------------------------------------------------- coverage ring
-function renderCoverageRing(pct, rough) {
+// Clean neural-ink progress ring (native SVG, accent gradient stroke).
+function renderCoverageRing(pct) {
   const host = document.getElementById("heroRing");
   host.classList.add("cov-ring");
   const size = 320, r = 128, cx = size / 2, cy = size / 2;
@@ -160,32 +149,25 @@ function renderCoverageRing(pct, rough) {
 
   const svg = el("svg", { viewBox: `0 0 ${size} ${size}`, "aria-hidden": "true" });
 
-  // outer vitruvian guide ring (hand-drawn when rough.js is present)
-  if (rough) {
-    const rc = rough.svg(svg);
-    svg.appendChild(rc.circle(cx, cy, r * 2 + 34, {
-      stroke: "#9c4a2f", strokeWidth: 0.8, roughness: 2.4, bowing: 1.2, fill: "none",
-    }));
-  } else {
-    svg.appendChild(el("circle", {
-      cx, cy, r: r + 17, fill: "none", stroke: "#9c4a2f", "stroke-width": 0.8, opacity: 0.6,
-    }));
-  }
+  // accent gradient for the progress arc
+  const defs = el("defs");
+  defs.innerHTML =
+    `<linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1">` +
+    `<stop offset="0%" stop-color="#0a84ff"/><stop offset="100%" stop-color="#5ac8fa"/></linearGradient>`;
+  svg.appendChild(defs);
 
   // track
-  const track = el("circle", {
-    cx, cy, r, fill: "none", stroke: "rgba(43,33,24,0.14)", "stroke-width": 14,
-  });
-  svg.appendChild(track);
+  svg.appendChild(el("circle", {
+    cx, cy, r, fill: "none", stroke: "rgba(0,0,0,0.08)", "stroke-width": 12,
+  }));
 
-  // crayon-textured progress arc
+  // progress arc
   const prog = el("circle", {
     cx, cy, r, fill: "none",
-    stroke: "#8a6a2c", "stroke-width": 14, "stroke-linecap": "round",
+    stroke: "url(#ringGrad)", "stroke-width": 12, "stroke-linecap": "round",
     transform: `rotate(-90 ${cx} ${cy})`,
     "stroke-dasharray": circ,
     "stroke-dashoffset": circ,
-    filter: "url(#crayon)",
   });
   svg.appendChild(prog);
 
@@ -268,55 +250,27 @@ function shortRegion(region) {
   return region.split(/[\/(]/)[0].trim().split(" ")[0];
 }
 
-// A minimal stand-in for rough.svg() that draws plain (straight) SVG shapes.
-// Used when rough.js is unavailable so the architecture diagram still renders.
-function plainRc() {
-  const dash = (o) => (o && o.strokeLineDash ? o.strokeLineDash.join(" ") : null);
-  const stroke = (o = {}) => ({
-    fill: o.fill && o.fill !== "none" && !o.fillStyle ? o.fill : "none",
-    stroke: o.stroke || "#2b2118",
-    "stroke-width": o.strokeWidth || 1,
-    "fill-opacity": o.fillStyle ? 0.18 : (o.fill && o.fill !== "none" ? 1 : 0),
-  });
-  return {
-    line(x1, y1, x2, y2, o) {
-      const n = el("line", { x1, y1, x2, y2, ...stroke(o) });
-      const d = dash(o); if (d) n.setAttribute("stroke-dasharray", d);
-      return n;
-    },
-    circle(cx, cy, diam, o) {
-      const n = el("circle", { cx, cy, r: diam / 2, ...stroke(o) });
-      if (o && o.fillStyle && o.fill) { n.setAttribute("fill", o.fill); }
-      return n;
-    },
-    curve(pts, o) {
-      const d = pts.map((p, i) => (i ? "L" : "M") + p[0] + " " + p[1]).join(" ");
-      return el("path", { d, ...stroke(o), fill: "none" });
-    },
-  };
-}
-
 // -------------------------------------------------------------- arch diagram
-function renderArchDiagram(rough) {
+// Clean neural-ink diagram, native SVG (no rough.js).
+function renderArchDiagram() {
   const host = document.getElementById("archDiagram");
   host.innerHTML = "";
   const W = 1000, H = 360;
   const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, role: "img",
     "aria-label": "The folding loop: EVENT folds into CONCEPT, which crystallizes into INTENT, all threaded by TIME." });
-  const rc = rough ? rough.svg(svg) : plainRc();
 
   const nodes = [
-    { x: 175, y: 170, label: "EVENT", sub: "hippocampal", color: "#9c4a2f" },
-    { x: 500, y: 170, label: "CONCEPT", sub: "neocortical", color: "#b9842f" },
+    { x: 175, y: 170, label: "EVENT", sub: "hippocampal", color: "#0a84ff" },
+    { x: 500, y: 170, label: "CONCEPT", sub: "neocortical", color: "#2a9ad6" },
     { x: 825, y: 170, label: "INTENT", sub: "prefrontal", color: "#3f4f6b" },
   ];
 
   // arrows between nodes
   const arrow = (x1, y, x2, label) => {
     const g = el("g", {});
-    g.appendChild(rc.line(x1, y, x2, y, { stroke: "#1d1d1f", strokeWidth: 1.6, roughness: 1, bowing: 0.8 }));
-    g.appendChild(rc.line(x2, y, x2 - 13, y - 7, { stroke: "#1d1d1f", strokeWidth: 1.6, roughness: 0.8 }));
-    g.appendChild(rc.line(x2, y, x2 - 13, y + 7, { stroke: "#1d1d1f", strokeWidth: 1.6, roughness: 0.8 }));
+    g.appendChild(el("line", { x1, y1: y, x2, y2: y, stroke: "#1d1d1f", "stroke-width": 1.6 }));
+    g.appendChild(el("line", { x1: x2, y1: y, x2: x2 - 13, y2: y - 7, stroke: "#1d1d1f", "stroke-width": 1.6, "stroke-linecap": "round" }));
+    g.appendChild(el("line", { x1: x2, y1: y, x2: x2 - 13, y2: y + 7, stroke: "#1d1d1f", "stroke-width": 1.6, "stroke-linecap": "round" }));
     const t = el("text", { x: (x1 + x2) / 2, y: y - 16, "text-anchor": "middle",
       "font-family": SANS, "font-size": "15", "font-weight": "500", fill: "#515154" });
     t.textContent = label;
@@ -327,46 +281,39 @@ function renderArchDiagram(rough) {
   svg.appendChild(arrow(580, 170, 745, "crystallize"));
 
   // feedback arc back (CONCEPT informs new EVENTs)
-  svg.appendChild(rc.curve(
-    [[825, 235], [650, 320], [400, 320], [175, 235]],
-    { stroke: "#86868b", strokeWidth: 1.4, roughness: 1, bowing: 1 }
-  ));
+  svg.appendChild(el("path", {
+    d: "M 825 235 C 700 315 300 315 175 235",
+    fill: "none", stroke: "#c4c7cc", "stroke-width": 1.4, "stroke-dasharray": "2 6",
+  }));
   const fb = el("text", { x: 500, y: 340, "text-anchor": "middle",
     "font-family": SANS, "font-size": "14", fill: "#86868b" });
   fb.textContent = "intent reshapes attention — the loop closes";
   svg.appendChild(fb);
 
-  // nodes
-  nodes.forEach((n, i) => {
+  // nodes — soft accent fill + crisp ring
+  nodes.forEach((n) => {
     const g = el("g", {});
-    g.appendChild(rc.circle(n.x, n.y, 130, {
-      stroke: n.color, strokeWidth: 2, roughness: 0.9, bowing: 0.8,
-      fill: n.color, fillStyle: "hachure", fillWeight: 0.8, hachureGap: 9,
-    }));
+    g.appendChild(el("circle", { cx: n.x, cy: n.y, r: 65, fill: n.color, "fill-opacity": 0.1, stroke: n.color, "stroke-width": 2 }));
     const t1 = el("text", { x: n.x, y: n.y - 1, "text-anchor": "middle",
       "font-family": SANS, "font-weight": "700", "font-size": "24", fill: "#1d1d1f" });
     t1.textContent = n.label;
     const t2 = el("text", { x: n.x, y: n.y + 20, "text-anchor": "middle",
-      "font-family": MONO, "font-size": "10", fill: "#515154",
-      "letter-spacing": "0.12em" });
+      "font-family": MONO, "font-size": "10", fill: "#515154", "letter-spacing": "0.12em" });
     t2.textContent = n.sub.toUpperCase();
     svg.append(g, t1, t2);
   });
 
   // TIME axis threading underneath
   const timeY = 40;
-  svg.appendChild(rc.line(120, timeY, 880, timeY, {
-    stroke: "#86868b", strokeWidth: 1, roughness: 1, bowing: 1, strokeLineDash: [2, 8],
-  }));
+  svg.appendChild(el("line", { x1: 120, y1: timeY, x2: 880, y2: timeY,
+    stroke: "#86868b", "stroke-width": 1, "stroke-dasharray": "2 8" }));
   const tlabel = el("text", { x: 500, y: timeY - 12, "text-anchor": "middle",
     "font-family": MONO, "font-size": "11", "letter-spacing": "0.1em", fill: "#86868b" });
   tlabel.textContent = "TIME · the fourth axis";
   svg.appendChild(tlabel);
-  // tick marks down to each node
   nodes.forEach((n) => {
-    svg.appendChild(rc.line(n.x, timeY, n.x, 100, {
-      stroke: "#3f4f6b", strokeWidth: 0.8, roughness: 2.4, strokeLineDash: [2, 6],
-    }));
+    svg.appendChild(el("line", { x1: n.x, y1: timeY, x2: n.x, y2: 100,
+      stroke: "#c4c7cc", "stroke-width": 0.8, "stroke-dasharray": "2 6" }));
   });
 
   host.appendChild(svg);
@@ -394,7 +341,7 @@ function renderLedger() {
 }
 
 // -------------------------------------------------------------- fallbacks
-// Static brain panel: shown when rough.js is missing or the brain throws.
+// Static brain panel: shown if the brain render throws, so it is never blank.
 // Renders the systems as a tasteful inline list inside the brain stage so the
 // section is never blank.
 function renderBrainFallback(host, data) {

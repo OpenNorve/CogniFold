@@ -1,33 +1,28 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="CogniFold — a brain-inspired always-on agent memory, roughly 60% of human memory modeled">
   <defs>
-    <filter id="wax" x="-20%" y="-20%" width="140%" height="140%">
-      <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="3" seed="5" result="t"/>
-      <feDisplacementMap in="SourceGraphic" in2="t" scale="4" xChannelSelector="R" yChannelSelector="G"/>
-    </filter>
+    <radialGradient id="bgGlow" cx="72%" cy="42%" r="55%">
+      <stop offset="0%" stop-color="rgba(10,132,255,0.10)"/>
+      <stop offset="100%" stop-color="rgba(10,132,255,0)"/>
+    </radialGradient>
   </defs>
 
-  <!-- clean white canvas (Apple), da Vinci as accent only -->
+  <!-- clean white canvas with a faint neural glow -->
   <rect width="1200" height="630" fill="#ffffff"/>
-  <rect x="0" y="0" width="1200" height="630" fill="#f5f5f7" opacity="0"/>
+  <rect width="1200" height="630" fill="url(#bgGlow)"/>
 
-  <!-- faint vitruvian guides -->
-  <g stroke="#1d1d1f" stroke-opacity="0.08" fill="none">
-    <circle cx="880" cy="315" r="250"/>
-    <circle cx="880" cy="315" r="155"/>
-    <rect x="660" y="95" width="440" height="440"/>
-  </g>
-
-  <!-- crayon brain glyph -->
-  <g filter="url(#wax)" transform="translate(820,250) scale(1.15)">
+  <!-- neural-ink brain glyph -->
+  <g transform="translate(840,300) scale(1.2)" stroke-linejoin="round">
     <path d="M-150 70 Q-160 -20 -110 -55 Q-60 -85 0 -80 Q70 -88 120 -55 Q165 -25 158 60 Q120 105 60 90 Q0 110 -60 92 Q-120 108 -150 70 Z"
-          fill="rgba(176,138,62,0.10)" stroke="#2b2118" stroke-width="4" stroke-linejoin="round"/>
+          fill="rgba(10,132,255,0.05)" stroke="#1d1d1f" stroke-width="3.5"/>
     <path d="M-90 -30 Q-30 -55 20 -35 Q70 -58 120 -30 M-110 25 Q-40 5 20 28 Q80 6 140 30 M-20 -70 Q-25 0 -15 85"
-          fill="none" stroke="#2b2118" stroke-width="2.4" stroke-opacity="0.7"/>
-    <!-- neurons -->
-    <g stroke="#9c4a2f" stroke-width="2.4" fill="#9c4a2f">
-      <circle cx="-70" cy="-10" r="9"/><circle cx="30" cy="20" r="9"/><circle cx="95" cy="-15" r="8"/>
-      <line x1="-70" y1="-10" x2="30" y2="20" stroke-opacity="0.6" fill="none"/>
-      <line x1="30" y1="20" x2="95" y2="-15" stroke-opacity="0.6" fill="none"/>
+          fill="none" stroke="#86868b" stroke-width="2" stroke-opacity="0.8"/>
+    <!-- neurons + synapses -->
+    <g stroke="#0a84ff" stroke-width="2" fill="#0a84ff">
+      <line x1="-70" y1="-10" x2="30" y2="20" stroke-opacity="0.55" fill="none"/>
+      <line x1="30" y1="20" x2="95" y2="-15" stroke-opacity="0.55" fill="none"/>
+      <line x1="-70" y1="-10" x2="-30" y2="55" stroke-opacity="0.55" fill="none"/>
+      <circle cx="-70" cy="-10" r="7"/><circle cx="30" cy="20" r="7"/>
+      <circle cx="95" cy="-15" r="6"/><circle cx="-30" cy="55" r="5" fill="#5ac8fa"/>
     </g>
   </g>
 

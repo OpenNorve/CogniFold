@@ -1,8 +1,8 @@
 /* ==========================================================================
    CogniFold
-   Apple-clean structure on a white canvas. The da Vinci / crayon language is
-   a textural accent reserved for the brain art + a few annotations — not the
-   page surface. Tight type scale, high information density.
+   Apple-clean structure on a white canvas, with a "neural ink" aesthetic:
+   crisp vector ink linework and an electric-blue accent reserved for the brain
+   art, synapses, and key highlights. System fonts, tight type, high density.
    No build step; CSS custom properties drive all.
    ========================================================================== */
 
@@ -21,21 +21,15 @@
   --ink-faint:  rgba(0, 0, 0, 0.10);
 
   /* Parchment — accent only (brain card, og art) */
-  --paper-0:   #faf4e6;
-  --paper:     #f3e9d2;
-  --paper-2:   #ece0c4;
+  /* Neural-ink accent family (electric blue) */
+  --accent:     #0a84ff;  /* primary accent = neural blue */
+  --accent-2:   #5ac8fa;  /* soft cyan */
+  --indigo:     #3f4f6b;
 
-  /* da Vinci / crayon accent hues (used on art + small accents) */
-  --sanguine:   #a64b32;  /* red chalk / terracotta */
-  --ochre:      #b9842f;  /* waxy ochre */
-  --indigo:     #3f4f6b;  /* faded indigo */
-  --sage:       #6f7d55;
-  --accent:     #a64b32;  /* primary accent = sanguine */
-
-  /* Status hues (kept warm/crayon for the brain) */
-  --status-covered: #8a6a2c;
-  --status-partial: #9a8a5a;
-  --status-planned: #a7a09a;
+  /* Status hues — accent saturation steps (calm, on-brand) */
+  --status-covered: #0a84ff;
+  --status-partial: #7f9fbf;
+  --status-planned: #c4c7cc;
 
   /* Typography — clean system sans throughout; mono for code/labels. No
      decorative or display web fonts (serious-repo look). */
@@ -255,17 +249,17 @@ section { padding: var(--section-pad) var(--gutter); position: relative; }
   position: relative;
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  /* parchment kept here only — the crayon brain lives on aged paper */
+  /* clean neural-ink canvas: cool white with a faint accent glow behind the brain */
   background:
-    radial-gradient(110% 90% at 50% 25%, var(--paper-0), transparent 70%),
-    var(--paper);
+    radial-gradient(80% 70% at 50% 30%, rgba(10, 132, 255, 0.06), transparent 70%),
+    #ffffff;
   box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 12px 32px rgba(0,0,0,0.07);
   padding: clamp(0.5rem, 2vw, 1.1rem);
 }
 .brain-host { width: 100%; }
 .brain-host svg { width: 100%; height: auto; display: block; }
 
-/* static fallback when rough.js / data is unavailable */
+/* static fallback when coverage data is unavailable */
 .brain-fallback { padding: 1rem clamp(0.5rem, 2vw, 1.4rem) 0.5rem; }
 .brain-fallback__note { color: var(--ink-soft); font-size: 0.95rem; margin: 0 0 0.8rem; }
 .brain-fallback__row {
@@ -276,7 +270,7 @@ section { padding: var(--section-pad) var(--gutter); position: relative; }
 .brain-fallback__region { font-family: var(--font-mono); font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-soft); }
 .brain-fallback__status { font-size: 0.8rem; }
 .brain-fallback__status[data-status="covered"] { color: var(--status-covered); }
-.brain-fallback__status[data-status="partial"] { color: var(--ochre); }
+.brain-fallback__status[data-status="partial"] { color: var(--status-partial); }
 .brain-fallback__status[data-status="planned"] { color: var(--status-planned); }
 .brain-fallback__row[data-status="covered"] .sys-row__dot { background: var(--status-covered); }
 .brain-fallback__row[data-status="partial"] .sys-row__dot { background: var(--status-partial); }
@@ -298,7 +292,7 @@ section { padding: var(--section-pad) var(--gutter); position: relative; }
 .region { cursor: pointer; transition: opacity 0.4s var(--ease); }
 .region__hit { fill: transparent; }
 .region.is-dim { opacity: 0.34; }
-.region.is-active .region__label { font-weight: 700; fill: var(--sanguine); }
+.region.is-active .region__label { font-weight: 700; fill: var(--accent); }
 .region__label {
   font-family: var(--font-ui); font-size: 12px; font-weight: 500; fill: var(--ink-soft);
   pointer-events: none; user-select: none;
@@ -317,8 +311,8 @@ section { padding: var(--section-pad) var(--gutter); position: relative; }
 .notecard__head { display: flex; align-items: baseline; justify-content: space-between; gap: 0.7rem; margin-bottom: 0.35rem; }
 .notecard__name { font-family: var(--font-display); font-weight: 600; font-size: 1.5rem; margin: 0; line-height: 1.05; }
 .notecard__status { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; white-space: nowrap; padding: 0.18rem 0.5rem; border-radius: 999px; }
-.notecard__status[data-status="covered"] { color: var(--status-covered); background: rgba(138,106,44,0.12); }
-.notecard__status[data-status="partial"] { color: var(--ochre); background: rgba(185,132,47,0.12); }
+.notecard__status[data-status="covered"] { color: #0a6fd4; background: rgba(10,132,255,0.12); }
+.notecard__status[data-status="partial"] { color: #5a7fa6; background: rgba(127,159,191,0.16); }
 .notecard__status[data-status="planned"] { color: var(--ink-soft); background: rgba(0,0,0,0.05); }
 .notecard__tags { display: flex; flex-wrap: wrap; gap: 0.3rem; margin: 0.2rem 0 0.7rem; }
 .notecard__tag {
@@ -368,8 +362,8 @@ section { padding: var(--section-pad) var(--gutter); position: relative; }
 }
 .arch-card h3 { font-family: var(--font-ui); font-weight: 600; font-size: 1.1rem; margin: 0 0 0.3rem; letter-spacing: -0.01em; }
 .arch-card p { margin: 0; color: var(--ink-soft); font-size: 0.92rem; line-height: 1.45; }
-.arch-card[data-layer="event"] .arch-card__sigil { color: var(--sanguine); }
-.arch-card[data-layer="concept"] .arch-card__sigil { color: var(--ochre); }
+.arch-card[data-layer="event"] .arch-card__sigil { color: var(--accent); }
+.arch-card[data-layer="concept"] .arch-card__sigil { color: #2a9ad6; }
 .arch-card[data-layer="intent"] .arch-card__sigil { color: var(--indigo); }
 .arch__note { text-align: center; display: block; margin-top: 1.4rem; font-size: 1.05rem; }
 
@@ -391,7 +385,7 @@ section { padding: var(--section-pad) var(--gutter); position: relative; }
 .bench-card__val { font-family: var(--font-display); font-weight: 700; font-size: clamp(2rem, 4.5vw, 2.6rem); color: var(--ink); line-height: 1; letter-spacing: -0.02em; }
 .bench-card__unit { font-family: var(--font-display); font-size: 1.05rem; color: var(--accent); }
 .bench-card__name { margin-top: 0.35rem; color: var(--ink-soft); font-size: 0.85rem; }
-.bench-card__note { color: var(--ochre); font-size: 0.78rem; margin-top: 0.2rem; }
+.bench-card__note { color: var(--ink-soft); font-size: 0.78rem; margin-top: 0.2rem; }
 
 /* ==========================================================================
    QUICKSTART
