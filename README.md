@@ -7,6 +7,7 @@
 <a href="https://arxiv.org/abs/2605.13438" target="_blank"><img alt="Paper" src="https://img.shields.io/badge/Technical_Report-arXiv-B31B1B?logo=arxiv&logoColor=white&style=flat-square" height="22px"></a>
 <a href="https://huggingface.co/datasets/OpenNorve/CogEval-Bench" target="_blank"><img alt="CogEval-Bench Dataset" src="https://img.shields.io/badge/Dataset-CogEval--Bench-FFD21E?logo=huggingface&logoColor=black&style=flat-square" height="22px"></a>
 <br/>
+<a href="https://github.com/OpenNorve/CogniFold/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/OpenNorve/CogniFold/actions/workflows/ci.yml/badge.svg?branch=main" height="22px"></a>
 <a href="docs/INTEGRATIONS.md"><img alt="MCP" src="https://img.shields.io/badge/MCP-Claude_Code_·_Desktop_·_Cursor-000000?style=flat-square" height="22px"></a>
 <a href="LICENSE"><img alt="License" src="https://img.shields.io/badge/License-Apache--2.0-2563EB?style=flat-square" height="22px"></a>
 <a href="https://www.python.org/"><img alt="Python" src="https://img.shields.io/badge/python-3.11%2B-3776AB?logo=python&logoColor=white&style=flat-square" height="22px"></a>
@@ -41,6 +42,7 @@
 - [🔌 Integrations & Deployment](#-integrations--deployment)
 - [⚙️ Key Configurations](#️-key-configurations)
 - [🔁 Benchmark Evaluation](#-benchmark-evaluation)
+- [🗺️ Roadmap: modeling the rest of the brain](#️-roadmap-modeling-the-rest-of-the-brain)
 - [📂 Project Structure](#-project-structure)
 - [🔗 Citation](#-citation)
 - [📜 License](#-license)
@@ -296,6 +298,16 @@ bash scripts/reproduce.sh all
 ```
 
 Each run writes `benchmarks/<name>/output/benchmark_results.json`. Override the reader model via env: `MODEL=openai:gpt-4o bash scripts/reproduce.sh locomo`. The `--event-stream` flag is **automatically applied to LoCoMo** (it gates the inter-session consolidation pass central to the always-on memory thesis); all other benchmarks discharge consolidation through the shared `base_runner` post-ingestion hook.
+
+## 🗺️ Roadmap: modeling the rest of the brain
+
+CogniFold maps its mechanisms onto the human-memory taxonomy (Squire + Baddeley + CoALA) and reports an **honest coverage figure** — currently **~60%**. The live, machine-readable breakdown is `GET /api/v1/brain/coverage` and the interactive view is the [showcase site](https://opennorve.github.io/CogniFold/). True to the [North Star](docs/NORTH_STAR_METHODOLOGY.md), a mechanism only counts once it earns measurable payoff — we don't claim biological fidelity we haven't shipped.
+
+| Status | Memory system | In CogniFold |
+|:--:|---|---|
+| ✅ Covered | Working · Episodic · Semantic · Prospective (intent) | hierarchical context · `event`/`concept`/`intent` nodes |
+| 🟡 Partial | Temporal · Consolidation · Forgetting | `time` nodes · inter-session consolidation · recency decay + prune |
+| ⬜ Planned | Procedural · Priming · Conditioning · Affective tagging · Sensory | tracked on the coverage map; pulled in as tasks demand them |
 
 ## 📂 Project Structure
 
