@@ -1,0 +1,144 @@
+{
+  "version": "1.0",
+  "methodology": "Each human memory system is scored covered (1.0), partial (0.5), or planned (0.0). The overall coverage percentage is the weight-normalized sum of status scores across all systems, where weight reflects each system's relative importance to an always-on agent memory. This file is the single source of truth, mirrored from src/cognifold/brain/memory_coverage.json.",
+  "status_scores": {
+    "covered": 1.0,
+    "partial": 0.5,
+    "planned": 0.0
+  },
+  "overall_coverage_pct": 60,
+  "systems": [
+    {
+      "id": "working",
+      "name": "Working Memory",
+      "taxonomy_group": "Short-term / Online",
+      "brain_region": "Prefrontal cortex",
+      "status": "covered",
+      "weight": 1.0,
+      "cognifold_mechanism": "Hierarchical context window (immediate / working / background) surfaces the most relevant nodes per event via composite scoring.",
+      "evidence": "scoring/hierarchical.py; BABILong 96.0% EM",
+      "description": "Transient, capacity-limited store that holds and manipulates information for the task at hand. CogniFold realizes it as a budgeted, three-level context window assembled fresh for every event."
+    },
+    {
+      "id": "episodic",
+      "name": "Episodic Memory",
+      "taxonomy_group": "Declarative",
+      "brain_region": "Hippocampus",
+      "status": "covered",
+      "weight": 1.0,
+      "cognifold_mechanism": "EVENT nodes capture what-happened-when verbatim; entity-anchored boosting and raw-turn preservation keep episodes retrievable.",
+      "evidence": "models/event.py; LoCoMo 82.8% J-Score",
+      "description": "Memory for specific autobiographical events bound to a time and place. The Hippocampal EVENT layer is CogniFold's verbatim episodic substrate."
+    },
+    {
+      "id": "semantic",
+      "name": "Semantic Memory",
+      "taxonomy_group": "Declarative",
+      "brain_region": "Neocortex",
+      "status": "covered",
+      "weight": 1.0,
+      "cognifold_mechanism": "CONCEPT nodes emerge from repeated EVENTs; the agent folds episodes into generalized, grounded knowledge with explainable reasoning.",
+      "evidence": "agent/agent.py; LongMemEval ~93%",
+      "description": "General world knowledge and facts abstracted away from any single experience. The Neocortical CONCEPT layer crystallizes semantics from the event stream."
+    },
+    {
+      "id": "prospective",
+      "name": "Prospective Memory (Intent)",
+      "taxonomy_group": "Declarative",
+      "brain_region": "Prefrontal cortex",
+      "status": "covered",
+      "weight": 1.2,
+      "cognifold_mechanism": "INTENT nodes crystallize proactively from accumulated concepts and time anchors — remembering to act in the future is a property of the topology, not the agent policy.",
+      "evidence": "models/node.py (IntentStatus); intent/; ToMi 91.6% EM",
+      "description": "Remembering to carry out intended actions at the right future moment. This proactive intent crystallization is CogniFold's unique differentiator versus passive memory stores."
+    },
+    {
+      "id": "temporal",
+      "name": "Temporal Memory",
+      "taxonomy_group": "Organizational",
+      "brain_region": "Hippocampus / Entorhinal",
+      "status": "covered",
+      "weight": 0.9,
+      "cognifold_mechanism": "TIME nodes anchor deadlines and schedules; recency decay and urgency boosting make approaching deadlines salient in retrieval.",
+      "evidence": "temporal/extractor.py; StreamingQA 78.4% EM",
+      "description": "Encoding of when events occurred and their order, enabling deadline awareness and time-sensitive reasoning. TIME nodes plus recency/urgency scoring provide CogniFold's temporal axis."
+    },
+    {
+      "id": "consolidation",
+      "name": "Memory Consolidation",
+      "taxonomy_group": "Maintenance",
+      "brain_region": "Hippocampus → Neocortex",
+      "status": "partial",
+      "weight": 0.9,
+      "cognifold_mechanism": "Inter-session consolidation merges similar concepts and reinforces grounded structure; offline systems-level replay is on the roadmap.",
+      "evidence": "merge_similar_concepts; --event-stream consolidation logs",
+      "description": "The gradual transfer of memories from fast hippocampal storage to durable neocortical representations. CogniFold consolidates at session boundaries; richer sleep-like offline replay is planned."
+    },
+    {
+      "id": "forgetting",
+      "name": "Adaptive Forgetting",
+      "taxonomy_group": "Maintenance",
+      "brain_region": "Distributed",
+      "status": "partial",
+      "weight": 0.7,
+      "cognifold_mechanism": "Recency decay lowers stale node salience and orphan pruning removes unsupported concepts; principled importance-weighted decay is in progress.",
+      "evidence": "scoring/ranker.py (decay_rate); prune_orphan_concepts",
+      "description": "Active down-weighting and removal of low-value memories to keep the store relevant. CogniFold decays and prunes today; calibrated, value-aware forgetting is the next step."
+    },
+    {
+      "id": "procedural",
+      "name": "Procedural Memory",
+      "taxonomy_group": "Non-declarative",
+      "brain_region": "Basal ganglia / Cerebellum",
+      "status": "planned",
+      "weight": 0.6,
+      "cognifold_mechanism": "Planned: skills and learned action sequences captured as reusable procedure nodes distinct from declarative concepts.",
+      "evidence": "Roadmap",
+      "description": "Implicit memory for skills and habits — how to do things. Not yet modeled; a procedure layer is on the roadmap."
+    },
+    {
+      "id": "priming",
+      "name": "Priming",
+      "taxonomy_group": "Non-declarative",
+      "brain_region": "Neocortex (sensory)",
+      "status": "planned",
+      "weight": 0.4,
+      "cognifold_mechanism": "Planned: residual activation that biases retrieval toward recently or repeatedly encountered patterns.",
+      "evidence": "Roadmap",
+      "description": "Implicit facilitation where exposure to a stimulus speeds later processing of related stimuli. A retrieval-bias mechanism is planned."
+    },
+    {
+      "id": "conditioning",
+      "name": "Associative Conditioning",
+      "taxonomy_group": "Non-declarative",
+      "brain_region": "Amygdala / Cerebellum",
+      "status": "planned",
+      "weight": 0.4,
+      "cognifold_mechanism": "Planned: reinforcement-driven edge strengthening between co-occurring stimuli and outcomes.",
+      "evidence": "Roadmap",
+      "description": "Learned associations between stimuli and responses through repeated pairing. Reinforcement-weighted edges are a planned extension."
+    },
+    {
+      "id": "affective",
+      "name": "Affective Memory",
+      "taxonomy_group": "Modulatory",
+      "brain_region": "Amygdala",
+      "status": "planned",
+      "weight": 0.5,
+      "cognifold_mechanism": "Planned: emotional salience tags that modulate consolidation strength and retrieval priority.",
+      "evidence": "Roadmap",
+      "description": "Emotional coloring of memories that biases what is stored and recalled. Salience-based modulation is on the roadmap."
+    },
+    {
+      "id": "sensory",
+      "name": "Sensory Memory",
+      "taxonomy_group": "Short-term / Online",
+      "brain_region": "Sensory cortices",
+      "status": "planned",
+      "weight": 0.4,
+      "cognifold_mechanism": "Planned: ultra-short multimodal buffers feeding raw perceptual traces into the event stream.",
+      "evidence": "Roadmap",
+      "description": "Brief, high-fidelity retention of raw perceptual input before it decays or enters working memory. Multimodal sensory buffers are planned."
+    }
+  ]
+}

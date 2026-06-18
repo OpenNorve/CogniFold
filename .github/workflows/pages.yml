@@ -1,0 +1,64 @@
+# Deploy the CogniFold showcase site (docs-site/) to GitHub Pages.
+#
+# ONE-TIME SETUP: enable Pages in the repo under
+#   Settings → Pages → Build and deployment → Source: "GitHub Actions".
+# Without that, the deploy-pages step will fail with a "Pages not enabled" error.
+#
+# The site is data-driven from docs-site/data/memory_coverage.json. That file is
+# a committed copy so the site renders standalone, but the SINGLE SOURCE OF TRUTH
+# is src/cognifold/brain/memory_coverage.json — this workflow copies it into
+# docs-site/data/ at build time so the published site always matches the canonical
+# taxonomy.
+
+name: Deploy Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Standard GitHub Pages permissions.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow only one concurrent deployment; let in-progress runs finish.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Sync canonical memory coverage data into the site
+        # src/cognifold/brain/memory_coverage.json is the single source of truth.
+        # Copy it over the committed standalone copy so the published site stays
+        # in sync. If the canonical file is absent (e.g. not yet merged), fall
+        # back to the committed copy already in docs-site/data/.
+        run: |
+          if [ -f src/cognifold/brain/memory_coverage.json ]; then
+            cp src/cognifold/brain/memory_coverage.json docs-site/data/memory_coverage.json
+            echo "Synced canonical memory_coverage.json into docs-site/data/."
+          else
+            echo "Canonical src/cognifold/brain/memory_coverage.json not found; using committed copy."
+          fi
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs-site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

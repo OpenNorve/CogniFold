@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CogniFold — Brain-Inspired Always-On Agent Memory</title>
+  <meta name="description" content="CogniFold is a brain-inspired always-on agent memory that folds events into self-emerging cognitive structure. See how much of the human brain's memory systems it models." />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="CogniFold — Brain-Inspired Agent Memory" />
+  <meta property="og:description" content="An always-on agent memory that folds events into self-emerging cognitive structure. ~60% of human brain memory systems modeled." />
+  <meta property="og:type" content="website" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./css/styles.css" />
+</head>
+<body>
+
+  <!-- ===== Nav ===== -->
+  <nav class="nav">
+    <div class="nav-inner">
+      <a class="brand" href="#top"><span class="dot"></span> CogniFold</a>
+      <div class="nav-links">
+        <a href="#brain">Brain Coverage</a>
+        <a href="#architecture">Architecture</a>
+        <a href="#benchmarks">Benchmarks</a>
+        <a href="#quickstart">Quickstart</a>
+        <a class="gh" href="https://github.com/OpenNorve/CogniFold" target="_blank" rel="noopener">GitHub ↗</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ===== Hero ===== -->
+  <section id="top" class="hero wrap">
+    <div class="hero-copy reveal">
+      <div class="eyebrow">Always-On Proactive Memory · via Cognitive Folding</div>
+      <h1>CogniFold</h1>
+      <p class="tagline">A brain-inspired always-on agent memory that folds continuously arriving events into <strong>self-emerging cognitive structure</strong> — built for the next generation of proactive assistants.</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="https://github.com/OpenNorve/CogniFold" target="_blank" rel="noopener">View on GitHub</a>
+        <a class="btn btn-ghost" href="#quickstart">Quickstart</a>
+      </div>
+      <div class="hero-meta">
+        <div class="stat"><b data-coverage-pct>~60%</b><span>Brain memory modeled</span></div>
+        <div class="stat"><b id="stat-covered">5</b><span>Systems covered</span></div>
+        <div class="stat"><b id="stat-total">12</b><span>Systems mapped</span></div>
+      </div>
+    </div>
+
+    <div class="ring-wrap reveal">
+      <div class="ring" id="coverage-ring"><!-- injected by app.js --></div>
+      <div class="ring-caption">Human Brain Memory Modeled: <strong data-coverage-pct>~60%</strong></div>
+    </div>
+  </section>
+
+  <!-- ===== Brain visualization ===== -->
+  <section id="brain" class="wrap-section">
+    <div class="wrap">
+      <div class="reveal">
+        <div class="eyebrow">The Headline</div>
+        <h2 class="section-title">How much of the brain's memory have we modeled?</h2>
+        <p class="section-sub">CogniFold maps the human memory taxonomy onto concrete mechanisms. Hover a system to light up the brain region it lives in. Covered systems glow, partial systems pulse, planned systems are dim with a roadmap note.</p>
+      </div>
+
+      <div class="brain-grid">
+        <div class="reveal">
+          <div class="brain-stage">
+            <div id="brain-mount"><!-- SVG injected by brain.js --></div>
+          </div>
+          <div class="brain-legend">
+            <div class="item"><span class="swatch" style="background:#38e8ff"></span> Modeled</div>
+            <div class="item"><span class="swatch" style="background:#ffb347"></span> Partial</div>
+            <div class="item"><span class="swatch" style="background:#4a5380"></span> Planned</div>
+          </div>
+        </div>
+
+        <div class="reveal">
+          <div class="systems-panel" id="systems-panel"><!-- injected by app.js --></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Architecture ===== -->
+  <section id="architecture" class="wrap-section">
+    <div class="wrap">
+      <div class="reveal">
+        <div class="eyebrow">Architecture</div>
+        <h2 class="section-title">A tri-layer cognitive folding loop</h2>
+        <p class="section-sub">CogniFold extends Complementary Learning Systems (CLS) with a prefrontal <strong>Intent</strong> layer. Events fold into concepts; concepts crystallize into intents — surfaced through a hierarchical context window across a TIME axis.</p>
+      </div>
+
+      <div class="cls-diagram reveal">
+        <div class="cls-layer l1">
+          <span class="badge">EVENT</span>
+          <h3>Hippocampal layer</h3>
+          <p>Verbatim episodes captured as EVENT nodes — what happened, when. The fast, high-fidelity store.</p>
+          <div class="region-tag">// hippocampus · episodic + temporal</div>
+        </div>
+        <div class="cls-arrow" style="left: calc(33.33% - 14px);">→</div>
+        <div class="cls-layer l2">
+          <span class="badge">CONCEPT</span>
+          <h3>Neocortical layer</h3>
+          <p>Patterns emerge across episodes into grounded CONCEPT nodes — generalized, explainable knowledge.</p>
+          <div class="region-tag">// neocortex · semantic</div>
+        </div>
+        <div class="cls-arrow" style="left: calc(66.66% - 14px);">→</div>
+        <div class="cls-layer l3">
+          <span class="badge">INTENT</span>
+          <h3>Prefrontal layer</h3>
+          <p>INTENT nodes crystallize proactively from accumulated concepts and time anchors — goals, not just facts.</p>
+          <div class="region-tag">// prefrontal · prospective + working</div>
+        </div>
+      </div>
+
+      <div class="time-strip reveal">⟵ TIME axis · recency decay · urgency boosting · deadline-aware retrieval ⟶</div>
+
+      <div class="arch-note reveal">
+        <h3>The differentiator: proactive intent crystallization</h3>
+        <p>Proactivity is a property of the memory substrate, not the agent's policy. Goals emerge from the topology that accumulates the conditions for them — when concepts and time anchors align, an INTENT node forms on its own, before it is asked for.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Benchmarks ===== -->
+  <section id="benchmarks" class="wrap-section">
+    <div class="wrap">
+      <div class="reveal">
+        <div class="eyebrow">Evaluation</div>
+        <h2 class="section-title">Benchmarked across memory &amp; reasoning</h2>
+        <p class="section-sub">Real measured results across long-context recall, multi-hop QA, theory-of-mind, and streaming knowledge.</p>
+      </div>
+
+      <div class="bench-grid reveal">
+        <div class="bench-card"><div class="score">82.8%</div><div class="metric">J-Score</div><div class="name">LoCoMo</div><div class="desc">Long-conversation memory (Mem0 protocol)</div></div>
+        <div class="bench-card"><div class="score">~93%</div><div class="metric">accuracy</div><div class="name">LongMemEval</div><div class="desc">Long-term memory evaluation</div></div>
+        <div class="bench-card"><div class="score">96.0%</div><div class="metric">EM</div><div class="name">BABILong</div><div class="desc">Reasoning over long contexts</div></div>
+        <div class="bench-card"><div class="score">91.6%</div><div class="metric">EM</div><div class="name">ToMi</div><div class="desc">Theory-of-mind belief tracking</div></div>
+        <div class="bench-card"><div class="score">0.587</div><div class="metric">F1</div><div class="name">MuSiQue-Ans</div><div class="desc">Multi-hop question answering</div></div>
+        <div class="bench-card"><div class="score">0.720</div><div class="metric">F1</div><div class="name">NarrativeQA</div><div class="desc">Long-form narrative QA</div></div>
+        <div class="bench-card"><div class="score">93.2%</div><div class="metric">accuracy</div><div class="name">MuTual</div><div class="desc">Multi-turn dialogue reasoning</div></div>
+        <div class="bench-card"><div class="score">78.4%</div><div class="metric">EM</div><div class="name">StreamingQA</div><div class="desc">Temporal knowledge over streams</div></div>
+      </div>
+
+      <p class="bench-foot reveal">Metrics are measured on CogniFold runs; see <code>docs/BENCHMARK.md</code> in the repository for protocols, dates, and reproduction commands.</p>
+    </div>
+  </section>
+
+  <!-- ===== Quickstart ===== -->
+  <section id="quickstart" class="wrap-section">
+    <div class="wrap">
+      <div class="reveal">
+        <div class="eyebrow">Get Started</div>
+        <h2 class="section-title">Quickstart</h2>
+        <p class="section-sub">Install, then run the stateful memory service. CogniFold integrates with agent runtimes over HTTP and via MCP.</p>
+      </div>
+
+      <div class="qs-grid">
+        <div class="code-block reveal">
+          <div class="code-head">
+            <span class="d r"></span><span class="d y"></span><span class="d g"></span>
+            <span class="title">bash</span>
+          </div>
+          <pre><span class="tok-comment"># Install (editable)</span>
+<span class="tok-cmd">uv pip install -e .</span>
+
+<span class="tok-comment"># Provide an LLM key</span>
+<span class="tok-cmd">export</span> OPENAI_API_KEY=<span class="tok-str">"sk-..."</span>
+
+<span class="tok-comment"># Launch the always-on memory service</span>
+<span class="tok-cmd">cognifold serve</span>
+
+<span class="tok-comment"># Or process an event timeline directly</span>
+<span class="tok-cmd">cognifold run</span> timeline.json --agent --steps 15
+<span class="tok-cmd">cognifold query</span> <span class="tok-str">"exercise habits"</span> --graph graph.json</pre>
+        </div>
+
+        <div class="integrations reveal">
+          <a class="int-card" href="https://github.com/OpenNorve/CogniFold/blob/main/docs/INTEGRATIONS.md" target="_blank" rel="noopener">
+            <h3>MCP / Claude Code <span class="arrow">↗</span></h3>
+            <p>Plug CogniFold in as an MCP memory server so agents read and write structured memory. See the integrations guide.</p>
+          </a>
+          <a class="int-card" href="https://github.com/OpenNorve/CogniFold/blob/main/docs/DEPLOYMENT.md" target="_blank" rel="noopener">
+            <h3>Deployment <span class="arrow">↗</span></h3>
+            <p>Run the FastAPI service with sessions, persistence, and auth. Docker image and config included.</p>
+          </a>
+          <a class="int-card" href="https://github.com/OpenNorve/CogniFold/blob/main/docs/ARCHITECTURE.md" target="_blank" rel="noopener">
+            <h3>Architecture deep-dive <span class="arrow">↗</span></h3>
+            <p>Data models, scoring, retrieval modes, and the HTTP service layer in full detail.</p>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Footer ===== -->
+  <footer class="footer">
+    <div class="links">
+      <a href="https://github.com/OpenNorve/CogniFold" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://github.com/OpenNorve/CogniFold/blob/main/docs/ARCHITECTURE.md" target="_blank" rel="noopener">Architecture</a>
+      <a href="https://github.com/OpenNorve/CogniFold/blob/main/docs/BENCHMARK.md" target="_blank" rel="noopener">Benchmarks</a>
+      <a href="https://huggingface.co/datasets/OpenNorve/CogEval-Bench" target="_blank" rel="noopener">CogEval-Bench</a>
+    </div>
+    <div>CogniFold — brain-inspired always-on agent memory · Apache-2.0</div>
+  </footer>
+
+  <!-- tooltip element reused across the page -->
+  <div class="tooltip" id="tooltip" role="status" aria-live="polite"></div>
+
+  <script type="module" src="./js/app.js"></script>
+</body>
+</html>
