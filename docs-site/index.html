@@ -6,7 +6,7 @@
   <title>CogniFold — A brain-inspired always-on agent memory</title>
   <meta name="description" content="CogniFold folds events into self-emerging cognitive structure: a brain-inspired, always-on agent memory with proactive intent crystallization. ~60% of human memory systems modeled." />
   <link rel="canonical" href="https://opennorve.github.io/CogniFold/" />
-  <meta name="theme-color" content="#ece0c4" />
+  <meta name="theme-color" content="#ffffff" />
   <meta name="color-scheme" content="light" />
 
   <!-- Favicon (neural brain glyph) -->
@@ -89,6 +89,12 @@
         </div>
 
         <p class="hero__note">Apache-2.0 · Python · MCP-compatible</p>
+
+        <div class="hero__stats" role="list" aria-label="At a glance">
+          <div class="hero__stat" role="listitem"><b>12</b><span>memory systems mapped</span></div>
+          <div class="hero__stat" role="listitem"><b>~60%</b><span>coverage (weight-normalized)</span></div>
+          <div class="hero__stat" role="listitem"><b>9</b><span>public benchmarks reported</span></div>
+        </div>
       </div>
       <div class="ink-divider" aria-hidden="true"></div>
     </section>
@@ -117,13 +123,26 @@
 
         <aside class="notebook reveal" aria-live="polite">
           <article class="notecard" id="notecard">
-            <!-- populated by app.js -->
+            <!-- populated by app.js; full list is in the table below -->
           </article>
-
-          <div class="system-index" id="systemIndex" role="list" aria-label="Memory systems">
-            <!-- system rows injected by app.js -->
-          </div>
         </aside>
+      </div>
+
+      <!-- Full reference table: all 12 systems visible at once -->
+      <div class="systbl-wrap reveal">
+        <table class="systbl" id="systemsTable">
+          <caption>All twelve memory systems · mapped to CogniFold mechanisms</caption>
+          <thead>
+            <tr>
+              <th scope="col">Memory system</th>
+              <th scope="col">Taxonomy</th>
+              <th scope="col">Brain region</th>
+              <th scope="col">Status</th>
+              <th scope="col">CogniFold mechanism</th>
+            </tr>
+          </thead>
+          <tbody id="systemsTableBody"><!-- rows injected by app.js --></tbody>
+        </table>
       </div>
       <div class="ink-divider ink-divider--flip" aria-hidden="true"></div>
     </section>
@@ -142,6 +161,17 @@
       <div class="arch__diagram reveal" id="archDiagram" aria-label="Three-layer memory loop: Event, Concept, Intent, anchored by Time">
         <!-- CLS diagram injected by app.js -->
       </div>
+
+      <p class="arch__explainer reveal">
+        Every event enters as a verbatim <strong>EVENT</strong> node in the hippocampal layer.
+        As events recur, the agent folds them into generalized <strong>CONCEPT</strong> nodes in the
+        neocortical layer — grounded knowledge with explainable provenance back to the episodes that
+        formed it. From accumulated concepts and time anchors, the prefrontal layer crystallizes
+        <strong>INTENT</strong> nodes: commitments to act at the right future moment. This
+        <strong>proactive intent crystallization</strong> is what sets CogniFold apart from passive
+        memory stores — remembering to act becomes a property of the topology, not a separate policy.
+        Retrieval then closes the loop, letting intent reshape what the agent attends to next.
+      </p>
 
       <div class="arch__cards">
         <div class="arch-card reveal" data-layer="event">

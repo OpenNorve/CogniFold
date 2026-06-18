@@ -15,19 +15,20 @@ const reduceMotion =
   window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 // Real benchmark numbers only (no invented competitor figures, no LongMemEval).
+// `note` is a concise, factual context line describing what the benchmark probes.
 const BENCHMARKS = [
-  { bench: "CogEval", name: "Proactivity", val: "0.614", unit: "", note: "intent crystallization" },
-  { bench: "BABILong", name: "long-context QA", val: "96.0", unit: "% EM" },
-  { bench: "SafetyBench", name: "safety", val: "94.3", unit: "%" },
-  { bench: "MuTual", name: "dialogue reasoning", val: "93.2", unit: "%" },
-  { bench: "ToMi", name: "theory of mind", val: "91.6", unit: "% EM" },
-  { bench: "LoCoMo", name: "long conversation", val: "82.8", unit: " J-Score", note: "episodic recall" },
-  { bench: "StreamingQA", name: "streaming QA", val: "78.4", unit: "% EM" },
-  { bench: "NarrativeQA", name: "narrative", val: "0.720", unit: " F1" },
-  { bench: "MuSiQue", name: "multi-hop", val: "41.2", unit: "% EM", note: "F1 0.587" },
+  { bench: "CogEval", name: "Proactivity", val: "0.614", unit: "", note: "Tests whether the agent acts on intents at the right moment — CogniFold's core differentiator." },
+  { bench: "BABILong", name: "Long-context QA", val: "96.0", unit: "% EM", note: "Reasoning over facts buried in very long contexts; exact-match accuracy." },
+  { bench: "SafetyBench", name: "Safety", val: "94.3", unit: "%", note: "Multiple-choice safety judgments across harm categories." },
+  { bench: "MuTual", name: "Dialogue reasoning", val: "93.2", unit: "%", note: "Multi-turn dialogue inference — choosing the coherent next response." },
+  { bench: "ToMi", name: "Theory of mind", val: "91.6", unit: "% EM", note: "Tracking other agents' beliefs and false beliefs across a narrative." },
+  { bench: "LoCoMo", name: "Long conversation", val: "82.8", unit: " J-Score", note: "Episodic recall over very long multi-session conversations." },
+  { bench: "StreamingQA", name: "Streaming QA", val: "78.4", unit: "% EM", note: "Answering questions over a time-ordered stream of incoming documents." },
+  { bench: "NarrativeQA", name: "Narrative", val: "0.720", unit: " F1", note: "Comprehension questions over full stories and scripts." },
+  { bench: "MuSiQue", name: "Multi-hop", val: "41.2", unit: "% EM", note: "Compositional multi-hop questions; also F1 0.587." },
 ];
 
-const STATUS_WORD = { covered: "inked", partial: "half-inked", planned: "pencilled" };
+const STATUS_WORD = { covered: "covered", partial: "partial", planned: "planned" };
 
 const el = (tag, attrs = {}) => {
   const n = document.createElementNS(SVG_NS, tag);
@@ -62,7 +63,7 @@ async function init() {
   renderCoverageRing(data.overall_coverage_pct);
   renderArchDiagram();
   renderLedger();
-  renderSystemIndex(data, onSelectSystem);
+  renderSystemsTable(data, onSelectSystem);
   showNotecard(null); // default state
 
   const host = document.getElementById("brainHost");
@@ -77,22 +78,14 @@ async function init() {
   }
   if (!brain) renderBrainFallback(host, data);
 
-  // wire system-index rows back to the brain (no-op guards if brain absent)
-  document.querySelectorAll(".sys-row").forEach((row) => {
-    const id = row.dataset.system;
-    row.addEventListener("mouseenter", () => { brain && brain.focusSystem(id); onSelectSystem(id, false); });
-    row.addEventListener("mouseleave", () => brain && brain.clearHighlight());
-    row.addEventListener("focus", () => { brain && brain.focusSystem(id); onSelectSystem(id, false); });
-    row.addEventListener("click", () => onSelectSystem(id, true));
-  });
-
   function onSelectSystem(systemId, markActive) {
     const sys = systemsById.get(systemId);
     if (!sys) return;
     showNotecard(sys);
-    document.querySelectorAll(".sys-row").forEach((r) =>
+    document.querySelectorAll(".systbl tbody tr").forEach((r) =>
       r.classList.toggle("is-active", r.dataset.system === systemId)
     );
+    if (brain) brain.focusSystem(systemId);
   }
 }
 
@@ -226,28 +219,27 @@ function showNotecard(sys) {
     <div class="notecard__row"><b>Evidence</b>${evidenceParts.map((p) => `<code>${escapeHtml(p)}</code>`).join(" ")}</div>`;
 }
 
-// -------------------------------------------------------------- system index
-function renderSystemIndex(data, onSelect) {
-  const host = document.getElementById("systemIndex");
-  host.innerHTML = "";
+// -------------------------------------------------------------- systems table
+// Full reference table: all 12 systems visible at once (name · taxonomy ·
+// region · status · mechanism). Rows sync with the brain + side index on hover.
+function renderSystemsTable(data, onSelect) {
+  const body = document.getElementById("systemsTableBody");
+  if (!body) return;
+  body.innerHTML = "";
   data.systems.forEach((s) => {
-    const row = document.createElement("button");
-    row.className = "sys-row";
-    row.type = "button";
-    row.dataset.system = s.id;
-    row.dataset.status = s.status;
-    row.setAttribute("role", "listitem");
-    row.setAttribute("aria-label", `${s.name}, ${s.status}, ${s.brain_region}`);
-    row.innerHTML = `
-      <span class="sys-row__dot" aria-hidden="true"></span>
-      <span class="sys-row__name">${escapeHtml(s.name)}</span>
-      <span class="sys-row__region">${escapeHtml(shortRegion(s.brain_region))}</span>`;
-    host.appendChild(row);
+    const tr = document.createElement("tr");
+    tr.dataset.system = s.id;
+    tr.dataset.status = s.status;
+    tr.innerHTML = `
+      <td class="systbl__name"><span class="systbl__sys"><span class="systbl__dot" aria-hidden="true"></span>${escapeHtml(s.name)}</span></td>
+      <td class="systbl__tax">${escapeHtml(s.taxonomy_group)}</td>
+      <td class="systbl__region">${escapeHtml(s.brain_region)}</td>
+      <td><span class="systbl__status" data-status="${s.status}">${escapeHtml(s.status)}</span></td>
+      <td class="systbl__mech">${escapeHtml(s.cognifold_mechanism)}</td>`;
+    tr.addEventListener("mouseenter", () => onSelect(s.id, false));
+    tr.addEventListener("click", () => onSelect(s.id, true));
+    body.appendChild(tr);
   });
-}
-
-function shortRegion(region) {
-  return region.split(/[\/(]/)[0].trim().split(" ")[0];
 }
 
 // -------------------------------------------------------------- arch diagram
