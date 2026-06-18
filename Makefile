@@ -3,7 +3,7 @@
 # Common development tasks for the Cognifold project.
 # Usage: make <target>
 
-.PHONY: all install dev test lint format check clean help
+.PHONY: all install dev test lint format check clean help serve serve-docker
 
 # Default target
 all: check test
@@ -74,6 +74,16 @@ build-wiki:
 run:
 	python -m cognifold.cli run data/mock_timeline.json --agent -o output/
 
+# Start the HTTP service (uvicorn via scripts/start_server.sh).
+# Override defaults via env vars, e.g. COGNIFOLD_HOST=0.0.0.0 COGNIFOLD_PORT=9000 make serve.
+# See scripts/start_server.sh for all COGNIFOLD_* settings.
+serve:
+	./scripts/start_server.sh
+
+# Start the service in Docker via docker compose (builds from Dockerfile on first run).
+serve-docker:
+	docker compose up
+
 # Show help
 help:
 	@echo "Cognifold Development Tasks"
@@ -103,6 +113,10 @@ help:
 	@echo ""
 	@echo "Simulation:"
 	@echo "  run         Run simulation with agent"
+	@echo ""
+	@echo "Service:"
+	@echo "  serve         Start the HTTP API (uvicorn, http://127.0.0.1:8000)"
+	@echo "  serve-docker  Start the HTTP API in Docker (docker compose up)"
 	@echo ""
 	@echo "Maintenance:"
 	@echo "  clean       Clean build artifacts"

@@ -1,0 +1,57 @@
+# Cognifold service — local Docker stack.
+#
+#   docker compose up            # build (first run) + start the API
+#   docker compose up -d         # same, detached
+#   docker compose up --build    # force a rebuild
+#
+# The API is then available at http://localhost:8000 (docs at /docs).
+# Configuration is read from .env (copy .env.example -> .env first).
+
+services:
+  cognifold:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: cognifold:local
+    ports:
+      - "8000:8000"
+    # Loads GOOGLE_API_KEY, COGNIFOLD_* settings, etc. Copy .env.example -> .env.
+    env_file:
+      - .env
+    healthcheck:
+      # The image ships python; use it rather than assuming curl is installed.
+      test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/health').status==200 else 1)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    restart: unless-stopped
+    # To use the Redis session backend instead of file storage, set these in
+    # .env (or uncomment here) and enable the redis service below:
+    #   COGNIFOLD_SESSION_BACKEND=redis
+    #   COGNIFOLD_REDIS_URL=redis://redis:6379/0
+    # depends_on:
+    #   redis:
+    #     condition: service_healthy
+
+  # --- Optional Redis session backend ---------------------------------------
+  # Uncomment this service (and the depends_on block above) to run Redis-backed
+  # sessions. Then set in .env:
+  #   COGNIFOLD_SESSION_BACKEND=redis
+  #   COGNIFOLD_REDIS_URL=redis://redis:6379/0
+  #
+  # redis:
+  #   image: redis:7-alpine
+  #   ports:
+  #     - "6379:6379"
+  #   healthcheck:
+  #     test: ["CMD", "redis-cli", "ping"]
+  #     interval: 10s
+  #     timeout: 3s
+  #     retries: 5
+  #   restart: unless-stopped
+  #   volumes:
+  #     - redis-data:/data
+
+# volumes:
+#   redis-data:
