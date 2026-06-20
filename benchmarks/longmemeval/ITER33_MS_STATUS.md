@@ -16,3 +16,27 @@ R1 bridge-entity 2nd hop + R2 category force-include + R1-age probe (retrieval-f
 D-CONSOLIDATED over-merge dedup. Lesson: do NOT reader-over-tune counting — iter19 counted better without dedup rules.
 
 ## Next: failure-driven iteration on the remaining ~17 cases (see ITER33_MS_NEXT_FAILURES.md).
+
+---
+
+## Neural-symbolic computation agent (2026-06-20) — EXPERIMENTAL, OFF by default, SHELVED
+
+Built a focused-extraction + deterministic-compute agent (`neural_symbolic.py`,
+`--neural-symbolic` **default OFF**, launcher env `NEURAL_SYMBOLIC_FLAG`) targeting
+the count/sum/arithmetic MS failures. See the CLAUDE.md Critical rule before touching.
+
+**Verdict: NOT net-positive at full scale → kept OFF as a tagged scaffold.**
+- Mechanism works: reader DOES adopt a concrete enumerated hint; raw-turn reading
+  recovers writer-gap operands (e3038f8c "25 coins"→99, 67e0d0f2 "8 edX"→20);
+  percent_diff works.
+- But the blast radius is structurally unfavorable: fires on ~76/133, collateral
+  surface (47 currently-correct) = 1.6× win opportunity (29). At the measured
+  collateral rate (~0.3–0.4), full-MS projection ≈ 68–76% (≤ 75.9% baseline).
+- Live A/B: v1 (lower-bound-floor render) = 8 NS wins / 2 collateral on 17 qids;
+  the post-review "two-directional render" fixes REGRESSED it (5 losses, 0 gains)
+  → reverted the render to the floor. Compute (`to_number` minutes-bug, SUM
+  dedup max→sum, `_norm_label` over-merge, compare vs→Yes/No) + classifier
+  exclusions (`_NOT_ENUM_RE`) are correct and $0-tested; those stay.
+- Rollback tag `iter33-ms-pre-symbolic`. $0 harnesses: neural_symbolic_selftest.py,
+  ns_static_analysis.py, ns_smoke_compare.py, neural_symbolic_replay.py.
+- Re-enable ONLY after a controlled A/B shows collateral rate < ~0.15.

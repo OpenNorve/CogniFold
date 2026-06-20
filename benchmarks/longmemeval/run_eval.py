@@ -46,6 +46,11 @@ from benchmarks.longmemeval.symbolic_resolver import (
     LongMemEvalSymbolicResolver,
     render_symbolic_block,
 )
+from benchmarks.longmemeval import neural_symbolic as neural_symbolic_mod
+from benchmarks.longmemeval.neural_symbolic import (
+    render_neural_symbolic_block,
+    resolve_neural_symbolic,
+)
 from benchmarks.longmemeval.round2_evidence_ledger import (
     answer_from_ledger,
     assemble_ledger_context,
@@ -1392,10 +1397,17 @@ Answer:"""
         "**Answer** verbatim — do not recompute or paraphrase.\n"
         "3. **RECALL_HINT.** Treat the **Candidate** as a guess and verify against the "
         "rest of the context; prefer a more specific or more recent contradicting fact.\n"
-        "4. **PREFERENCES.** For recommendation/suggestion questions, weave in any "
+        "4. **COUNT_CROSSCHECK / SYMBOLIC_CROSSCHECK.** If such a block appears, it is a "
+        "candidate enumeration/value to RECONCILE with the context — not a verdict. "
+        "Verify each listed item against its quote: ADD any qualifying item it missed, "
+        "and DROP any listed item that does not actually qualify (planned/aspirational, "
+        "out of the time window, wrong category). Correct the total UP or DOWN as the "
+        "evidence requires. If a required operand or named component is not in the "
+        "context, say the information is insufficient rather than reporting a number.\n"
+        "5. **PREFERENCES.** For recommendation/suggestion questions, weave in any "
         "user preferences (brand, language, theme, requirement) you can find.\n"
-        "5. **NO 'UNKNOWN'.** If any related signal exists, synthesize a specific "
-        "answer — never refuse."
+        "6. **NO 'UNKNOWN'.** If any related signal exists, synthesize a specific "
+        "answer — never refuse (UNLESS rule 4 says a required operand is missing)."
     )
 
     answer = call_llm(prompt, config)
@@ -2976,6 +2988,57 @@ def run_benchmark(args: argparse.Namespace) -> None:
             if symbolic_result is not None:
                 context_text = render_symbolic_block(symbolic_result) + "\n" + context_text
 
+        # iter33-MS — neural-symbolic computation agent. A FOCUSED structured-
+        # extraction LLM call reads the RAW retrieved turns (query_result.nodes,
+        # which carry EVENT `content` verbatim — recovering writer-gap operands
+        # the classic resolver/concepts dropped), forces an explicit enumeration
+        # of qualifying items, and then computes the count/sum/diff/date/age
+        # answer DETERMINISTICALLY in Python. Injected as a RECALL_HINT
+        # (bypass=False by default) so the reader verifies a presented list
+        # rather than performing the error-prone enumeration itself. Gated OFF
+        # by default; only fires when the classic resolver did NOT already match
+        # (clean separation — count_among is party-gated, so it returns None for
+        # the count/sum questions this agent targets). See neural_symbolic.py.
+        if getattr(args, "neural_symbolic", False) and symbolic_result is None:
+            # Extraction runs on the READER config (the reasoning model, e.g.
+            # gpt-5.4-mini), NOT the cheap writer: an extraction-replay against
+            # cached context showed gpt-4o-mini under-enumerates and is unstable
+            # on the enumerate+qualify task (run-to-run variance), while the
+            # reasoning model is materially more reliable. The op is one call
+            # per count/sum question, so the cost delta is small.
+            try:
+                ns_result = resolve_neural_symbolic(
+                    question,
+                    getattr(query_result, "nodes", None),
+                    call_llm,
+                    config,
+                    bypass_mode=(
+                        neural_symbolic_mod.BYPASS_AUTO
+                        if getattr(args, "neural_symbolic_bypass", False)
+                        else neural_symbolic_mod.BYPASS_NEVER
+                    ),
+                )
+            except Exception as e:
+                logger.warning(f"neural-symbolic agent failed for {question_id}: {e}")
+                ns_result = None
+            if ns_result is not None:
+                logger.info(
+                    "Neural-symbolic [%s] for %s → %r (bypass=%s)",
+                    ns_result.get("pattern"), question_id,
+                    ns_result.get("answer", "")[:60], ns_result.get("bypass"),
+                )
+                symbolic_result = ns_result
+                # bypass=True (auto, high-confidence) → verbatim SYMBOLIC_ANSWER;
+                # bypass=False (default) → the COUNT_CROSSCHECK block whose framing
+                # treats the enumeration as a lower-bound checklist to merge with,
+                # NOT a verdict (fixes the under-count collateral seen in the smoke).
+                _ns_block = (
+                    render_symbolic_block(ns_result)
+                    if ns_result.get("bypass")
+                    else render_neural_symbolic_block(ns_result)
+                )
+                context_text = _ns_block + "\n" + context_text
+
         # iter15 — RECALL_TARGET_DATE for "X N weeks ago" Qs. Pin the
         # absolute target date so reader prefers the right [YYYY-MM-DD]
         # prefix even when the resolver doesn't bypass.
@@ -3166,6 +3229,26 @@ if __name__ == "__main__":
         action=argparse.BooleanOptionalAction,
         default=True,
         help="When the symbolic resolver matches, use its answer verbatim and skip the LLM reader call",
+    )
+    parser.add_argument(
+        "--neural-symbolic",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Enable the neural-symbolic computation agent: a focused "
+        "structured-extraction LLM call (on the writer config) reads the raw "
+        "retrieved turns for count/sum/diff/date/age questions, enumerates the "
+        "operands, and computes the answer deterministically, injected as a "
+        "RECALL_HINT. OFF by default; only fires when the classic resolver did "
+        "not already match. See neural_symbolic.py.",
+    )
+    parser.add_argument(
+        "--neural-symbolic-bypass",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Let the neural-symbolic agent set bypass=True (use its computed "
+        "answer verbatim, skipping the reader) for HIGH-confidence enumerate/sum "
+        "results. Still requires --symbolic-bypass. Default OFF (hint-only, "
+        "reader verifies).",
     )
     parser.add_argument(
         "--judge-model",

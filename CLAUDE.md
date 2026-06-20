@@ -33,6 +33,8 @@ PYTHONPATH=src python -u -m benchmarks.locomo.run_benchmark \
 
 ---
 
+**Neural-symbolic computation agent (LongMemEval MS): EXPERIMENTAL, OFF by default — do NOT enable.** The count/sum/arithmetic agent (`benchmarks/longmemeval/neural_symbolic.py`, CLI `--neural-symbolic` **default OFF**; launcher env `NEURAL_SYMBOLIC_FLAG`) is built but **shelved**. Two paid A/B smokes + a full-MS static projection (2026-06-20) show it is **NOT net-positive at full scale**: it fires on ~76/133 MS questions, but the collateral surface (47 currently-CORRECT) is 1.6× the win opportunity (29 currently-wrong), and at the measured collateral rate (~0.3–0.4) the projected full-MS score is ~68–76% — **at or below** the 75.9% baseline. **NEVER pass `--neural-symbolic` / set `NEURAL_SYMBOLIC_FLAG` in any benchmark or paper run, and NEVER flip the default to ON, without first re-validating (a controlled A/B) that the collateral rate is below ~0.15.** Its compute + classification fixes are correct and $0-tested (`neural_symbolic_selftest.py`); the agent is kept only as a tagged, reversible scaffold (`git tag iter33-ms-pre-symbolic`) for future operand-selection work. Details: memory `longmemeval-neural-symbolic-agent`, `benchmarks/longmemeval/ITER33_MS_STATUS.md`.
+
 ## Quick Start for Agents
 
 **Read these files in order before writing any code:**

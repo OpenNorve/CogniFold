@@ -4,6 +4,33 @@ All notable changes to Cognifold will be documented in this file.
 
 ---
 
+## [2026-06-20] - iter33-MS: neural-symbolic computation agent (EXPERIMENTAL, OFF by default, shelved)
+
+### Added (all behind `--neural-symbolic`, default OFF — see CLAUDE.md Critical rule)
+- `benchmarks/longmemeval/neural_symbolic.py` — focused structured-extraction LLM
+  call reads RAW retrieved turns, enumerates operands for 5 families
+  (count/sum/diff/date/age), computes deterministically, injects a RECALL_HINT
+  (bypass=False). Routed to the reader (reasoning) model. CLI `--neural-symbolic`
+  / `--neural-symbolic-bypass`; launcher env `NEURAL_SYMBOLIC_FLAG`.
+- `$0` tooling: `neural_symbolic_selftest.py` (39 fixtures incl. adversarial
+  mis-route guards), `ns_static_analysis.py` (full-MS fire-map), `ns_smoke_compare.py`,
+  `neural_symbolic_replay.py` (cached-context extraction replay).
+
+### Verdict — NOT net-positive at full scale; left OFF
+- Live A/B (ns_smoke17_v1, ns_ab22_v1) + static projection: fires on ~76/133 MS;
+  collateral surface (47 currently-correct) is 1.6× the win opportunity (29).
+  At the measured collateral rate (~0.3–0.4), projected full-MS ≈ 68–76% — at or
+  below the 75.9% baseline. The adversarial-review "fixes" (two-directional render)
+  net-REGRESSED the count wins; reverted to the v1 lower-bound-floor framing.
+- KEPT (correct, $0-tested): compute fixes (`to_number` "10 minutes"→1e7 bug,
+  minus-sign; SUM dedup max()→sum(); `_norm_label` over-merge; compare vs→Yes/No)
+  and classifier exclusions (`_NOT_ENUM_RE`: elapsed-duration/age/requirement/
+  left/exceed/recurring-rate → blast radius 89→76).
+- Rollback tag: `iter33-ms-pre-symbolic`. Do NOT enable without re-validating
+  collateral rate < ~0.15.
+
+---
+
 ## [2026-06-05] - iter31: revert to iter19 writer stack + 4 targeted qa_answer rules
 
 ### Motivation

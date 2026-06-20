@@ -22,6 +22,12 @@
 #   Embed:   text-embedding-3-small (OpenRouter)
 #   W1/W2/W3: OFF   AGG: 15000   ledger: 42 emitters (8 TR + 34 MS)
 #
+# NEURAL_SYMBOLIC_FLAG (env, default empty/OFF): if set to "--neural-symbolic" it
+# enables the EXPERIMENTAL neural-symbolic count/sum agent. It is NOT net-positive
+# at full scale (collateral surface 1.6x the win opportunity; projected ~68-76% <=
+# 75.9% baseline). DO NOT set it for benchmark/paper runs — see the CLAUDE.md
+# "Neural-symbolic computation agent" Critical rule. Leave unset for all real runs.
+#
 # Usage:  bash scripts/run_unified_ms.sh <QID_LIST_FILE> <LABEL> [N_PARALLEL]
 
 set -uo pipefail
@@ -142,6 +148,7 @@ for ((i=0; i<N_PARALLEL; i++)); do
         --rerank-reasoning-effort low --rerank-pool 100 \
         --agg-max-context-chars 15000 \
         --extract-typed-attributes \
+        ${NEURAL_SYMBOLIC_FLAG:-} \
         --question-ids "$IDS_CSV" \
         --output-dir "$OUTDIR" \
         --batch-mode --llm-eval \

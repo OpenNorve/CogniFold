@@ -1,7 +1,17 @@
 # Resume Point
 
 ## Last Updated
-2026-06-05
+2026-06-20
+
+## Current State (2026-06-20) — neural-symbolic MS agent: built, validated, SHELVED (OFF)
+The LongMemEval MS count/sum/arithmetic **neural-symbolic agent** (`benchmarks/longmemeval/neural_symbolic.py`,
+`--neural-symbolic` **default OFF**) is complete and `$0`-tested but **left OFF**: two paid A/B smokes + a
+full-MS static projection show it is **NOT net-positive at full scale** (collateral surface 47 = 1.6× the
+29 win opportunities; projected ~68–76% ≤ 75.9% baseline at the measured ~0.3–0.4 collateral rate). The
+correct compute/classifier fixes it carries stay; the render was reverted to the v1 lower-bound floor after
+the post-review "two-directional" change net-regressed the count wins. **Do NOT enable it** (see the
+CLAUDE.md Critical rule). Rollback tag `iter33-ms-pre-symbolic`. Full account: `benchmarks/longmemeval/ITER33_MS_STATUS.md`,
+memory `longmemeval-neural-symbolic-agent`. The higher-value MS lever remains entity-aware retrieval (M-probes).
 
 ## Current Phase
 **iter30 cleanup branch** — codebase + prompt rationalization on top of the iter29 baseline. Targeting the LongMemEval-S benchmark via the `longmemeval-iter` lineage.
