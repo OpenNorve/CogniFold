@@ -11,8 +11,14 @@ on:
 
 jobs:
   claude-review:
-    # Only run when the 'claude-review' label is applied to the PR.
-    if: github.event.label.name == 'claude-review'
+    # Only run when the 'claude-review' label is applied to a same-repo PR.
+    # Fork PRs are skipped (not failed): GitHub withholds secrets and the
+    # OIDC token from fork-originated pull_request events, so the action
+    # can't authenticate and would red-flag the PR. Skipping keeps the
+    # label a no-op on forks instead of a guaranteed failure.
+    if: >-
+      github.event.label.name == 'claude-review' &&
+      github.event.pull_request.head.repo.full_name == github.repository
 
     runs-on: ubuntu-latest
     permissions:
