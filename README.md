@@ -20,7 +20,7 @@
 
 <div align="center">
 
-<a href="https://opennorve.github.io/CogniFold/"><b>🌐 Live Demo</b></a> &nbsp;·&nbsp; <a href="docs/ARCHITECTURE.md"><b>🏗️ Architecture</b></a> &nbsp;·&nbsp; <a href="docs/DEPLOYMENT.md"><b>🚀 Deploy</b></a> &nbsp;·&nbsp; <a href="docs/INTEGRATIONS.md"><b>🔌 Integrations</b></a> &nbsp;·&nbsp; <a href="docs/PROMPTS.md"><b>✍️ Prompt Profiles</b></a> &nbsp;·&nbsp; <a href="docs/NORTH_STAR_METHODOLOGY.md"><b>🧭 North Star</b></a>
+<a href="https://opennorve.github.io/CogniFold/"><b>🌐 Live Demo</b></a> &nbsp;·&nbsp; <a href="docs/ARCHITECTURE.md"><b>🏗️ Architecture</b></a> &nbsp;·&nbsp; <a href="docs/DEPLOYMENT.md"><b>🚀 Deploy</b></a> &nbsp;·&nbsp; <a href="docs/INTEGRATIONS.md"><b>🔌 Integrations</b></a> &nbsp;·&nbsp; <a href="docs/PROMPTS.md"><b>✍️ Prompt Profiles</b></a> &nbsp;·&nbsp; <a href="docs/PHILOSOPHY.md"><b>🧭 Philosophy</b></a> &nbsp;·&nbsp; <a href="docs/NORTH_STAR_METHODOLOGY.md"><b>🧭 North Star</b></a>
 
 </div>
 
@@ -35,6 +35,7 @@
 ## 📖 Table of Contents
 
 - [🎯 Highlights](#-highlights)
+- [🧭 Design Philosophy: imperfection by design](#-design-philosophy-imperfection-by-design)
 - [🧠 Concepts in 60 seconds](#-concepts-in-60-seconds)
 - [🎬 Demo](#-demo)
 - [🛠️ Installation](#️-installation)
@@ -55,6 +56,19 @@
 2. **🧠 Architecture.** A tri-layered substrate extending Complementary Learning Systems with a prefrontal Intent layer — events fold into concepts, concepts crystallize into intents, surfaced through a hierarchical context window.
 3. **🌱 Conceptual Bootstrapping.** Accumulation, compression, decay, completion — four structural debts of a streaming event log, resolved as transparent graph rewrites: test-time learning without gradient updates or surface text rewriting.
 4. **📊 Evaluation.** CogEval-Bench isolates proactive emergence from retrieval accuracy; seven downstream benchmarks confirm the substrate stays robust on conventional memory tasks.
+
+## 🧭 Design Philosophy: imperfection by design
+
+CogniFold does **not** chase a perfect, omniscient, unbiased recall store. It models memory the way cognition actually works — *situated, lossy, and opinionated* — because that is precisely what makes proactivity possible. A system that stored everything with equal weight and perfect fidelity would be a database: faithful, and completely reactive. What lets memory *act ahead of you* is the same thing that makes it imperfect — it decides what matters, what fades, and what crystallizes into an intent. **The bias is not a defect we are slowly engineering away. The bias is the mechanism.** We optimize for useful proactive structure, not for maximal ground-truth fidelity.
+
+Four cognitive realities we model **on purpose** instead of designing around:
+
+1. **Situated cognition.** Cognition is embedded in the active context, goals, and history; the deeper into a problem, the more the frame gets *locked*. Retrieval is conditioned on the active intent and recent trace, so the graph reasons *from where it already is*.
+2. **Confirmation bias / reasoning inertia.** Once an understanding forms, contradicting signals get filtered and the view is reinforced — agents inherit this through the reasoning path accumulated in a context window. We bound that inertia structurally (decay, completion, re-linking) instead of pretending each turn is a clean slate.
+3. **Locality of working memory.** Human working memory activates only the currently relevant nodes; an LLM's attention weights decide *what is even seen*. We embrace locality — the hierarchical context window surfaces a focused, partial view rather than dumping the whole graph.
+4. **Metacognitive blind spots (unknown unknowns).** The most dangerous gap is the part you don't know you don't know — you can't feel you need help. A *proactive* substrate matters here: intents that crystallize from topology can surface what you never thought to ask, partially covering the blind spot pure on-demand retrieval can't reach.
+
+This is also why our reported benchmark numbers are the **proactive-substrate stack, not per-benchmark tuned ceilings**. Several older tasks are trivially inflatable with a task-specialized reader — but that path rewards *auto-loop hallucination*, the reader confabulating to satisfy a metric instead of reading memory. That's exactly the metacognitive failure above, so we don't optimize for it. **The flaw is the point.** → Full writeup: [docs/PHILOSOPHY.md](docs/PHILOSOPHY.md).
 
 ## 🧠 Concepts in 60 seconds
 
