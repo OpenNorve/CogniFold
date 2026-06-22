@@ -34,8 +34,8 @@
 
 ## 📖 Table of Contents
 
-- [🎯 Highlights](#-highlights)
 - [🧭 Design Philosophy: imperfection by design](#-design-philosophy-imperfection-by-design)
+- [🎯 Highlights](#-highlights)
 - [🧠 Concepts in 60 seconds](#-concepts-in-60-seconds)
 - [🎬 Demo](#-demo)
 - [🛠️ Installation](#️-installation)
@@ -50,13 +50,6 @@
 
 ---
 
-## 🎯 Highlights
-
-1. **🔮 Proactive Memory.** Proactivity is a property of the memory substrate, not the agent's policy — goals emerge from the topology that accumulates the conditions for them.
-2. **🧠 Architecture.** A tri-layered substrate extending Complementary Learning Systems with a prefrontal Intent layer — events fold into concepts, concepts crystallize into intents, surfaced through a hierarchical context window.
-3. **🌱 Conceptual Bootstrapping.** Accumulation, compression, decay, completion — four structural debts of a streaming event log, resolved as transparent graph rewrites: test-time learning without gradient updates or surface text rewriting.
-4. **📊 Evaluation.** CogEval-Bench isolates proactive emergence from retrieval accuracy; seven downstream benchmarks confirm the substrate stays robust on conventional memory tasks.
-
 ## 🧭 Design Philosophy: imperfection by design
 
 CogniFold does **not** chase a perfect, omniscient, unbiased recall store. It models memory the way cognition actually works — *situated, lossy, and opinionated* — because that is precisely what makes proactivity possible. A system that stored everything with equal weight and perfect fidelity would be a database: faithful, and completely reactive. What lets memory *act ahead of you* is the same thing that makes it imperfect — it decides what matters, what fades, and what crystallizes into an intent. **The bias is not a defect we are slowly engineering away. The bias is the mechanism.** We optimize for useful proactive structure, not for maximal ground-truth fidelity.
@@ -69,6 +62,13 @@ Four cognitive realities we model **on purpose** instead of designing around:
 4. **Metacognitive blind spots (unknown unknowns).** The most dangerous gap is the part you don't know you don't know — you can't feel you need help. A *proactive* substrate matters here: intents that crystallize from topology can surface what you never thought to ask, partially covering the blind spot pure on-demand retrieval can't reach.
 
 This is also why our reported benchmark numbers are the **proactive-substrate stack, not per-benchmark tuned ceilings**. Several older tasks are trivially inflatable with a task-specialized reader — but that path rewards *auto-loop hallucination*, the reader confabulating to satisfy a metric instead of reading memory. That's exactly the metacognitive failure above, so we don't optimize for it. **The flaw is the point.** → Full writeup: [docs/PHILOSOPHY.md](docs/PHILOSOPHY.md).
+
+## 🎯 Highlights
+
+1. **🔮 Proactive Memory.** Proactivity is a property of the memory substrate, not the agent's policy — goals emerge from the topology that accumulates the conditions for them.
+2. **🧠 Architecture.** A tri-layered substrate extending Complementary Learning Systems with a prefrontal Intent layer — events fold into concepts, concepts crystallize into intents, surfaced through a hierarchical context window.
+3. **🌱 Conceptual Bootstrapping.** Accumulation, compression, decay, completion — four structural debts of a streaming event log, resolved as transparent graph rewrites: test-time learning without gradient updates or surface text rewriting.
+4. **📊 Evaluation.** CogEval-Bench isolates proactive emergence from retrieval accuracy; seven downstream benchmarks confirm the substrate stays robust on conventional memory tasks.
 
 ## 🧠 Concepts in 60 seconds
 
