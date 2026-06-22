@@ -2,7 +2,7 @@
 
 <h1>CogniFold: Always-On Proactive Memory<br/>via Cognitive Folding</h1>
 
-<a href="https://opennorve.github.io/CogniFold/" target="_blank"><img alt="Live Demo" src="https://img.shields.io/badge/%F0%9F%A7%A0_Live_Demo-opennorve.github.io-7C3AED?style=flat-square" height="22px"></a>
+<a href="https://opennorve.github.io/CogniFold/" target="_blank"><img alt="Live progress track" src="https://img.shields.io/badge/%F0%9F%A7%A0_Live_progress_track-opennorve.github.io-7C3AED?style=flat-square" height="22px"></a>
 <a href="https://opennorve.github.io/CogniFold/" target="_blank"><img alt="Brain Memory Coverage" src="https://img.shields.io/badge/Brain_Memory_Coverage-~60%25-8B5CF6?style=flat-square" height="22px"></a>
 <a href="https://arxiv.org/abs/2605.13438" target="_blank"><img alt="Paper" src="https://img.shields.io/badge/Technical_Report-arXiv-B31B1B?logo=arxiv&logoColor=white&style=flat-square" height="22px"></a>
 <a href="https://huggingface.co/datasets/OpenNorve/CogEval-Bench" target="_blank"><img alt="CogEval-Bench Dataset" src="https://img.shields.io/badge/Dataset-CogEval--Bench-FFD21E?logo=huggingface&logoColor=black&style=flat-square" height="22px"></a>
@@ -20,7 +20,7 @@
 
 <div align="center">
 
-<a href="https://opennorve.github.io/CogniFold/"><b>🌐 Live Demo</b></a> &nbsp;·&nbsp; <a href="docs/ARCHITECTURE.md"><b>🏗️ Architecture</b></a> &nbsp;·&nbsp; <a href="docs/DEPLOYMENT.md"><b>🚀 Deploy</b></a> &nbsp;·&nbsp; <a href="docs/INTEGRATIONS.md"><b>🔌 Integrations</b></a> &nbsp;·&nbsp; <a href="docs/PROMPTS.md"><b>✍️ Prompt Profiles</b></a> &nbsp;·&nbsp; <a href="docs/PHILOSOPHY.md"><b>🧭 Philosophy</b></a> &nbsp;·&nbsp; <a href="docs/NORTH_STAR_METHODOLOGY.md"><b>🧭 North Star</b></a>
+<a href="https://opennorve.github.io/CogniFold/"><b>🌐 Live progress track</b></a> &nbsp;·&nbsp; <a href="docs/ARCHITECTURE.md"><b>🏗️ Architecture</b></a> &nbsp;·&nbsp; <a href="docs/DEPLOYMENT.md"><b>🚀 Deploy</b></a> &nbsp;·&nbsp; <a href="docs/INTEGRATIONS.md"><b>🔌 Integrations</b></a> &nbsp;·&nbsp; <a href="docs/PROMPTS.md"><b>✍️ Prompt Profiles</b></a> &nbsp;·&nbsp; <a href="docs/PHILOSOPHY.md"><b>🧭 Philosophy</b></a> &nbsp;·&nbsp; <a href="docs/NORTH_STAR_METHODOLOGY.md"><b>🧭 North Star</b></a>
 
 </div>
 
