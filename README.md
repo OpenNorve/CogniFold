@@ -261,19 +261,22 @@ Environment overrides accepted by `scripts/reproduce.sh`: `MODEL=...`, plus the 
 
 ### Headline results
 
+Numbers below are as reported in the technical report (<a href="https://arxiv.org/abs/2605.13438">arXiv:2605.13438v3</a>, Tables 3–5 and Fig. 4).
+
 | Benchmark | Metric | CogniFold | Note |
 |---|---|:---:|---|
-| **CogEval-Bench** | Proactivity | **0.614** | only system non-zero on Purity **and** Proactivity |
-| **BABILong** | EM | **96.0%** | intent routing |
+| **CogEval-Bench** | Proactivity / Purity | **0.614 / 0.361** | only system non-zero on Purity **and** Proactivity; 4.6× compression |
+| **LongMemEval** | J-Score (overall) | **93.0%** | 500 Q; SSA 100.0 · SSU 97.1 · KU 94.9 · SSP 93.3 · MS 91.0 · TR 88.7 (vs Mastra 94.9, ENGRAM 71.4, Zep 71.2) |
+| **LoCoMo** | J-Score (overall) | **81.23%** | vs ENGRAM 77.55 · MemOS 75.80 · Zep 75.14 (Mem0 protocol, `--event-stream`) |
+| **MuSiQue** | F1 | **58.7** | exceeds HippoRAG 2 (49.3) |
+| **BABILong** | Accuracy | **85.0** | exceeds ARMT — fine-tuned (83.8) |
+| **ToMi** | EM | **83.5** | exceeds AutoToM (80.2) |
 | **SafetyBench** | Accuracy | **94.3%** | exceeds GPT-4 zero-shot (88.9%) |
 | **MuTual** | Accuracy | **93.2%** | near-SOTA dialogue coherence |
-| **ToMi** | EM | **91.6%** | symbolic belief tracker |
-| **LoCoMo** | J-Score | **82.8%** | +15.9 pp over Mem0 (Mem0 protocol, `--event-stream`) |
 | **StreamingQA** | EM / F1 | **78.4% / 0.573** | streaming temporal QA |
 | **NarrativeQA** | F1 / ROUGE-L | **0.720 / 0.712** | long-form comprehension |
-| **MuSiQue** | EM / F1 | **41.2% / 0.587** | exceeds HippoRAG 2 (F1 0.486) |
 
-<sub>Full protocol, dates, and ablations in <a href="docs/BENCHMARK.md">docs/BENCHMARK.md</a>. Numbers reproduce via <code>bash scripts/reproduce.sh</code>.</sub>
+<sub>Stack: build `gpt-4o-mini`, answer `gpt-5.4-mini` (LongMemEval) / `gpt-4o-mini` (LoCoMo + downstream), judge `gpt-4o` (LongMemEval) / `gpt-4o-mini` (LoCoMo), embeddings `text-embedding-3-small`. Full protocol, per-category tables, and ablations in <a href="docs/BENCHMARK.md">docs/BENCHMARK.md</a>. Numbers reproduce via <code>bash scripts/reproduce.sh</code>.</sub>
 
 ### Running the suite
 

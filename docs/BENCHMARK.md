@@ -8,6 +8,48 @@ Detailed documentation lives in `docs/benchmark/`.
 
 ---
 
+## 📄 Paper results (canonical)
+
+Headline numbers are as reported in the technical report — [arXiv:2605.13438v3](https://arxiv.org/abs/2605.13438), *CogniFold: Always-On Proactive Memory via Cognitive Folding*. The paper is the source of truth; the Implementation Status table below is the internal tracker and is kept consistent with it.
+
+> **Why these numbers (not the highest we can get).** The reported configuration is the one that preserves proactive **intent/intention generation** end-to-end, not the per-benchmark maximum. Several older benchmarks — ToMi in particular — are easy to drive much higher with a task-specialized reader, but that path encourages auto-loop hallucination (the reader confabulates to satisfy the metric instead of reading memory). We report the proactive-substrate stack so the numbers reflect the always-on memory thesis rather than a benchmark-tuned ceiling. See PR discussion for detail.
+
+### LongMemEval (Table 5) — J-Score, N=500
+
+Stack: build `gpt-4o-mini`, answer `gpt-5.4-mini`, judge `gpt-4o`.
+
+| System | SSU | SSA | SSP | MS | KU | TR | **Overall** |
+|---|---|---|---|---|---|---|---|
+| Chronos (High) | 98.6 | 100.0 | 100.0 | 88.7 | 100.0 | 95.5 | 95.6 |
+| Mastra | 95.7 | 94.6 | 100.0 | 87.2 | 96.2 | 95.5 | 94.9 |
+| **CogniFold** | **97.1** | **100.0** | **93.3** | **91.0** | **94.9** | **88.7** | **93.0** |
+| ENGRAM | 97.1 | 87.5 | 93.3 | 60.2 | 74.4 | 55.6 | 71.4 |
+| Zep | 92.9 | 80.4 | 56.7 | 57.9 | 83.3 | 62.4 | 71.2 |
+
+### LoCoMo (Table 4) — J-Score, Mem0 protocol
+
+Stack: `gpt-4o-mini` read/write, judge `gpt-4o-mini`, `--event-stream`.
+
+| Category | CogniFold | ENGRAM | MemOS | Zep |
+|---|---|---|---|---|
+| Single-Hop | 90.49 | 79.90 | 81.09 | 79.79 |
+| Multi-Hop | 67.38 | 79.79 | 67.49 | 74.11 |
+| Temporal | 78.50 | 70.79 | 75.18 | 67.71 |
+| Open Domain | 50.00 | 72.92 | 55.90 | 66.04 |
+| **Overall** | **81.23** | **77.55** | **75.80** | **75.14** |
+| Overall F1 | 35.71 | 21.08 | 45.27 | 41.23 |
+
+### CogEval-Bench (Table 3) & downstream (Fig. 4)
+
+Stack: `gpt-4o-mini` extraction/reader, `text-embedding-3-small`.
+
+- **CogEval-Bench** — Harmony **0.476** (GraphRAG 0.323), Gold-F1 **0.358**, LLM-Quality **0.733**, Purity **0.361** (all others 0.000), Proactivity **0.614** (all others 0.000), Compression **4.6×** (GraphRAG 1.2×, Mem0 1.0×). Only CogniFold is non-zero on Purity **and** Proactivity.
+- **MuSiQue** — F1 **58.7** vs HippoRAG 2 49.3.
+- **BABILong** — **85.0** vs ARMT (fine-tuned) 83.8.
+- **ToMi** — **83.5** vs AutoToM 80.2.
+
+---
+
 ## ⚠️ ALWAYS pass `--event-stream` (every benchmark, not just LoCoMo)
 
 All benchmark runners have `event_stream` default OFF, but **paper-grade runs MUST enable it** to activate per-session inter-session consolidation (`merge_similar_concepts` + `prune_orphan_concepts`). Canonical LoCoMo (full 10-conv, Mem0 protocol):
@@ -23,18 +65,18 @@ Sanity check log for `Inter-session consolidation:` lines. Pre-2026-04-19 `--lim
 
 | Benchmark | Location | Status | Accuracy (latest) | Primary Blocker / Note |
 |-----------|----------|--------|-------------------|------------------------|
-| **LoCoMo** | `benchmarks/locomo/` | Tested | **82.8% J-Score (iter3)** (May 5, 1275/1540 cat 1–4 QA, strict 65.9% / partial 82.0%, gpt-4.1-mini + gpt-4o-mini judge, `--event-stream`, Mem0 protocol; entity-anchored EVENT boost + raw-turn preservation + question decomposition) · prior 62.9% (Apr 19 baseline) · 56.2% strict (Apr 17, gemini-2.5-flash, 1986 QA) | +15.9 pp over Mem0 (66.88); +7.0 pp over Memobase v0.0.37 (75.78); -8.4 pp to MemMachine v0.2 (91.23, has Cohere reranker) |
-| **LongMemEval** | `benchmarks/longmemeval/` | Tested | 0% | Retrieval returns empty context |
+| **LoCoMo** | `benchmarks/locomo/` | Tested | **81.23% J-Score overall** (paper Table 4, Mem0 protocol, gpt-4o-mini read/write + gpt-4o-mini judge, `--event-stream`; Single-Hop 90.49 / Multi-Hop 67.38 / Temporal 78.50 / Open 50.00; F1 35.71) | vs ENGRAM 77.55 · MemOS 75.80 · Zep 75.14 |
+| **LongMemEval** | `benchmarks/longmemeval/` | Tested | **93.0% J-Score overall** (paper Table 5, N=500, build gpt-4o-mini / answer gpt-5.4-mini / judge gpt-4o; SSA 100.0 / SSU 97.1 / KU 94.9 / SSP 93.3 / MS 91.0 / TR 88.7) | vs Mastra 94.9 · ENGRAM 71.4 · Zep 71.2; Chronos (High) 95.6. MS lever: see PR #26/#27 |
 | **MSC** | `benchmarks/msc/` | Tested | N/A (excluded from Feb 21 full eval) | Agent concept extraction too passive |
-| **BABILong** | `benchmarks/babilong/` | Tested | **96.0% EM** (N=100) | Intent routing; solved |
+| **BABILong** | `benchmarks/babilong/` | Tested | **85.0** (paper Fig. 4; proactive-substrate stack, not benchmark-tuned ceiling) | exceeds ARMT — fine-tuned (83.8) |
 | **FutureX** | `benchmarks/futurex/` | Tested | N/A (no GT) | Pipeline verified, needs real MiroFlow |
 | **MuTual** | `benchmarks/mutual/` | Tested | **93.2% acc** (N=500) | Near-SOTA (~97% GPT-4o zero-shot) |
-| **MuSiQue-Ans** | `benchmarks/musique/` | Tested | **41.2% EM / F1 0.587** (Apr 8, N=500, GPT-4o) | **Exceeds HippoRAG 2 F1=0.486** |
+| **MuSiQue-Ans** | `benchmarks/musique/` | Tested | **F1 58.7** (paper Fig. 4, N=500) | exceeds HippoRAG 2 (49.3) |
 | **TimeQA** | `benchmarks/timeqa/` | Tested | 0.0% EM (Feb 21, n=20) | Temporal reasoning absent |
 | **NarrativeQA** | `benchmarks/narrativeqa/` | Tested | **F1 0.720 / ROUGE-L 0.712** (Apr 8, N=500, GPT-4o) | Scoring normalization + summary detruncation |
 | **QMSum** | `benchmarks/qmsum/` | Tested | F1=0.143, ROUGE-L=0.139 (N=281) | Gemini thinking-token truncation unresolved |
 | **SocialIQA** | `benchmarks/socialiqa/` | Tested | **78.4% acc** (N=500) | LLM internal commonsense sufficient |
-| **ToMi** | `benchmarks/tomi/` | Tested | **91.6% EM** (N=500) | Symbolic belief tracker |
+| **ToMi** | `benchmarks/tomi/` | Tested | **83.5 EM** (paper Fig. 4; proactive-substrate stack — a task-specialized reader scores far higher but invites auto-loop confabulation, so not used) | exceeds AutoToM (80.2) |
 | **SafetyBench** | `benchmarks/safetybench/` | Tested | **94.3% acc** (N=35) | Exceeds GPT-4 zero-shot (88.9%); direct mode |
 | **StreamingQA** | `benchmarks/streamingqa/` | Tested | **78.4% EM / F1 0.573** (N=500) | Answer-seeded fact events + containment EM |
 | **RGB** | `benchmarks/rgb/` | Tested | 80.0% EM / F1 0.860 (N=20, pilot) | Wave 7 fix |
