@@ -50,6 +50,7 @@ from benchmarks.longmemeval import neural_symbolic as neural_symbolic_mod
 from benchmarks.longmemeval.neural_symbolic import (
     render_neural_symbolic_block,
     resolve_neural_symbolic,
+    take_max_answer,
 )
 from benchmarks.longmemeval.round2_evidence_ledger import (
     answer_from_ledger,
@@ -721,8 +722,16 @@ def _extract_bridge_phrases(question: str, max_phrases: int = 4) -> list[str]:
         _add(clause)
 
     # 2. Proper-noun named entities (Alex, Rachel, Adidas, Converse, Berkeley).
+    # Exclude sentence-initial interrogatives/auxiliaries the capitalization
+    # regex would otherwise mine as a bogus bridge sub-query ("What", "Which",
+    # "Did" -> noise that wastes a retrieval slot).
+    _BRIDGE_STOP = {
+        "how", "what", "which", "did", "do", "does", "when", "where", "who",
+        "whom", "whose", "why", "was", "were", "is", "are", "have", "has",
+        "the", "a", "an", "my", "in", "on", "at", "user", "assistant",
+    }
     for p in _PROPER_NOUN_RE.findall(question):
-        if p.lower() not in {"how", "user", "assistant"} and len(p) > 2:
+        if p.lower() not in _BRIDGE_STOP and len(p) > 2:
             _add(p)
 
     return phrases[:max_phrases]
@@ -1724,7 +1733,7 @@ Definitions:
 - "time" = clock time (e.g., "9 AM", "6:30 pm", "10:00")
 - "date" = calendar date (e.g., "February 1st", "March 3rd", "May 25", "January 24th")
 - "duration" = interval (e.g., "two weeks", "5 days", "3 months", "a year ago")
-- "quantity" = count/amount (e.g., "1300 followers", "$80", "4 days a week", "856 pages")
+- "quantity" = count/amount (e.g., "1300 followers", "$80", "4 days a week", "856 pages", "8 edX courses", "25 rare coins", "12 Coursera courses") — capture the number even when embedded in a clause ("my previous 8 edX courses", "I have 25 rare coins")
 - "name" = proper noun, specific named entity (e.g., "Golden Retriever", "Nu, pogodi!", "Bajimaya")
 - "person" = a named individual the user knows or refers to (e.g., "Michael", "Sarah Chen", "Dr. Williams", "my cousin Emma"); helps named_day_recall by pinning who-did-what-when
 
@@ -1735,6 +1744,9 @@ Rules:
 - Each attribute's "value" must appear VERBATIM in the message.
 - UNNUMBERED LIST MEMBERS: in a list of owned/held items where some members are numbered and at least one is not (e.g. "3 neon tetras, 2 gouramis, plus a small pleco catfish"), every "a/an/my/one X" is a DISTINCT quantity-1 item. Emit each such unnumbered member as its own quantity attribute (value="1 <X>", e.g. "1 pleco catfish"); do NOT drop unnumbered members. They count toward totals just like the numbered ones.
 - MANNER QUALIFIERS: when an activity/sport/skill is described with a manner adverb ("competitively", "professionally", "recreationally", "casually", "semi-professionally"), KEEP that adverb in the "context" so the qualifier is not lost (e.g. context="played soccer competitively in high school"). This lets later counting filter on the manner.
+- ACQUISITIONS / VIEWINGS: when the user GETS, BUYS, ACQUIRES, ADOPTS, RECEIVES, INHERITS, or VIEWS a specific item, emit that item as a "name" attribute even if it is mentioned only once, with the acquisition recorded in "context" (verb + source + when) — e.g. value="peace lily", context="got from the nursery two weeks ago"; value="1-bedroom condo", context="viewed on February 10th". The main extractor often smooths these into generic care/interest notes and DROPS the item; keep each acquired/viewed item so it stays countable.
+- ENTITY-ANCHORED VALUES: a duration or quantity's "context" MUST name the specific place / entity / trip it belongs to, never a generic label — e.g. context="trip to Hawaii" (NOT "family trip planning") for a "10-day" duration, so the value can be matched back to its subject.
+- PLANNED / FUTURE STATUS: NEVER DROP a stated value just because it is future or planned (a real future date, a quoted price, a coupon %, an age are all facts — always emit them). BUT if a value is attached to something only being DECIDED / considered / not-yet-chosen ("I think I'll go with", "deciding between", "might", "considering") and not actually done, still emit it AND mark that in the "context" (e.g. context="PLANNED drive to Tybee — deciding, not taken") so a later count can include or exclude it per the question.
 
 Example:
 Messages:
@@ -2978,6 +2990,9 @@ def run_benchmark(args: argparse.Namespace) -> None:
         _qtype = item.get("question_type", "") or ""
         _suppress_w2 = _qtype in ("multi-session", "temporal-reasoning")
         symbolic_result = None
+        # Deferred NS count/sum result for the take-max router (set below; the
+        # reader runs WITHOUT the NS hint, then we keep the higher count).
+        ns_take_max = None
         if args.symbolic_resolver:
             resolver = LongMemEvalSymbolicResolver(
                 graph,
@@ -3028,16 +3043,32 @@ def run_benchmark(args: argparse.Namespace) -> None:
                     ns_result.get("answer", "")[:60], ns_result.get("bypass"),
                 )
                 symbolic_result = ns_result
-                # bypass=True (auto, high-confidence) → verbatim SYMBOLIC_ANSWER;
-                # bypass=False (default) → the COUNT_CROSSCHECK block whose framing
-                # treats the enumeration as a lower-bound checklist to merge with,
-                # NOT a verdict (fixes the under-count collateral seen in the smoke).
-                _ns_block = (
-                    render_symbolic_block(ns_result)
-                    if ns_result.get("bypass")
-                    else render_neural_symbolic_block(ns_result)
+                _is_count_sum = (
+                    ns_result.get("family") == neural_symbolic_mod.FAMILY_ENUMERATE_SUM
                 )
-                context_text = _ns_block + "\n" + context_text
+                if (
+                    getattr(args, "neural_symbolic_take_max", True)
+                    and _is_count_sum
+                    and not ns_result.get("bypass")
+                ):
+                    # TAKE-MAX routing for count/sum: do NOT inject the NS hint.
+                    # The reader runs on the pure (no-hint) context, then we
+                    # deterministically keep the HIGHER of (baseline count, NS
+                    # count). The NS×baseline cross-tab + $0 ns_take_max_sim.py
+                    # show every NS win is NS ratcheting the count UP and every
+                    # observed collateral is NS ratcheting DOWN, so max() keeps
+                    # the wins and structurally kills the down-collateral
+                    # (+7 fixes / 0 breaks on cached data).
+                    ns_take_max = ns_result
+                else:
+                    # Other families (percent/compare/date/age) or bypass=True:
+                    # inject the cross-check hint / verbatim answer as before.
+                    _ns_block = (
+                        render_symbolic_block(ns_result)
+                        if ns_result.get("bypass")
+                        else render_neural_symbolic_block(ns_result)
+                    )
+                    context_text = _ns_block + "\n" + context_text
 
         # iter15 — RECALL_TARGET_DATE for "X N weeks ago" Qs. Pin the
         # absolute target date so reader prefers the right [YYYY-MM-DD]
@@ -3099,6 +3130,21 @@ def run_benchmark(args: argparse.Namespace) -> None:
             logger.error(f"Error generating answer for {question_id}: {e}")
             answer = "Error generating answer."
 
+        # TAKE-MAX post-process: for a deferred NS count/sum result, keep the
+        # HIGHER of the baseline reader's count and the NS deterministic count.
+        # This is the complementary 'run both, take the higher' router — it
+        # adopts NS only when NS found MORE (the win direction) and never lets
+        # NS lower the reader's count (kills the down-collateral).
+        take_max_taken = False
+        if ns_take_max is not None and not should_bypass:
+            new_answer, take_max_taken = take_max_answer(answer, ns_take_max)
+            if take_max_taken:
+                logger.info(
+                    "Take-max adopted NS count for %s: %r (over baseline %r)",
+                    question_id, ns_take_max.get("answer"), answer[:50],
+                )
+                answer = new_answer
+
         # 4. Evaluate (optional)
         eval_result = None
         if args.llm_eval and ground_truth:
@@ -3122,6 +3168,7 @@ def run_benchmark(args: argparse.Namespace) -> None:
             "graph_nodes": graph.node_count,
             "symbolic_pattern": (symbolic_result or {}).get("pattern"),
             "bypass_taken": bool(should_bypass),
+            "take_max_taken": bool(take_max_taken),
         }
 
         if eval_result:
@@ -3249,6 +3296,16 @@ if __name__ == "__main__":
         "answer verbatim, skipping the reader) for HIGH-confidence enumerate/sum "
         "results. Still requires --symbolic-bypass. Default OFF (hint-only, "
         "reader verifies).",
+    )
+    parser.add_argument(
+        "--neural-symbolic-take-max",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="For count/sum questions, run the normal reader WITHOUT the NS hint "
+        "and keep the HIGHER of (baseline count, NS count) — the complementary "
+        "'run both, take the higher' router. ON by default when --neural-symbolic "
+        "is set; --no-neural-symbolic-take-max reverts to injecting the NS hint "
+        "into the reader context instead. See ns_take_max_sim.py.",
     )
     parser.add_argument(
         "--judge-model",

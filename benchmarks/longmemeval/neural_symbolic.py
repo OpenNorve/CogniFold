@@ -882,3 +882,75 @@ def render_neural_symbolic_block(result: dict[str, Any]) -> str:
         f"**Computed**: {answer}\n"
         f"**Reasoning**: {reasoning}\n"
     )
+
+
+# ---------------------------------------------------------------------------
+# Take-max router (complementary use with the normal reader)
+# ---------------------------------------------------------------------------
+
+_COUNT_VERB_RE = re.compile(
+    r"(?:attended|visited|used|have|own|completed|got|took|earned|raised|spent|"
+    r"purchased|acquired|played|total of|total|count(?:ed)?)\s+"
+    r"(?:about\s+|over\s+|a\s+total\s+of\s+|approximately\s+|at\s+least\s+)?"
+    r"\$?([\d,]+(?:\.\d+)?)",
+    re.IGNORECASE,
+)
+
+
+def parse_answer_count(text: Any) -> float | None:
+    """Best-effort extraction of an answer's headline count/total from prose.
+
+    Order of preference: a bolded **N** (the reader almost always bolds the
+    final figure) -> a number directly after a count/total verb -> a leading
+    word-number -> the first standalone digit that is not a list index
+    ("Item 1") or a markdown bullet. Returns None when no count is recoverable.
+    """
+    if text is None:
+        return None
+    s = str(text)
+    m = re.search(r"\*\*\s*\$?\s*([\d,]+(?:\.\d+)?)", s)
+    if m:
+        return to_number(m.group(1))
+    m = _COUNT_VERB_RE.search(s)
+    if m:
+        return to_number(m.group(1))
+    m = re.search(
+        r"\b(zero|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve)\b",
+        s[:80], re.IGNORECASE,
+    )
+    if m:
+        return to_number(m.group(1))
+    for mm in re.finditer(r"([\d,]+(?:\.\d+)?)", s):
+        pre = s[max(0, mm.start() - 6):mm.start()].lower()
+        if "item" in pre or "#" in pre:
+            continue
+        return to_number(mm.group(1))
+    return None
+
+
+def take_max_answer(baseline_answer: str, ns_result: dict) -> tuple[str, bool]:
+    """Complementary 'run both, keep the higher count' router for count/sum.
+
+    The NS-vs-baseline cross-tab (and the $0 ns_take_max_sim.py replay, +7 fixes
+    / 0 breaks) show that on MS count/sum questions the error mode is
+    under-count-dominated: every NS win is NS ratcheting the count UP, every
+    observed collateral is NS ratcheting DOWN. So taking max(baseline_count,
+    ns_count) keeps the up-wins and structurally kills the down-collateral
+    (when NS under-counts, we keep the baseline reader's higher answer).
+
+    Only applies to enumerate_sum results. Returns (final_answer, took_ns).
+    When the NS count is not strictly greater than the baseline's count — or
+    either count can't be parsed — the baseline answer is kept unchanged.
+    """
+    if ns_result.get("family") != FAMILY_ENUMERATE_SUM:
+        return baseline_answer, False
+    ns_count = parse_answer_count(ns_result.get("answer"))
+    base_count = parse_answer_count(baseline_answer)
+    if ns_count is None or base_count is None:
+        return baseline_answer, False
+    if ns_count > base_count:
+        # NS recovered items the reader missed — adopt the higher count and
+        # carry the enumeration as its justification for the judge.
+        reasoning = ns_result.get("reasoning", "")
+        return f"{ns_result.get('answer', '')}. {reasoning}".strip(), True
+    return baseline_answer, False
