@@ -1,25 +1,11 @@
 name: Claude Code Review
 
-# On-demand only: add the "claude-review" label to a PR to trigger one review.
-# Previously this ran automatically on every PR open/push (types: opened,
-# synchronize, ready_for_review, reopened), which billed an LLM review per PR
-# and red-flagged every PR whenever the auth token was absent. Switched to a
-# label trigger so the capability stays available but costs nothing by default.
 on:
   pull_request:
-    types: [labeled]
+    types: [opened, synchronize]
 
 jobs:
   claude-review:
-    # Only run when the 'claude-review' label is applied to a same-repo PR.
-    # Fork PRs are skipped (not failed): GitHub withholds secrets and the
-    # OIDC token from fork-originated pull_request events, so the action
-    # can't authenticate and would red-flag the PR. Skipping keeps the
-    # label a no-op on forks instead of a guaranteed failure.
-    if: >-
-      github.event.label.name == 'claude-review' &&
-      github.event.pull_request.head.repo.full_name == github.repository
-
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -38,11 +24,17 @@ jobs:
         uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-          plugin_marketplaces: 'https://github.com/anthropics/claude-code.git'
-          plugins: 'code-review@claude-code-plugins'
           prompt: |
-            /code-review:code-review ${{ github.repository }}/pull/${{ github.event.pull_request.number }}
-            Write the entire review in English — the summary and every inline
-            comment — regardless of the language used in the code or PR description.
-          # See https://github.com/anthropics/claude-code-action/blob/main/docs/usage.md
-          # or https://code.claude.com/docs/en/cli-reference for available options
+            Please review this pull request and provide feedback on:
+            - Code quality and best practices
+            - Potential bugs or issues
+            - Performance considerations
+            - Security concerns
+            - Test coverage
+
+            Use the repository's CLAUDE.md (if present) for style and conventions.
+            Be constructive and helpful, and focus on the changes in this PR.
+
+            Use `gh pr comment` with your Bash tool to leave your review as a comment on the PR.
+          claude_args: |
+            --allowed-tools "Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*)"
