@@ -2,9 +2,9 @@
 
 **This document is an extension of `CLAUDE.md`. Read `CLAUDE.md` first.**
 
-The benchmark system evaluates Cognifold's memory against established datasets. This file is the **entry point** — it tells you what benchmarks exist, where to find everything, and what to update when making changes.
-
-Detailed documentation lives in `docs/benchmark/`.
+The benchmark system evaluates Cognifold's memory against established datasets.
+This file is the **entry point** — what benchmarks exist, how to run them, what
+to update when making changes, and how to contribute a new one.
 
 ---
 
@@ -12,7 +12,7 @@ Detailed documentation lives in `docs/benchmark/`.
 
 Headline numbers are as reported in the technical report — [arXiv:2605.13438v3](https://arxiv.org/abs/2605.13438), *CogniFold: Always-On Proactive Memory via Cognitive Folding*. The paper is the source of truth; the Implementation Status table below is the internal tracker and is kept consistent with it.
 
-> **Why these numbers (not the highest we can get).** The reported configuration is the one that preserves proactive **intent/intention generation** end-to-end, not the per-benchmark maximum. Several older benchmarks — ToMi in particular — are easy to drive much higher with a task-specialized reader, but that path encourages auto-loop hallucination (the reader confabulates to satisfy the metric instead of reading memory). We report the proactive-substrate stack so the numbers reflect the always-on memory thesis rather than a benchmark-tuned ceiling. See PR discussion for detail.
+> **Why these numbers (not the highest we can get).** The reported configuration is the one that preserves proactive **intent/intention generation** end-to-end, not the per-benchmark maximum. Several older benchmarks — ToMi in particular — are easy to drive much higher with a task-specialized reader, but that path encourages auto-loop hallucination (the reader confabulates to satisfy the metric instead of reading memory). We report the proactive-substrate stack so the numbers reflect the always-on memory thesis rather than a benchmark-tuned ceiling.
 
 ### LongMemEval (Table 5) — J-Score, N=500
 
@@ -50,296 +50,246 @@ Stack: `gpt-4o-mini` extraction/reader, `text-embedding-3-small`.
 
 ---
 
-## ⚠️ ALWAYS pass `--event-stream` (every benchmark, not just LoCoMo)
+## ⚠️ Consolidation and `--event-stream` — how it actually works
 
-All benchmark runners have `event_stream` default OFF, but **paper-grade runs MUST enable it** to activate per-session inter-session consolidation (`merge_similar_concepts` + `prune_orphan_concepts`). Canonical LoCoMo (full 10-conv, Mem0 protocol):
+Inter-session consolidation (`merge_similar_concepts` + `prune_orphan_concepts`)
+is central to the always-on memory thesis, but the mechanism differs by runner:
+
+- **LoCoMo**: consolidation is gated behind the `--event-stream` flag, which
+  exists **only** in `benchmarks/locomo/run_benchmark.py`. Paper-grade LoCoMo
+  runs MUST pass it (`scripts/reproduce.sh locomo` does so automatically).
+  Sanity-check the log for `Inter-session consolidation:` lines.
+- **All other `BenchmarkRunner`-based runners**: consolidation runs
+  unconditionally in the shared post-ingestion hook
+  (`benchmarks/shared/base_runner.py`, step after ingestion). There is no
+  `--event-stream` flag on these runners — passing it is an argparse error.
+
+Canonical LoCoMo (full 10-conv, Mem0 protocol):
+
 ```bash
 PYTHONPATH=src python -u -m benchmarks.locomo.run_benchmark \
-    --event-stream --model openai:gpt-4.1-mini
+    --event-stream --model openai:gpt-4o-mini
 ```
-Sanity check log for `Inter-session consolidation:` lines. Pre-2026-04-19 `--limit` default was `1` (silent conv-26-only truncation); fixed to `None` = all 10. If log shows `Loaded 1 conversations` on a full run → regression.
+
+Historical note: pre-2026-04-19 the LoCoMo `--limit` default was `1` (silent
+conv-26-only truncation); it is now `None` = all 10. If a full run logs
+`Loaded 1 conversations`, that regression is back.
 
 ---
 
 ## Implementation Status
 
-| Benchmark | Location | Status | Accuracy (latest) | Primary Blocker / Note |
-|-----------|----------|--------|-------------------|------------------------|
-| **LoCoMo** | `benchmarks/locomo/` | Tested | **81.23% J-Score overall** (paper Table 4, Mem0 protocol, gpt-4o-mini read/write + gpt-4o-mini judge, `--event-stream`; Single-Hop 90.49 / Multi-Hop 67.38 / Temporal 78.50 / Open 50.00; F1 35.71) | vs ENGRAM 77.55 · MemOS 75.80 · Zep 75.14 |
-| **LongMemEval** | `benchmarks/longmemeval/` | Tested | **93.0% J-Score overall** (paper Table 5, N=500, build gpt-4o-mini / answer gpt-5.4-mini / judge gpt-4o; SSA 100.0 / SSU 97.1 / KU 94.9 / SSP 93.3 / MS 91.0 / TR 88.7) | vs Mastra 94.9 · ENGRAM 71.4 · Zep 71.2; Chronos (High) 95.6. MS lever: see PR #26/#27 |
-| **MSC** | `benchmarks/msc/` | Tested | N/A (excluded from Feb 21 full eval) | Agent concept extraction too passive |
-| **BABILong** | `benchmarks/babilong/` | Tested | **85.0** (paper Fig. 4; proactive-substrate stack, not benchmark-tuned ceiling) | exceeds ARMT — fine-tuned (83.8) |
-| **FutureX** | `benchmarks/futurex/` | Tested | N/A (no GT) | Pipeline verified, needs real MiroFlow |
-| **MuTual** | `benchmarks/mutual/` | Tested | **93.2% acc** (N=500) | Near-SOTA (~97% GPT-4o zero-shot) |
-| **MuSiQue-Ans** | `benchmarks/musique/` | Tested | **F1 58.7** (paper Fig. 4, N=500) | exceeds HippoRAG 2 (49.3) |
-| **TimeQA** | `benchmarks/timeqa/` | Tested | 0.0% EM (Feb 21, n=20) | Temporal reasoning absent |
-| **NarrativeQA** | `benchmarks/narrativeqa/` | Tested | **F1 0.720 / ROUGE-L 0.712** (Apr 8, N=500, GPT-4o) | Scoring normalization + summary detruncation |
-| **QMSum** | `benchmarks/qmsum/` | Tested | F1=0.143, ROUGE-L=0.139 (N=281) | Gemini thinking-token truncation unresolved |
-| **SocialIQA** | `benchmarks/socialiqa/` | Tested | **78.4% acc** (N=500) | LLM internal commonsense sufficient |
-| **ToMi** | `benchmarks/tomi/` | Tested | **83.5 EM** (paper Fig. 4; proactive-substrate stack — a task-specialized reader scores far higher but invites auto-loop confabulation, so not used) | exceeds AutoToM (80.2) |
-| **SafetyBench** | `benchmarks/safetybench/` | Tested | **94.3% acc** (N=35) | Exceeds GPT-4 zero-shot (88.9%); direct mode |
-| **StreamingQA** | `benchmarks/streamingqa/` | Tested | **78.4% EM / F1 0.573** (N=500) | Answer-seeded fact events + containment EM |
-| **RGB** | `benchmarks/rgb/` | Tested | 80.0% EM / F1 0.860 (N=20, pilot) | Wave 7 fix |
-| **CogEval-Bench** (structural) | `papers/cognifold-neurips2025/` | Validated | **Harmony 0.476, Purity 0.361, Proactivity 0.614, Compression 4.6×** (6 systems × 6 scenarios, GPT-4o-mini) | Only CogniFold non-zero on Purity + Proactivity; 5-tier hierarchy revealed |
+Nine benchmark directories exist in-tree today. Rows for retired benchmarks
+(MSC, FutureX, TimeQA, QMSum, SocialIQA, SafetyBench, RGB) keep their last
+recorded numbers for the paper's record but have **no code in this repo**.
 
-See [docs/benchmark/results.md](benchmark/results.md) for detailed experiment results and known issues.
+| Benchmark | Location | Status | Accuracy (latest) | Note |
+|-----------|----------|--------|-------------------|------|
+| **LoCoMo** | `benchmarks/locomo/` | In-tree, tested | **81.23% J-Score overall** (paper Table 4) | vs ENGRAM 77.55 · MemOS 75.80 · Zep 75.14 |
+| **LongMemEval** | `benchmarks/longmemeval/` | In-tree, tested | **93.0% J-Score overall** (paper Table 5, N=500) | headline benchmark; entry point is `run_eval.py`, not `run_benchmark.py` — see below |
+| **CogEval-Bench** | `benchmarks/cogeval/` | In-tree, tested | **Harmony 0.476, Purity 0.361, Proactivity 0.614, 4.6×** | dataset is generated (`generate_dataset.py`), not downloaded |
+| **BABILong** | `benchmarks/babilong/` | In-tree, tested | **85.0** (paper Fig. 4) | exceeds ARMT — fine-tuned (83.8) |
+| **MuTual** | `benchmarks/mutual/` | In-tree, tested | **93.2% acc** (N=500) | cleanest runner — use as the template |
+| **MuSiQue-Ans** | `benchmarks/musique/` | In-tree, tested | **F1 58.7** (paper Fig. 4, N=500) | exceeds HippoRAG 2 (49.3) |
+| **NarrativeQA** | `benchmarks/narrativeqa/` | In-tree, tested | **F1 0.720 / ROUGE-L 0.712** (N=500) | |
+| **ToMi** | `benchmarks/tomi/` | In-tree, tested | **83.5 EM** (paper Fig. 4) | exceeds AutoToM (80.2) |
+| **StreamingQA** | `benchmarks/streamingqa/` | In-tree, tested | **78.4% EM / F1 0.573** (N=500) | |
+| MSC / FutureX / TimeQA / QMSum / SocialIQA / SafetyBench / RGB | *(removed)* | Retired | historical | code no longer in tree |
 
 ---
 
 ## File Map
 
-### Documentation (docs/)
-
-| File | Content |
-|------|---------|
-| **`docs/BENCHMARK.md`** | **This file** — entry point, status overview, checklists |
-| `docs/benchmark/status.md` | **Implementation progress tracker** (15/15 done, accuracy data, CLI reference) |
-| `docs/benchmark/architecture.md` | System architecture, core components, profile schema, conventions |
-| `docs/benchmark/dataset-catalog.md` | All 15 planned datasets across 6 categories |
-| `docs/benchmark/results.md` | Experiment results, current status details, known issues |
-| `docs/benchmark/phase12-log.md` | Phase 12 detailed work log (historical record) |
-| **`test_benchmarks.py`** | **Test suite** — verifies all 15 runners, unified CLI args, data files |
-
-### Benchmark Code (benchmarks/)
+### Benchmark code (`benchmarks/`)
 
 ```
 benchmarks/
-├── locomo/
-│   ├── run_benchmark.py        # Main runner (agent mode)
-│   ├── download_data.py        # Fetches locomo10.json from GitHub
-│   ├── locomo10.json           # Dataset (10 conversations, ~66K lines)
-│   └── README.md
-├── longmemeval/
-│   ├── __init__.py
-│   └── run_eval.py             # Runner (batch + turn modes)
-├── msc/
-│   ├── run_benchmark.py        # Main runner (speaker-aware)
-│   ├── download_data.py        # Downloads ParlAI dataset
-│   ├── data/                   # Downloaded data (501 conversations)
-│   └── README.md
-├── babilong/
-│   ├── run_benchmark.py        # Runner (direct/batch/agent modes)
-│   ├── download_data.py        # Downloads from HuggingFace
-│   ├── data/                   # Downloaded data
-│   └── README.md
-├── futurex/
-│   ├── run_benchmark.py        # Async runner (simulated tools)
-│   ├── run_miroflow_benchmark.py  # Real MiroFlow entry point
-│   ├── miroflow_adapter.py     # Cognifold <> MiroFlow adapter
-│   ├── cognifold_orchestrator.py  # Custom MiroFlow orchestrator
-│   ├── download_data.py
-│   └── futurex_data.jsonl      # 96 prediction tasks
-├── mutual/
-│   ├── run_benchmark.py        # MC dialogue reasoning (4 choices)
-│   ├── download_data.py        # GitHub zip download, JSON parser
-│   ├── data/                   # 886 dev examples
-│   └── README.md
-├── musique/
-│   ├── run_benchmark.py        # Multi-hop QA (EM/F1)
-│   ├── download_data.py        # HuggingFace download
-│   ├── data/                   # 4,834 examples
-│   └── README.md
-├── timeqa/
-│   ├── run_benchmark.py        # Time-sensitive QA (EM/F1)
-│   ├── download_data.py        # GitHub JSONL download
-│   ├── data/                   # 2,997 easy + hard examples
-│   └── README.md
-├── narrativeqa/
-│   ├── run_benchmark.py        # Long-form QA (ROUGE-L/F1)
-│   ├── download_data.py        # HuggingFace download
-│   ├── data/                   # 10,557 examples
-│   └── README.md
-├── qmsum/
-│   ├── run_benchmark.py        # Meeting summarization (ROUGE-L)
-│   ├── download_data.py        # GitHub JSONL + HF fallback
-│   ├── data/                   # 35 meetings, 281 queries
-│   └── README.md
-├── socialiqa/
-│   ├── run_benchmark.py        # MC social reasoning (3 choices)
-│   ├── download_data.py        # HF + parquet fallback
-│   ├── data/                   # 1,954 validation examples
-│   └── README.md
-├── tomi/
-│   ├── run_benchmark.py        # Theory of Mind (EM)
-│   ├── download_data.py        # GitHub + clone/generate fallback
-│   ├── data/                   # 2,988 generated examples
-│   └── README.md
-├── safetybench/
-│   ├── run_benchmark.py        # Safety MC (4 choices, no GT)
-│   ├── download_data.py        # HuggingFace download
-│   ├── data/                   # 11,435 test examples
-│   └── README.md
-├── streamingqa/
-│   ├── run_benchmark.py        # Temporal knowledge QA
-│   ├── download_data.py        # GCS download (requires manual)
-│   └── README.md
-└── rgb/
-    ├── run_benchmark.py        # Noise robustness (EM/F1)
-    ├── download_data.py        # GitHub (currently 404)
-    └── README.md
+├── shared/                      # THE shared infrastructure — read this first
+│   ├── base_runner.py           #   BenchmarkRunner ABC + run() pipeline + LLM helpers
+│   ├── baseline_runner.py       #   Direct-LLM / RAG baselines
+│   ├── graph_evolution_tracker.py
+│   └── stats_utils.py           #   wilson_ci, bootstrap_ci_mean
+├── _utils.py                    # embedding resolution (the canonical embedder factory)
+├── analysis_utils.py            # wrong-case enrichment + save_wrong_cases
+├── compare_fast.py              # classic-vs-fast ingestion A/B
+├── babilong/    cogeval/    locomo/    longmemeval/
+├── musique/     mutual/     narrativeqa/
+├── streamingqa/ tomi/
+└── scripts/plot_graph_evolution.py
 ```
 
-### Config Profiles (configs/)
+Each benchmark dir: `run_benchmark.py` (runner), `download_data.py` (dataset
+fetch), `README.md`. Exceptions: **longmemeval** uses `run_eval.py` +
+`symbolic_resolver.py` + `runs/<label>/` snapshots + `HISTORY.md`;
+**cogeval** generates its dataset via `generate_dataset.py` and ships extra
+baseline/experiment runners.
 
-| File | Benchmark |
-|------|-----------|
-| `configs/locomo_profile.yaml` | LoCoMo |
-| `configs/longmemeval_profile.yaml` | LongMemEval |
-| `configs/msc_profile.yaml` | MSC |
-| `configs/babilong_profile.yaml` | BABILong |
-| `configs/futurex_profile.yaml` | FutureX |
-| `configs/mutual_profile.yaml` | MuTual |
-| `configs/musique_profile.yaml` | MuSiQue-Ans |
-| `configs/timeqa_profile.yaml` | TimeQA |
-| `configs/narrativeqa_profile.yaml` | NarrativeQA |
-| `configs/qmsum_profile.yaml` | QMSum |
-| `configs/socialiqa_profile.yaml` | SocialIQA |
-| `configs/tomi_profile.yaml` | ToMi |
-| `configs/safetybench_profile.yaml` | SafetyBench |
-| `configs/streamingqa_profile.yaml` | StreamingQA |
-| `configs/rgb_profile.yaml` | RGB |
+### Entry points
 
-### Core Modules (src/cognifold/)
+| What | Command |
+|---|---|
+| Any base-runner benchmark | `bash scripts/reproduce.sh {cogeval,locomo,musique,narrativeqa,tomi,babilong,mutual,streamingqa}` |
+| All of the above | `bash scripts/reproduce.sh all` |
+| LongMemEval | `bash scripts/parallel_longmemeval.sh [N_PARALLEL] [STRATIFIED] [TOTAL_LIMIT] [LABEL]` — or the Claude Code skills `.claude/skills/longmemeval-run` (one-shot) / `longmemeval-iterate` (iteration campaign) |
+| Runner sanity check | `PYTHONPATH=src python test_benchmarks.py` (8 base runners; longmemeval not covered) |
 
-These are **shared** by all benchmarks. Changes here affect everything.
+**Datasets are NOT auto-downloaded.** Run `benchmarks/<name>/download_data.py`
+before the first run (a missing dataset exits with an error). LongMemEval is
+the exception — `run_eval.py` self-downloads.
+
+**Reproducing paper numbers**: `reproduce.sh` defaults to `MODEL=openai:gpt-5`;
+the paper stack is `gpt-4o-mini` (build) — set `MODEL=openai:gpt-4o-mini` to
+match published numbers.
+
+### Config profiles (`configs/`)
+
+One `configs/<name>_profile.yaml` per benchmark: `babilong`, `locomo`,
+`longmemeval`, `musique`, `mutual`, `narrativeqa`, `streamingqa`, `tomi`
+(cogeval currently has none — known gap). Prompt changes go in the YAML, not in
+Python. `configs/prompt_profiles.yaml` is the general scenario-profile registry.
+
+### Core modules shared by all benchmarks (`src/cognifold/`)
 
 | File | Role |
 |------|------|
-| `agent/domain.py` | `DomainConfig` per benchmark (LOCOMO_DOMAIN, MSC_DOMAIN, BABILONG_DOMAIN, etc.) |
+| `agent/domain.py` | `DomainConfig` per benchmark + `register_domain()` |
 | `query/agent.py` | `MemoryQueryAgent` — main read interface, `query_for_qa()` |
 | `query/models.py` | `QueryConfig`, `QueryResult`, `NodeSummary` |
 | `query/assembly.py` | Formats nodes into context text |
-| `query/strategies.py` | Query mode implementations (mergefold, rag, base, episodic) |
+| `query/strategies.py` | Query modes (mergefold, rag, base, episodic) |
 | `retrieval/bm25.py` | BM25 retrieval engine |
-| `utils/embeddings.py` | OpenAI embedding service (text-embedding-3-small) |
+| `symbolic/` | Symbolic state/belief trackers used during ingestion + ToMi |
+
+Changes here affect **every** benchmark — smoke-test after touching them
+(see Checklists).
+
+### Environment variables
+
+`.env` keys (see `.env.example`): `OPENAI_API_KEY` / `GOOGLE_API_KEY` required
+for LLM modes. Benchmark-specific:
+
+| Variable | Used by | Meaning |
+|---|---|---|
+| `MODEL` | `reproduce.sh` | reader/build model (`provider:model` syntax) |
+| `PYTHON` | `reproduce.sh` | python binary override |
+| `READER_MODEL` `WRITER_MODEL` `JUDGE_MODEL` `RERANK_MODEL` `EMBED_MODEL` | `parallel_longmemeval.sh` | per-role model overrides |
+| `EMBEDDING_API_KEY` `EMBEDDING_BASE_URL` | embeddings provider | separate key/endpoint for embeddings (defaults to api.openai.com when key set) |
+| `JUDGE_API_KEY` `JUDGE_BASE_URL` | longmemeval | separate judge endpoint |
+| `OPENROUTER_API_KEY` | shell scripts | shim: exported as `OPENAI_API_KEY` + OpenRouter base URL |
+| `HF_ENDPOINT` `GITHUB_MIRROR` | `download_data.py` scripts | mirrors (e.g. hf-mirror.com) |
+| `COGNIFOLD_ABLATE_KNN=1` `COGNIFOLD_ABLATE_MERGE=1` | `base_runner.py` | ablation switches (skip kNN edge inference / concept merge) |
+| `EXTRACT_TYPED_ATTRIBUTES` `RESOLVE_EVENT_DATES` | longmemeval | W1 (default on) / W2 (default off) passes |
+| `QID_LIST_FILE` | `parallel_longmemeval.sh` | run a fixed qid subset |
+
+Model string syntax everywhere: `provider:model` — `openai:gpt-4o-mini`,
+`gemini:gemini-2.5-flash` (bare `gemini-*` also accepted). OpenAI models MUST
+carry the `openai:` prefix so agent dispatch routes correctly
+(`benchmarks/shared/base_runner.py::_normalize_agent_model_name`).
 
 ---
 
-## Checklists
+## Contributing a new benchmark
 
-### When Adding a New Benchmark
+`benchmarks/mutual/run_benchmark.py` (182 lines) is the reference
+implementation — copy its shape. `locomo` and `narrativeqa` predate the shared
+base and duplicate its orchestration; **do not copy them**.
 
-1. **Create benchmark directory**:
+1. **Create the directory**:
+
    ```
    benchmarks/<name>/
    ├── __init__.py
-   ├── run_benchmark.py        # argparse CLI, standard phases
-   ├── download_data.py        # Data download (optional)
-   └── README.md               # Quick setup
+   ├── run_benchmark.py        # subclass benchmarks.shared.base_runner.BenchmarkRunner
+   ├── download_data.py        # dataset fetch (honor HF_ENDPOINT/GITHUB_MIRROR mirrors)
+   └── README.md               # quick setup + one working command
    ```
 
-2. **Create config profile**: `configs/<name>_profile.yaml`
-   - See [docs/benchmark/architecture.md](benchmark/architecture.md) for the profile schema
+   Subclass `BenchmarkRunner` and implement only the three abstract methods —
+   `load_dataset()`, `build_events()`, `evaluate_example()` — plus optional
+   hooks (`add_extra_args`, `post_ingest`, `get_query_config_overrides`, …).
+   **Never copy the `run()` loop**; if `run()` doesn't fit, add a hook to the
+   base instead.
 
-3. **Register domain**: Add `<NAME>_DOMAIN` in `src/cognifold/agent/domain.py`
+2. **Create the profile**: `configs/<name>_profile.yaml` (copy
+   `configs/mutual_profile.yaml` as a starting point; set
+   `profiles.<name>.model.name` and `embedding.model`).
 
-4. **Required CLI flags** (unified across all benchmarks):
-   - `--limit N` — number of samples to process
-   - `--query-mode MODE` — `base` | `rag` | `episodic` | `mergefold` (default: `mergefold`)
-   - `--disable-concepts` — episodic mode (events only, no concepts)
-   - `--no-llm-eval` — disable LLM-based evaluation
-   - `--no-profile` — skip YAML prompt profile
-   - `--visualize` — generate replay HTML
+3. **Register the domain** with `register_domain()` in your runner (or, if it
+   must ship in-tree, add `<NAME>_DOMAIN` in `src/cognifold/agent/domain.py`
+   — but the long-term direction is YAML-registered domains, see
+   `docs/CODE_HEALTH.md` #3).
 
-5. **Required phases in runner**:
-   1. Data loading (with `--limit`)
-   2. Graph initialization (fresh `ConceptGraph` per sample or global)
-   3. Ingestion (event -> agent -> executor -> graph)
-   4. QA evaluation (query_for_qa -> answer generation -> LLM judge)
-   5. Metrics output (accuracy, node count, context length)
+4. **Unified CLI** — the base `main()` already provides `--limit`,
+   `--query-mode {base,rag,episodic,mergefold}`, `--disable-concepts`,
+   `--no-llm-eval`, `--no-profile`, `--visualize`, `--data`, `--embedding`,
+   `--model`. Add benchmark-specific flags via `add_extra_args()` only.
+   (`--judge-model` and `--event-stream` are currently locomo/longmemeval
+   specials, not base flags.)
 
-6. **Update documentation**:
-   - Update `docs/benchmark/status.md` — mark dataset as Done, fill in runner/profile/accuracy
-   - Add row to the **Implementation Status** table in this file
-   - Add entry to `docs/benchmark/results.md` (even if no results yet)
-   - Add to the **File Map** sections in this file
+5. **Wire the hardcoded lists** (all four, or your benchmark is invisible):
+   - `scripts/reproduce.sh` — both the `case` in `run_one` **and** the
+     `all` loop
+   - `test_benchmarks.py` — the `RUNNERS` list
+   - the **Implementation Status** table and **File Map** in this file
 
-### When Modifying an Existing Benchmark
+6. **Outputs**: `run()` writes `benchmarks/<name>/output/benchmark_results.json`
+   and `wrong_cases.json` (both allowlisted in `.gitignore`; everything else
+   under `output/` is ignored). Run from the **repo root** — the output dir is
+   a relative path.
 
-1. **Read the profile YAML first** (`configs/<domain>_profile.yaml`)
-2. **Prompt changes go in the YAML**, not in Python code
-3. **Test with `--limit 1`** before running full datasets (API cost)
-4. **Update `docs/benchmark/results.md`** after any run that produces new results
+7. **Verify cheaply before spending**: `--limit 1` first; then
+   `PYTHONPATH=src python test_benchmarks.py` must pass.
 
-### After Running Experiments
+### When modifying an existing benchmark
 
-1. **Record results** in `docs/benchmark/results.md` with:
-   - Date, model, config used
-   - Accuracy metrics (strict, partial/lenient)
-   - Node count, context length
-   - Command used to reproduce
-2. **Update status table** in this file if accuracy changed significantly
+1. Read `configs/<name>_profile.yaml` first — prompt changes go there, not in code.
+2. Test with `--limit 1` before full runs (API cost).
+3. Record results (date, model, config, command) in the run output and update
+   the status table here if numbers change significantly.
 
-### When Modifying the Query System
+### When modifying the query system
 
-The query system (`src/cognifold/query/`) is shared by all benchmarks. After changes:
+`src/cognifold/query/` is shared by all benchmarks. After changes:
 
 ```bash
 # Quick smoke test
-PYTHONPATH=src python benchmarks/locomo/run_benchmark.py --limit 1 --sessions 1
+PYTHONPATH=src python -m benchmarks.locomo.run_benchmark --limit 1 --sessions 1
 
-# Check retrieval quality
-PYTHONPATH=src python benchmarks/babilong/run_benchmark.py --config 0k --tasks qa1 --limit 5 --no-llm-eval
+# Retrieval quality without LLM cost
+PYTHONPATH=src python -m benchmarks.babilong.run_benchmark --config 0k --tasks qa1 --limit 5 --no-llm-eval
 ```
 
 ---
 
 ## Quick Start
 
-### Environment
-
 ```bash
-# Required for LLM-based modes
-export OPENAI_API_KEY="sk-..."
+# Environment
+export OPENAI_API_KEY="sk-..."          # or put it in .env
+export HF_ENDPOINT=https://hf-mirror.com  # optional mirror
 
-# Optional (HuggingFace mirror, e.g. in China)
-export HF_ENDPOINT=https://hf-mirror.com
+uv sync                                  # install
 
-# Install
-uv pip install -e .
-```
-
-### Verify All Runners
-
-```bash
-# Run the test suite — checks all 15 runners, unified CLI args, and data files
-PYTHONPATH=src python test_benchmarks.py
-```
-
-### Minimal Cost Tests
-
-```bash
-# BABILong - 3 examples, no LLM eval
-PYTHONPATH=src python benchmarks/babilong/run_benchmark.py \
+# Fetch a dataset, then run a minimal-cost test
+PYTHONPATH=src python benchmarks/babilong/download_data.py
+PYTHONPATH=src python -m benchmarks.babilong.run_benchmark \
     --config 0k --tasks qa1 --limit 3 --no-llm-eval
 
-# MSC - 1 conversation
-PYTHONPATH=src python benchmarks/msc/run_benchmark.py --limit 1 --query-mode rag
+# Full paper run for one benchmark
+bash scripts/reproduce.sh musique
 
-# LoCoMo - 1 conversation, 1 session
-PYTHONPATH=src python benchmarks/locomo/run_benchmark.py --limit 1 --sessions 1
+# LongMemEval full N=500 (hours; ~$80–150 on the recommended stack)
+bash .claude/skills/longmemeval-run/scripts/run.sh
 ```
 
-### Full Benchmarks (costs tokens)
+## Known gaps (tracked)
 
-```bash
-# BABILong - full agent mode
-PYTHONPATH=src python benchmarks/babilong/run_benchmark.py \
-    --config 0k --tasks qa1,qa2 --limit 20 --query-mode mergefold
+- `cogeval` has no README, no `download_data.py`, no config profile.
+- `longmemeval` is absent from `reproduce.sh` and `test_benchmarks.py`; its
+  flags drift from the unified set (`--llm-eval` vs `--no-llm-eval`).
+- `locomo`, `narrativeqa`, `longmemeval` re-implement the shared `run()`
+  orchestration; `baseline_runner.py` duplicates LLM/metric helpers.
+- Result JSON schemas differ per benchmark; there is no cross-benchmark
+  aggregate file.
 
-# MSC - multiple conversations
-PYTHONPATH=src python benchmarks/msc/run_benchmark.py --limit 10 --query-mode mergefold
-
-# LoCoMo - 2 conversations, all sessions, with visualization
-PYTHONPATH=src python benchmarks/locomo/run_benchmark.py --limit 2 --sessions 5 --visualize
-```
-
----
-
-## Detail Documentation
-
-- **[Implementation Status](benchmark/status.md)** — progress tracker for all 15 datasets (TODO / Done)
-- **[Architecture & Components](benchmark/architecture.md)** — system design, core components, profile schema, LLM config
-- **[Dataset Catalog](benchmark/dataset-catalog.md)** — all 15 planned datasets across 6 categories
-- **[Experiment Results](benchmark/results.md)** — results, status details, known issues
-- **[Phase 12 Work Log](benchmark/phase12-log.md)** — historical record of Phase 12 development
+Details, evidence, and fix directions: `docs/CODE_HEALTH.md`.
